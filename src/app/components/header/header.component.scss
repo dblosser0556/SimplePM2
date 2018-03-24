@@ -1,0 +1,52 @@
+
+.navbar-spacer {
+    margin-left: auto;
+}
+
+
+.navbar  {
+    padding: 5px 10px;
+    //background: #fff;
+    background: #7386D5;
+    color: #fff;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 5px;
+    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+    color: #fff;
+}
+
+.navbar-brand {
+    font-size: 1.8em;
+}
+
+.navbar-brand div {
+    padding: 0px;
+    margin: 0px;
+}
+
+.navbar-brand div a {
+    padding: 0px;
+    margin: 0px;
+}
+
+.btn-navbar {
+    background: rgb(92, 113, 201);
+    color: #fff;
+}
+
+.nav-item {
+    margin-right: 10px;
+}
+.navbar-btn {
+    box-shadow: none;
+    outline: none !important;
+    border: none;
+    background: rgb(92, 113, 201);
+    color: #fff;
+}
+
+

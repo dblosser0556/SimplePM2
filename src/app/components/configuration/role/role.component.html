@@ -1,0 +1,43 @@
+<div class="container" fxLayout="column" fxLayoutGap="20px">
+  <div class="card">
+    <div class="card-body">
+      <div *ngIf="isLoading">Loading Project Cost Types ...</div>
+      <table class="table" *ngIf="!isLoading">
+        <tr>
+          <td>Role Name</td>
+          <td>Description</td>
+          <td>Edit</td>
+          <td>Delete</td>
+        </tr>
+        <tr *ngFor="let item of items">
+          <td>
+            {{item.roleName}}
+          </td>
+          <td>
+            {{item.roleDesc}}
+          </td>
+          <td>
+            <a (click)="edit(item)">
+              <i class="fas fa-edit" ></i>
+            </a>
+          </td>
+          <td>
+            <a ref (click)="onDelete(item.roleID)">
+              <i class="fas fa-trash"></i>
+            </a>
+          </td>
+        </tr>
+
+      </table>
+      <div class="card-body">
+        <button class="btn btn-primary" (click)="add()">
+          <i class="fas fa-plus-square" ></i>Add New</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" *ngIf="selectedItem">
+    <div class="card-body">
+      <app-role-detail [item]="selectedItem" (itemChange)="updateList($event)" ></app-role-detail>
+    </div>
+  </div>
+</div>

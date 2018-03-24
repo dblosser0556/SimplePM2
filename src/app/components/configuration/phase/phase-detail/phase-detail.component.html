@@ -1,0 +1,26 @@
+<form (ngSubmit)="onSubmit()" name="phaseForm" class="phase-form" [formGroup]="phaseForm" novalidate>
+  <input readonly hidden placeholder="Phase Id" formControlName="phaseID" class="required">
+  <div class="form-group">
+    <label class="center-block">Name:</label>
+    <input class="form-control" formControlName="phaseName" required>
+    <div align="start" *ngIf="phaseForm.controls.phaseName.errors && !phaseForm.controls.phaseName.pristine">
+      <div class="invalid-input">
+        Phase Name is required!
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="center-block">Description:</label>
+    <input class="form-control" formControlName="phaseDesc">
+  </div>
+  <div class="form-group-row">
+    <button class="btn btn-primary" type="submit" [disabled]="!phaseForm.valid">
+      <i class="fas fa-save"></i>Save</button>
+    <button type="button" class="btn btn-warning" (click)="revert()">
+      <i class="fas fa-window-restore"></i>Reset</button>
+
+    <button type="button" class="btn btn-warning" (click)="cancel()">
+      <i class="fas fa-ban"></i>Cancel</button>
+  </div>
+
+</form>

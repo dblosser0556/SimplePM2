@@ -1,0 +1,53 @@
+<div class="container">
+  <div class="card">
+    <div class="card-block">
+      <div *ngIf="isLoading">Loading User List ...</div>
+      <table class="table" *ngIf="!isLoading">
+        <tr>
+          <td>UserName</td>
+          <td>First Name</td>
+          <td>Last Name</td>
+          <td>Email</td>
+          <td>Edit</td>
+          <td>Delete</td>
+        </tr>
+        <tr *ngFor="let user of users">
+          <td>
+            {{user.currentUser.userName}}
+          </td>
+          <td>
+            {{user.currentUser.firstName}}
+          </td>
+          <td>
+            {{user.currentUser.lastName}}
+          </td>
+          <td>
+            {{user.currentUser.email}}
+          </td>
+          
+          <td>
+
+            <a (click)="edit(user)">
+              <i class="fas fa-edit"></i>
+            </a>
+          </td>
+          <td>
+            <a ref (click)="onDelete(user.userId)">
+              <i class="fas fa-trash"></i>
+            </a>
+          </td>
+        </tr>
+
+      </table>
+      <div class="card-body">
+        <button class="btn btn-primary" (click)="add()">
+          <i class="fas fa-plus-square"></i>Add New</button>
+      </div>
+    </div>
+  </div>
+  <div class="card" *ngIf="selectedUser">
+    <div class="card-block">
+
+    </div>
+  </div>
+</div>

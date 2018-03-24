@@ -1,0 +1,85 @@
+
+
+<div class="container-fluid">
+
+  <form name="registrationForm" [formGroup]="registrationForm" novalidate (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+        <label class="center-block">First name:</label>
+        <input type="text" class="form-control" formControlName="firstName" placeholder="First name" name="firstName" tmFocus required>
+        <div align="start" *ngIf="registrationForm.controls.firstName.errors && !registrationForm.controls.firstName.pristine">
+          <div class="invalid-input">
+            First Name is required!
+          </div>
+        </div>
+
+      </div>
+      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+        <label class="center-block">Last name</label>
+        <input type="text" class="form-control" formControlName="lastName" placeholder="Last name" name="lastName" required>
+        <div align="start" *ngIf="registrationForm.controls.lastName.errors && !registrationForm.controls.lastName.pristine">
+          <div class="invalid-input">
+            Last Name is required!
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+        <label class="center-block">UserName</label>
+        <input type="text" class="form-control" formControlName="userName" placeholder="User Name" name="userName" required>
+        <div align="start" *ngIf="registrationForm.controls.userName.errors && !registrationForm.controls.userName.pristine">
+          <div class="invalid-input">
+            User Name is required and must be at least 8 characters long!
+          </div>
+        </div>
+      </div>
+      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+        <label class="center-block">Email</label>
+        <input type="text" class="form-control" formControlName="email" placeholder="Email" name="eMail" required>
+        <div align="start" *ngIf="registrationForm.controls.email.errors && !registrationForm.controls.email.pristine">
+          <div class="invalid-input">
+            Email is required and must be in the form name@service
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+        <label class="center-block">Password</label>
+        <input type="password" class="form-control" formControlName="password" name="password" placeholder="Password" required>
+
+        <div align="start" *ngIf="registrationForm.controls.password.errors && !registrationForm.controls.password.pristine">
+          <div class="invalid-input">
+            Password is required and must be between 8 and 12 characters.
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="form-group checkbox col-xs-24 col-12 col-sm-12 col-md-8">
+      <h5>Roles:</h5>
+      <div formArrayName="roleList">
+      <div *ngFor="let role of roleList.controls; let i= index" class="form-check form-check-inline">
+        <label class="center-block">
+          <input type="checkbox"  [formControlName]="i" />{{roles[i]}}</label>
+      </div>
+    </div>
+  </div>
+ 
+
+
+
+<div class="form-group-row">
+  <button class="btn btn-primary" type="submit" [disabled]="!registrationForm.valid">
+    <i class="fas fa-save"></i>Save</button>
+  <button type="button" class="btn btn-warning" (click)="revert()">
+    <i class="fas fa-window-restore"></i>Reset</button>
+  <button type="button" class="btn btn-warning" (click)="cancel()">
+    <i class="fas fa-ban"></i>Cancel</button>
+</div>
+
+</form>
+
+</div>

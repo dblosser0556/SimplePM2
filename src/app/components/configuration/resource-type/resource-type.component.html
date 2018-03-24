@@ -1,0 +1,60 @@
+<div class="container" fxLayout="column" fxLayoutGap="20px">
+  <div class="card">
+    <div class="card-block">
+        <clr-alert [clrAlertType]="'alert-warning'" [(clrAlertClosed)]="error">
+            <div class="alert-item">
+                <span class="alert-text">
+                    {{error}}
+                </span>
+            </div>
+        </clr-alert>
+        <clr-alert [clrAlertType]="'alert-success'" [(clrAlertClosed)]="successMessage">
+            <div class="alert-item">
+                <span class="alert-text">
+                    {{successMessage}}
+                </span>
+            </div>
+        </clr-alert>
+      
+      <div *ngIf="isLoading">Loading Resource Types ...</div>
+      <table class="table" *ngIf="!isLoading">
+        <thead>
+        <tr>
+          <th>Resource Type</th>
+          <th>Description</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+      </thead>
+        <tr *ngFor="let item of items">
+          <td>
+            {{item.resourceTypeName}}
+          </td>
+          <td>
+            {{item.resourceTypeDesc}}
+          </td>
+          <td>
+            <a (click)="edit(item)">
+                <clr-icon shape="pencil" class="is-solid"></clr-icon>
+            </a>
+          </td>
+          <td>
+            <a ref (click)="onDelete(item.resourceTypeId)">
+                <clr-icon shape="trash" class="is-solid"></clr-icon>
+            </a>
+          </td>
+        </tr>
+
+      </table>
+      <div class="card-footer">
+        <a class="card link" (click)="add()">
+            <clr-icon shape="plus"></clr-icon>Add New</a>
+      </div>
+    </div>
+  </div>
+  <div class="card" *ngIf="selectedItem">
+    <div class="card-block">
+      <app-resource-type-detail [item]="selectedItem" (itemChange)="updateList($event)" ></app-resource-type-detail>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,67 @@
+<form (ngSubmit)="onSubmit()" name="groupForm" class="group-form" [formGroup]="groupForm" novalidate>
+  <input readonly hidden  formControlName="groupId" class="required">
+  <div class="form-row">
+  <div class="w-25 p-2 form-group">
+    <label class="center-block">Parent Group:</label>
+    <select class="form-control" formControlName="parentId">
+      <option *ngFor="let group of groupOptions" [value]="group.groupId">{{group.groupName}}</option>
+    </select>
+  </div>
+  <div class="w-25 p-2 form-group">
+    <label class="center-block">Name: </label>
+      <input class="form-control" formControlName="groupName" required>
+    <div align="start" *ngIf="groupForm.controls.groupName.errors && !groupForm.controls.groupName.pristine">
+      <div class="invalid-input">
+        Group Name is required!
+      </div>
+    </div>
+  </div>
+  <div class="w-25 p-2 form-group">
+      <label class="center-block">Group Manager:</label>
+      <select class="form-control" formControlName="groupManager">
+        <option *ngFor="let pm of  pmList" [value]="pm.currentUser.userId">{{pm.currentUser.lastName}},&nbsp;{{pm.currentUser.firstName}}</option>
+      </select>
+    </div>
+</div>
+
+<div class="form-row">
+  <div class="w-25 p-2 form-group">
+    <label class="center-block">Description:</label>
+      <input class="form-control" formControlName="groupDesc"> 
+  </div>
+    <div class="w-25 p-2 form-group">
+      <label class="center-block">Level Description:</label>
+        <input class="form-control" formControlName="levelDesc">
+    </div>
+    <div class="w-25 p-2 form-group">
+        <a tooltip="Show Capital Budget" class="btn btn-sm btn-success" role="button" (click)="showBudget(true)">Capital Budget</a>
+        <a tooltip="Add Capital Budget" (click)="addBudget(true)">
+          <i class="fas fa-plus-square"></i>
+        </a>
+        <input type="number" class="form-control" formControlName="capBudget">
+      </div>
+      <clr-modal [(clrModalOpen)]="opened">
+        <!--<app-group-budget></app-group-budget>-->
+      </clr-modal>
+      <div class="w-25 p-2 form-group">
+        <a tooltip="Show Capital Budget"  class="btn btn-sm btn-success" role="button"  (click)="showBudget(false)">Expense Budget</a>
+        <a tooltip="Add Expense Budget" (click)="addBudget(false)">
+          <i class="fas fa-plus-square"></i>
+        </a>
+        <input type="number" class="form-control" formControlName="expBudget">
+      </div>
+  </div>
+ 
+
+  <div class="row p-2">
+    <button class="btn btn-primary" type="submit" [disabled]="!groupForm.valid">
+      <i class="fas fa-save"></i>Save</button>
+      <button type="button" class="btn btn-warning" (click)="revert()">
+        <i class="fas fa-window-restore"></i>Reset</button>
+  
+      <button type="button" class="btn btn-warning" (click)="cancel()">
+      <i class="fas fa-ban"></i>Cancel</button>
+  </div>
+
+</form>
+
