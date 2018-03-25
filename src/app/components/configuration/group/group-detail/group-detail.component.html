@@ -45,45 +45,126 @@
           </div>
           <div class="column">
             <section class="form-block">
-                <label>Budget Details</label>
-                <table class="table table-sm">
-                  <thead> 
+              <label>Captial Budget Details</label>
+              <div>
+                <clr-datagrid>
+                  <clr-dg-column>Approved Date</clr-dg-column>
+                  <clr-dg-column>Budget Year</clr-dg-column>
+                  <clr-dg-column>Amount</clr-dg-column>
+                  <clr-dg-column>Delete</clr-dg-column>
+
+                  <clr-dg-row *ngFor="let budget of group.groupBudgets; let i=index">
+                    <clr-dg-cell>{{budget.approvedDateTime}}</clr-dg-cell>
+                    <clr-dg-cell>{{budget.budgetYear}}</clr-dg-cell>
+                    <clr-dg-cell>{{budget.amount}}</clr-dg-cell>
+                    <clr-dg-cell>
+                      <clr-icon shape="trash" class="is-solid"></clr-icon>
+                    </clr-dg-cell>
+                  </clr-dg-row>
+
+                  <clr-dg-footer>{{group.groupBudgets.length}} budget years</clr-dg-footer>
+                </clr-datagrid>
+              </div>
+              <!--  <table class="table table-compact">
+                <thead>
                   <tr>
+                    <th>Approved Date</th>
+                    <th>Budget Year</th>
+                    <th>Amount</th>
+                    <th>Delete</th>
+                  </tr>
+                </thead>
+                <tbody formArrayName="capBudgets">
+                  <tr  *ngFor="let budget of groupForm.get('capBudgets').controls; let i=index" [formGroupName]="i">
+                    <td>
+                      <input type="text" formControlName="approvedDateTime">
+                    </td>
+                    <td class="pull-right">
+                      <input type="text" formControlName="budgetYear">
+                    </td>
+                    <td class="pull-right">
+                      <input type="text" formControlName="amount">
+                    </td>
+                    <td>
+                      <a ref (click)="confirmDeleteBudget(budget)" title="Delete Budget">
+                        <clr-icon shape="trash" class="is-solid"></clr-icon>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table> -->
+              <div>
+                <button type="button" class="btn btn-sm btn-link" (click)="addBudget(0)">
+                  <clr-icon shape="plus"></clr-icon>Add Budget</button>
+              </div>
+            </section>
+            <section class="form-block">
+              <label>Expense Budget Details</label>
+              <div class="form-group row">
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                  <label>Approved Date</label>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                  <label>Budget Year</label>
+                </div>
+                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                  <label>Amount</label>
+                </div>
+              </div>
+              <div formArrayName="expBudgets">
+                <div *ngFor="let budget of groupForm.get('expBudgets').controls; let j=index">
+                  <div [formGroupName]="j" class="form-group row">
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                      <input type="date" formControlName="approvedDateTime">
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                      <input type="number" formControlName="budgetYear">
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                      <input type="number" formControlName="amount">
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
+                      <a ref (click)="confirmDeleteBudget(budget)" title="Delete Budget">
+                        <clr-icon shape="trash" class="is-solid"></clr-icon>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- <table class="table table-sm">
+                  <thead>
+                    <tr>
                       <th>Approved Date</th>
                       <th>Budget Year</th>
                       <th>Amount</th>
-                      <th>Edit</th>
                       <th>Delete</th>
                     </tr>
                   </thead>
-                    <tr *ngFor="let budget of group.groupBudgets">
-                      <td>
-                        {{budget.approvedDateTime | date:'yyyy-MM-dd'}}
-                      </td>
-                      <td class="pull-right">
-                          {{budget.year}}
-                        </td>
-                      <td class="pull-right">
-                        {{budget.amount | currency:'USD':'symbol-narrow':'0.0-0'}}
-                      </td>
-                      <td>
-                        <a (click)="edit(budget)" title="Edit Budget">
-                            <clr-icon shape="pencil" class="is-solid"></clr-icon>
-                        </a>
-                      </td>
-                      <td>
-                        <a ref (click)="onDelete(budget.budgetId)" title="Delete Budget">
-                            <clr-icon shape="trash" class="is-solid"></clr-icon>
-                        </a>
-                      </td>
-                    </tr>
-                
-                  </table>
-                  <div>
-                      <button type="button" class="btn btn-sm btn-link" (click)="addBudget()">
-                          <clr-icon shape="plus"></clr-icon>Add Budget</button>
-                  </div>
+                  <tbody>
+                  <tr  *ngFor="let budget of groupForm.get('expBudgets').controls; let j = index;" [formGroupName]="j">
+                    <td>
+                      <input type="date" formControlName="approvedDateTime">
+                    </td>
+                    <td class="pull-right">
+                      <input type="number" formControlName="budgetYear">
+                    </td>
+                    <td class="pull-right">
+                      <input type="number" formControlName="amount" >
+                    </td>
+                    <td>
+                      <a ref (click)="confirmDeleteBudget(budget)" title="Delete Budget">
+                        <clr-icon shape="trash" class="is-solid"></clr-icon>
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+                </table> -->
+              <div>
+                <button type="button" class="btn btn-sm btn-link" (click)="addBudget(1)">
+                  <clr-icon shape="plus"></clr-icon>Add Budget</button>
+              </div>
             </section>
+
           </div>
         </div>
         <div>
@@ -100,30 +181,3 @@
     </div>
   </div>
 </div>
-<clr-modal [(clrModalOpen)]="categoryEditModal" [clrModalClosable]="false">
-    <h3 class="modal-title" *ngIf="edit?.id">Edit category name</h3>
-    <h3 class="modal-title" *ngIf="!edit?.id">Add new category</h3>
-    <div class="modal-body">
-      <input type="text" name="category" class="full-width" [(ngModel)]="edit.name" placeholder="Category name" />
-    </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline" (click)="cancel()">Cancel</button>
-      <button type="button" class="btn btn-primary" (click)="save()">Save</button>
-    </div>
-  </clr-modal>
-  
-  <clr-modal [(clrModalOpen)]="categoryRemoveModal" [clrModalClosable]="false">
-    <h3 class="modal-title" *ngIf="!error">Remove {{edit.name}}?</h3>
-    <h3 class="modal-title" *ngIf="error">Unable to remove {{edit.name}}</h3>
-    <div class="modal-body" *ngIf="!error">
-      Once you delete a category, you cannot get it back.
-    </div>
-    <div class="modal-body" *ngIf="error">
-        {{error.message}}
-      </div>
-    <div class="modal-footer">
-      <button type="button" class="btn btn-outline" (click)="cancel()" *ngIf="!error">Cancel</button>
-      <button type="button" class="btn btn-warning" (click)="removeCategory()" *ngIf="!error">Delete</button>
-      <button type="button" class="btn btn-outline" (click)="cancel()" *ngIf="error">Ok</button>
-    </div>
-  </clr-modal>

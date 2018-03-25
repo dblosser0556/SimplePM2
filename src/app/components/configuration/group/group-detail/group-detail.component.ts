@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { GroupService } from './../group.service';
 import { Group, LoggedInUser, GroupBudget, BudgetType } from '../../../../models';
-import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl, FormArray } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { GroupBudgetComponent } from '../../../group-budget/group-budget.component';
 
@@ -31,20 +31,27 @@ export class GroupDetailComponent implements OnInit, OnChanges {
   @Input() groupOptions: Group[];
   @Output() groupChange = new EventEmitter<Group>();
 
-//  public budgetListModal: BsModalRef;
-//  public budgetDetailModal: BsModalRef;
+  //  public budgetListModal: BsModalRef;
+  //  public budgetDetailModal: BsModalRef;
 
   expBudget: number;
   capBudget: number;
 
   currentYear: number;
   groupForm: FormGroup;
+
+  // handle the embedded budget form
+  budgetForm: FormGroup;
+  selectedBudget: GroupBudget;
+  showBudgetForm = false;
+  showConfirmDelete = false;
+
   error: any;
   opened = false;
 
   constructor(private groupService: GroupService,
     private fb: FormBuilder,
-  //  private modalService: BsModalService
+    //  private modalService: BsModalService
   ) {
     this.createForm();
   }
@@ -55,20 +62,7 @@ export class GroupDetailComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.currentYear = moment().year();
-    this.expBudget = 0;
-    this.capBudget = 0;
-    if (this.group.groupBudgets !== undefined) {
-      for (const budget of this.group.groupBudgets) {
-        if (budget.budgetYear === this.currentYear) {
-          if (budget.budgetType === BudgetType.Capital) {
-
-            this.capBudget += budget.amount;
-          } else {
-            this.expBudget += budget.amount;
-          }
-        }
-      }
-    }
+    
     if (this.group.level === undefined) {
       this.group.level = 0;
     }
@@ -80,9 +74,10 @@ export class GroupDetailComponent implements OnInit, OnChanges {
       parentId: this.group.parentId,
       levelDesc: this.group.levelDesc,
       level: this.group.level,
-      capBudget: this.capBudget,
-      expBudget: this.expBudget
     });
+
+    this.setBudget(BudgetType.Capital, this.group.groupBudgets);
+    this.setBudget(BudgetType.Expense, this.group.groupBudgets);
   }
 
   onSubmit() {
@@ -92,7 +87,7 @@ export class GroupDetailComponent implements OnInit, OnChanges {
     }
 
     const group: Group = this.getGroupFromFormValue(this.groupForm.value);
-    
+
     if (group.groupId !== null && group.groupId !== undefined) {
       this.groupService.update(group.groupId, group).subscribe(data => {
         // this.snackBar.open('Project Cost Type has been updated', '', {duration: 2000});
@@ -144,14 +139,35 @@ export class GroupDetailComponent implements OnInit, OnChanges {
       groupName: ['', Validators.required],
       groupDesc: '',
       groupManager: '',
-      capBudget: '',
-      expBudget: ''
-
+      capBudgets: this.fb.array([]),
+      expBudgets: this.fb.array([])
     }
     );
   }
 
+  setBudget(type: BudgetType, budgets: GroupBudget[]) {
+    const budgetFGs = budgets.filter(budget => budget.budgetType === type)
+      .map(budget => this.createBudget(budget));
+    const budgetFormArray = this.fb.array(budgetFGs);
 
+    if (type === BudgetType.Capital) {
+      this.groupForm.setControl('capBudgets', budgetFormArray);
+    } else {
+      this.groupForm.setControl('expBudgets', budgetFormArray);
+    }
+  }
+
+  createBudget(budget: GroupBudget) {
+    return this.fb.group( {
+        groupBudgetId: budget.groupBudgetId,
+        budgetType: [budget.budgetType, Validators.required],
+        budgetYear: [budget.budgetYear, Validators.required],
+        approvedDateTime: [budget.approvedDateTime, Validators.required],
+        amount: [budget.amount, Validators.required]
+    });
+  }
+
+  
   revert() { this.ngOnChanges(); }
 
   cancel() { this.groupChange.emit(this.group); }
@@ -162,6 +178,49 @@ export class GroupDetailComponent implements OnInit, OnChanges {
         this.groupForm.patchValue({ 'level': g.level + 1 });
       }
     });
-  } 
+  }
 
+  addBudget(type: BudgetType) {
+
+    if (type === BudgetType.Capital) {
+      const budgets = this.groupForm.get('capBudgets') as FormArray;
+      budgets.push(this.createBudget(new GroupBudget()));
+    } else {
+      const budgets = this.groupForm.get('expBudgets') as FormArray;
+      budgets.push(this.createBudget(new GroupBudget()));
+    }
+
+  }
+
+
+  getBudgetFromFormValue(formValue: any): GroupBudget {
+    let budget: GroupBudget;
+    budget = new GroupBudget();
+
+    budget.groupBudgetId = formValue.groupBudgetId;
+    budget.groupId = formValue.groupId;
+    budget.budgetType = formValue.budgetType;
+    budget.approvedDateTime = formValue.approvedDateTime;
+    budget.budgetYear = formValue.budgetYear;
+    budget.amount = formValue.amount;
+    return budget;
+  }
+
+
+
+  confirmDeleteBudget(budget: GroupBudget) {
+    this.selectedBudget = budget;
+    this.showConfirmDelete = true;
+  }
+
+  deleteBudget() {
+    const budgetIndex = this.group.groupBudgets.findIndex(b => b.groupBudgetId === this.selectedBudget.groupBudgetId);
+    if (budgetIndex) {
+      this.group.groupBudgets.slice(budgetIndex, 1);
+    }
+    this.showConfirmDelete = false;
+  }
 }
+
+
+
