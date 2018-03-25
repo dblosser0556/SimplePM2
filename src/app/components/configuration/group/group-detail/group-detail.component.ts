@@ -40,6 +40,7 @@ export class GroupDetailComponent implements OnInit, OnChanges {
   currentYear: number;
   groupForm: FormGroup;
   error: any;
+  opened = false;
 
   constructor(private groupService: GroupService,
     private fb: FormBuilder,
@@ -91,6 +92,7 @@ export class GroupDetailComponent implements OnInit, OnChanges {
     }
 
     const group: Group = this.getGroupFromFormValue(this.groupForm.value);
+    
     if (group.groupId !== null && group.groupId !== undefined) {
       this.groupService.update(group.groupId, group).subscribe(data => {
         // this.snackBar.open('Project Cost Type has been updated', '', {duration: 2000});
@@ -136,7 +138,7 @@ export class GroupDetailComponent implements OnInit, OnChanges {
   createForm() {
     this.groupForm = this.fb.group({
       groupId: '',
-      parentId: '',
+      parentId: ['', Validators.required],
       level: [{ value: 0, disabled: true }],
       levelDesc: '',
       groupName: ['', Validators.required],
@@ -160,43 +162,6 @@ export class GroupDetailComponent implements OnInit, OnChanges {
         this.groupForm.patchValue({ 'level': g.level + 1 });
       }
     });
-  }
-
-  showBudget(isCapital: boolean) {
-    let _budgets = new Array<GroupBudget>();
-    if (this.group.groupBudgets !== undefined) {
-      _budgets = this.group.groupBudgets;
-    }
-
-    const initialState = {
-      budgets: _budgets,
-      groupId: this.group.groupId,
-      title: this.group.groupName,
-      isCapital: isCapital
-    };
-
-//    this.budgetListModal = this.modalService.show(GroupBudgetComponent, { initialState });
-//    this.budgetListModal.content.onClose.subscribe(result => {
-////      console.log('results', result);
-//      this.group.groupBudgets = result;
-//      this.ngOnChanges();
-//    });
-  }
-
- /*  addBudget(isCapital: boolean) {
-    const _budget = new GroupBudget();
-    _budget.groupBudgetId = null;
-    _budget.groupId = this.group.groupId;
-    _budget.budgetType = (isCapital) ? BudgetType.Capital : BudgetType.Expense;
-    const initialState = {
-      budget: _budget
-    };
-    this.budgetDetailModal = this.modalService.show(GroupBudgetDetailComponent, { initialState });
-    this.budgetDetailModal.content.onClose.subscribe(result => {
-      console.log('results', result);
-      this.group.groupBudgets.push(result);
-      this.ngOnChanges();
-    });
-  } */
+  } 
 
 }

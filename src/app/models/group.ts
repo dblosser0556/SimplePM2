@@ -16,6 +16,6 @@ export class Group {
     groupManager: string;
     groupManagerName: string;
 
-    groupBudgets: GroupBudget[];
+    groupBudgets: GroupBudget[] = [];
 
 }

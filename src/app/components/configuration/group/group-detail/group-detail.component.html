@@ -1,67 +1,129 @@
-<form (ngSubmit)="onSubmit()" name="groupForm" class="group-form" [formGroup]="groupForm" novalidate>
-  <input readonly hidden  formControlName="groupId" class="required">
-  <div class="form-row">
-  <div class="w-25 p-2 form-group">
-    <label class="center-block">Parent Group:</label>
-    <select class="form-control" formControlName="parentId">
-      <option *ngFor="let group of groupOptions" [value]="group.groupId">{{group.groupName}}</option>
-    </select>
-  </div>
-  <div class="w-25 p-2 form-group">
-    <label class="center-block">Name: </label>
-      <input class="form-control" formControlName="groupName" required>
-    <div align="start" *ngIf="groupForm.controls.groupName.errors && !groupForm.controls.groupName.pristine">
-      <div class="invalid-input">
-        Group Name is required!
-      </div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+  <div class="card">
+    <div class="card-block">
+      <form (ngSubmit)="onSubmit()" name="groupForm" class="group-form" [formGroup]="groupForm" novalidate>
+        <input readonly hidden formControlName="groupId" class="required">
+        <div class="row">
+          <div class="column">
+            <section class="form-block">
+              <label>Edit Group</label>
+              <div class="form-group">
+                <label for="parentgroup">Parent Group</label>
+                <label for="parentgroup" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="groupFrom.get('parentId').invalid
+                    && (groupFrom.get('parentId').dirty || groupFrom.get('parentId').touched)"></label>
+                <div class="select">
+                  <select id="parentgroup" formControlName="parentId">
+                    <option *ngFor="let group of groupOptions" [value]="group.groupId">{{group.groupName}}</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="groupName">Group Name</label>
+                <label for="groupName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="groupFrom.get('groupName').invalid
+          && (groupFrom.get('groupName').dirty || groupFrom.get('groupName').touched)">
+                  <input type="text" id="groupName" formControlName="groupName" required>
+                </label>
+              </div>
+              <div class="form-group">
+                <label for="groupDesc">Description</label>
+                <input type="text" id="groupDesc" formControlName="groupDesc" size="45" placeholder="Group Description">
+              </div>
+              <div class="form-group">
+                <label for="groupManager">Group Manager</label>
+                <div class="select">
+                  <select id="groupManager" formControlName="groupManager">
+                    <option *ngFor="let pm of  pmList" [value]="pm.currentUser.userId">{{pm.currentUser.lastName}},&nbsp;{{pm.currentUser.firstName}}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="levelDesc">Level Description</label>
+                <input type="text" id="levelDesc" formControlName="levelDesc" size="45" placeholder="e.g. Program">
+              </div>
+            </section>
+          </div>
+          <div class="column">
+            <section class="form-block">
+                <label>Budget Details</label>
+                <table class="table table-sm">
+                  <thead> 
+                  <tr>
+                      <th>Approved Date</th>
+                      <th>Budget Year</th>
+                      <th>Amount</th>
+                      <th>Edit</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                    <tr *ngFor="let budget of group.groupBudgets">
+                      <td>
+                        {{budget.approvedDateTime | date:'yyyy-MM-dd'}}
+                      </td>
+                      <td class="pull-right">
+                          {{budget.year}}
+                        </td>
+                      <td class="pull-right">
+                        {{budget.amount | currency:'USD':'symbol-narrow':'0.0-0'}}
+                      </td>
+                      <td>
+                        <a (click)="edit(budget)" title="Edit Budget">
+                            <clr-icon shape="pencil" class="is-solid"></clr-icon>
+                        </a>
+                      </td>
+                      <td>
+                        <a ref (click)="onDelete(budget.budgetId)" title="Delete Budget">
+                            <clr-icon shape="trash" class="is-solid"></clr-icon>
+                        </a>
+                      </td>
+                    </tr>
+                
+                  </table>
+                  <div>
+                      <button type="button" class="btn btn-sm btn-link" (click)="addBudget()">
+                          <clr-icon shape="plus"></clr-icon>Add Budget</button>
+                  </div>
+            </section>
+          </div>
+        </div>
+        <div>
+          <button class="btn btn-primary" type="submit" [disabled]="!groupForm.valid">
+            <clr-icon shape="floppy" class="is-solid"></clr-icon>Save</button>
+          <button type="button" class="btn btn-warning-outline" (click)="revert()">
+            <clr-icon shape="redo"></clr-icon>Reset</button>
+
+          <button type="button" class="btn btn-warning-outline" (click)="cancel()">
+            <clr-icon shape="ban"></clr-icon>Cancel</button>
+        </div>
+
+      </form>
     </div>
   </div>
-  <div class="w-25 p-2 form-group">
-      <label class="center-block">Group Manager:</label>
-      <select class="form-control" formControlName="groupManager">
-        <option *ngFor="let pm of  pmList" [value]="pm.currentUser.userId">{{pm.currentUser.lastName}},&nbsp;{{pm.currentUser.firstName}}</option>
-      </select>
-    </div>
 </div>
-
-<div class="form-row">
-  <div class="w-25 p-2 form-group">
-    <label class="center-block">Description:</label>
-      <input class="form-control" formControlName="groupDesc"> 
-  </div>
-    <div class="w-25 p-2 form-group">
-      <label class="center-block">Level Description:</label>
-        <input class="form-control" formControlName="levelDesc">
+<clr-modal [(clrModalOpen)]="categoryEditModal" [clrModalClosable]="false">
+    <h3 class="modal-title" *ngIf="edit?.id">Edit category name</h3>
+    <h3 class="modal-title" *ngIf="!edit?.id">Add new category</h3>
+    <div class="modal-body">
+      <input type="text" name="category" class="full-width" [(ngModel)]="edit.name" placeholder="Category name" />
     </div>
-    <div class="w-25 p-2 form-group">
-        <a tooltip="Show Capital Budget" class="btn btn-sm btn-success" role="button" (click)="showBudget(true)">Capital Budget</a>
-        <a tooltip="Add Capital Budget" (click)="addBudget(true)">
-          <i class="fas fa-plus-square"></i>
-        </a>
-        <input type="number" class="form-control" formControlName="capBudget">
-      </div>
-      <clr-modal [(clrModalOpen)]="opened">
-        <!--<app-group-budget></app-group-budget>-->
-      </clr-modal>
-      <div class="w-25 p-2 form-group">
-        <a tooltip="Show Capital Budget"  class="btn btn-sm btn-success" role="button"  (click)="showBudget(false)">Expense Budget</a>
-        <a tooltip="Add Expense Budget" (click)="addBudget(false)">
-          <i class="fas fa-plus-square"></i>
-        </a>
-        <input type="number" class="form-control" formControlName="expBudget">
-      </div>
-  </div>
- 
-
-  <div class="row p-2">
-    <button class="btn btn-primary" type="submit" [disabled]="!groupForm.valid">
-      <i class="fas fa-save"></i>Save</button>
-      <button type="button" class="btn btn-warning" (click)="revert()">
-        <i class="fas fa-window-restore"></i>Reset</button>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" (click)="cancel()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="save()">Save</button>
+    </div>
+  </clr-modal>
   
-      <button type="button" class="btn btn-warning" (click)="cancel()">
-      <i class="fas fa-ban"></i>Cancel</button>
-  </div>
-
-</form>
-
+  <clr-modal [(clrModalOpen)]="categoryRemoveModal" [clrModalClosable]="false">
+    <h3 class="modal-title" *ngIf="!error">Remove {{edit.name}}?</h3>
+    <h3 class="modal-title" *ngIf="error">Unable to remove {{edit.name}}</h3>
+    <div class="modal-body" *ngIf="!error">
+      Once you delete a category, you cannot get it back.
+    </div>
+    <div class="modal-body" *ngIf="error">
+        {{error.message}}
+      </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline" (click)="cancel()" *ngIf="!error">Cancel</button>
+      <button type="button" class="btn btn-warning" (click)="removeCategory()" *ngIf="!error">Delete</button>
+      <button type="button" class="btn btn-outline" (click)="cancel()" *ngIf="error">Ok</button>
+    </div>
+  </clr-modal>

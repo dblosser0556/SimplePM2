@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { GroupBudget, BudgetType } from '../../models';
 import { Subject } from 'rxjs/Subject';
 //  import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
@@ -12,8 +12,8 @@ import { GroupBudgetService} from '../../services';
 })
 export class GroupBudgetComponent implements OnInit {
 
-  budgets: GroupBudget[];
-  groupId: number;
+  @Input() budgets: GroupBudget[];
+  @Input() groupId: number;
   title: string;
   isCapital: boolean;
   onClose: Subject<GroupBudget[]>;

@@ -17,13 +17,13 @@
             {{item.fixedPriceDesc}}
           </td>
           <td>
-            <a (click)="edit(item)">
-              <i class="fas fa-edit"></i>
+            <a (click)="edit(item)" title="Edit">
+              <clr-icon shape="pencil" class="is-solid" ></clr-icon>
             </a>
           </td>
           <td>
-            <a ref (click)="onDelete(item.fixedPriceTypeId)">
-              <i class="fas fa-trash"></i>
+            <a ref (click)="onDelete(item.fixedPriceTypeId)" title="Delete">
+              <clr-icon shape="trash" class="is-solid"></clr-icon>
             </a>
           </td>
         </tr>
@@ -31,7 +31,7 @@
       </table>
       <div class="card-body">
         <button class="btn btn-primary" (click)="add()">
-          <i class="fas fa-plus-square"></i>Add New</button>
+          <clr-icon shape="plus"></clr-icon>Add New</button>
         </div>
     </div>
   </div>
