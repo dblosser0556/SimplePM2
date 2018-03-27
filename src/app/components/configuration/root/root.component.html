@@ -1,5 +1,6 @@
 <div class="content-container">
   <main class="content-area" [class.active]=isActive()>
+    <app-breadcrumbs></app-breadcrumbs>
     <h4>{{pageTitle}}</h4>
     <router-outlet></router-outlet>
   </main>
@@ -13,8 +14,8 @@
         Home</a>
 
 
-      <a class="nav-link" href="#" routerLinkActive="active" routerLink="/configuration/group">
-        <clr-icon shape="info-circle" size="16"></clr-icon>
+      <a class="nav-link" href="#" routerLinkActive="active" routerLink="/configuration/groups">
+        <clr-icon shape="users"></clr-icon>
         Groups</a>
 
 
@@ -34,31 +35,31 @@
 
 
       <a class="nav-link" href="" routerLinkActive="active" routerLink="/configuration/role">
-        <clr-icon shape="info-circle" size="16"></clr-icon>
+        <clr-icon shape="user" class="has-badge"></clr-icon>
         Roles
       </a>
 
 
       <a class="nav-link" href="" routerLinkActive="active" routerLink="/configuration/resourcetype">
-        <clr-icon shape="info-circle" size="16"></clr-icon>
+        <clr-icon shape="wallet"></clr-icon>
         Resource Types
       </a>
 
 
       <a class="nav-link" href="" routerLinkActive="active" routerLink="/configuration/fixedpricetype">
-        <clr-icon shape="info-circle" size="16"></clr-icon>
+        <clr-icon shape="wallet"></clr-icon>
         Fixed Price Types
       </a>
 
 
       <a class="nav-link" href="" routerLinkActive="active" routerLink="/configuration/status">
-        <clr-icon shape="info-circle" size="16"></clr-icon>
+        <clr-icon shape="flag" class="is-solid"></clr-icon>
         Status
       </a>
 
 
       <a class="nav-link" href="" routerLinkActive="active" routerLink="/configuration/accounts">
-        <clr-icon shape="info-circle" size="16"></clr-icon>
+        <clr-icon shape="users" class="is-solid"></clr-icon>
         Users
       </a>
 

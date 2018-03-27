@@ -1,26 +1,29 @@
 <form (ngSubmit)="onSubmit()" name="phaseForm" class="phase-form" [formGroup]="phaseForm" novalidate>
-  <input readonly hidden placeholder="Phase Id" formControlName="phaseID" class="required">
+  <input readonly hidden placeholder="Phase Id" formControlName="phaseId" class="required">
+  
   <div class="form-group">
-    <label class="center-block">Name:</label>
-    <input class="form-control" formControlName="phaseName" required>
-    <div align="start" *ngIf="phaseForm.controls.phaseName.errors && !phaseForm.controls.phaseName.pristine">
-      <div class="invalid-input">
-        Phase Name is required!
-      </div>
+      <label class="required">Name:</label>
+      <label for="phaseName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="phaseForm.get('phaseName').invalid
+      && (phaseForm.get('phaseName').dirty || phaseForm.get('phaseName').touched)">
+        <input id="phaseName" type="text" size="15" formControlName="phaseName" placeholder="Status Name" required>
+  
+        <span class="tooltip-content">
+          Phase Name is required!
+        </span>
+      </label>
     </div>
-  </div>
-  <div class="form-group">
-    <label class="center-block">Description:</label>
-    <input class="form-control" formControlName="phaseDesc">
-  </div>
+    <div class="form-group">
+      <label for="phaseDesc">Description:</label>
+      <input type="text" size="25" formControlName="phaseDesc" placeholder="Phase Description">
+    </div>
   <div class="form-group-row">
     <button class="btn btn-primary" type="submit" [disabled]="!phaseForm.valid">
-      <i class="fas fa-save"></i>Save</button>
-    <button type="button" class="btn btn-warning" (click)="revert()">
-      <i class="fas fa-window-restore"></i>Reset</button>
+      <clr-icon shape="floppy" class="is-solid"></clr-icon>Save</button>
+    <button type="button" class="btn btn-warning-outline" (click)="revert()">
+      <clr-icon shape="redo"></clr-icon>Reset</button>
 
-    <button type="button" class="btn btn-warning" (click)="cancel()">
-      <i class="fas fa-ban"></i>Cancel</button>
+    <button type="button" class="btn btn-warning-outline" (click)="cancel()">
+      <clr-icon shape="ban"></clr-icon>Cancel</button>
   </div>
 
 </form>

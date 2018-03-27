@@ -4,6 +4,7 @@ import { FixedPriceType } from '../../../models';
 import { Observable } from 'rxjs/Observable';
 
 import '../../../rxjs-extensions';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-fixed-price-type',
@@ -16,9 +17,12 @@ export class FixedPriceTypeComponent implements OnInit {
   selectedItem: FixedPriceType;
   error: any;
   isLoading = false;
+  selectedDelete: FixedPriceType;
 
+  showDeleteConf = false;
 
-  constructor(private itemService: FixedPriceTypeService) {
+  constructor(private itemService: FixedPriceTypeService,
+    private toast: ToastrService) {
   }
 
   ngOnInit() {
@@ -26,18 +30,25 @@ export class FixedPriceTypeComponent implements OnInit {
   }
 
 
-
-
-  onDelete(id: number) {
-    if (confirm('Are you sure to delete this record?') === true) {
-      this.itemService.delete(id)
-        .subscribe(x => {
-         // this.snackBar.open('Phase has been deleted', '', { duration: 2000 });
-         // this.getList();
-        },
-        error => this.error = error);
-    }
+  confirmDelete(status: FixedPriceType) {
+    this.selectedDelete = status;
+    this.showDeleteConf = true;
   }
+
+  onDelete() {
+    this.showDeleteConf = false;
+    this.itemService.delete(this.selectedDelete.fixedPriceTypeId)
+      .subscribe(x => {
+        this.toast.success('Status has been deleted', 'Success');
+        this.getList();
+      },
+        error => {
+          this.toast.error(error);
+          console.log(error);
+        });
+  }
+
+ 
 
   getList() {
     this.isLoading = true;

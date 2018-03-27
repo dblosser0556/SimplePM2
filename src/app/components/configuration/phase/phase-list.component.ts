@@ -4,6 +4,7 @@ import { PhaseService } from './phase.service';
 import { Phase } from '../../../models';
 import { Observable } from 'rxjs/Observable';
 import '../../../rxjs-extensions';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-phase-list',
@@ -18,8 +19,12 @@ export class PhaseListComponent implements OnInit {
     selectedPhase: Phase;
     error: any;
     isLoading = false;
+    selectedDelete: Phase;
+
+    showDeleteConf = false;
 
     constructor(private phaseService: PhaseService,
+        private toast: ToastrService
       ) {
     }
 
@@ -30,15 +35,24 @@ export class PhaseListComponent implements OnInit {
 
 
 
-    onDelete(id: number) {
-        if (confirm('Are you sure to delete this record?') === true) {
-            this.phaseService.delete(id)
-                .subscribe(x => {
-                  //  this.snackBar.open('Phase has been deleted', '', {duration: 2000});
-                    this.getList();
-                });
-        }
-    }
+   
+  confirmDelete(status: Phase) {
+    this.selectedDelete = status;
+    this.showDeleteConf = true;
+  }
+
+  onDelete() {
+    this.showDeleteConf = false;
+    this.phaseService.delete(this.selectedDelete.phaseId)
+      .subscribe(x => {
+        this.toast.success('Phase has been deleted', 'Success');
+        this.getList();
+      },
+        error => {
+          this.toast.error(error);
+          console.log(error);
+        });
+  }
 
     getList() {
         this.isLoading = true;

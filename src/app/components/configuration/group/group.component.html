@@ -1,48 +1,53 @@
-<div class="row">
-  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-    <div class="card">
-      <div class="card-block">
-        <div *ngIf="isLoading">Loading Groups ...</div>
-        <table class="table" *ngIf="!isLoading">
-          <tr>
-            <th>Group Name</th>
-            <th>Description</th>
-            <th>Group Manager</th>
-            <th>Edit</th>
-            <th>Delete</th>
-          </tr>
-          <tr *ngFor="let group of groups">
-            <td>
-              {{group.groupName}}
-            </td>
-            <td>
-              {{group.groupDesc}}
-            </td>
-            <td>
-              {{group.groupManagerName}}
-            </td>
-            <td>
-              <a (click)="edit(group)">
-                <clr-icon shape="pencil" class="is-solid"></clr-icon>
-              </a>
-            </td>
-            <td>
-              <a ref (click)="onDelete(group.groupId)" title="Delete">
-                <clr-icon shape="trash" class="is-solid"></clr-icon>
-              </a>
-            </td>
-          </tr>
+<div class="container">
+  <div class="card">
+    <div class="card-block">
+      <div *ngIf="isLoading">Loading Groups ...</div>
+      <table class="table" *ngIf="!isLoading">
+        <tr>
+          <th>Group Name</th>
+          <th>Description</th>
+          <th>Group Manager</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+        <tr *ngFor="let group of groups">
+          <td>
+            {{group.groupName}}
+          </td>
+          <td>
+            {{group.groupDesc}}
+          </td>
+          <td>
+            {{group.groupManagerName}}
+          </td>
+          <td>
+            <a (click)="edit(group)">
+              <clr-icon shape="pencil" class="is-solid"></clr-icon>
+            </a>
+          </td>
+          <td>
+            <a ref (click)="confirmDelete(group)" title="Delete">
+              <clr-icon shape="trash" class="is-solid"></clr-icon>
+            </a>
+          </td>
+        </tr>
 
-        </table>
-        <div class="card-block">
-          <button class="btn btn-primary" (click)="add()">
-            <clr-icon shape="plus"></clr-icon>Add New</button>
-        </div>
+      </table>
+      <div class="card-block">
+        <button class="btn btn-primary" (click)="add()">
+          <clr-icon shape="plus"></clr-icon>Add New</button>
       </div>
     </div>
   </div>
 </div>
-
-<div *ngIf="selectedGroup" class="row">
-    <app-group-detail [group]="selectedGroup" [pmList]="managers" [groupOptions]="groupOptionsList" (groupChange)="updateList($event)"></app-group-detail>
-</div>
+<clr-modal [(clrModalOpen)]="showDeleteConf">
+    <h3 class="modal-title">Confirm Deletion</h3>
+    <div class="modal-body">
+        <p>Are you sure you want to delete?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>  
+        <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+  
+    </div>
+</clr-modal>

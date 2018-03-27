@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 
-import { UserService} from '../../../services';
+import { UserService } from '../../../services';
 import { LoggedInUser, User, UserRole } from '../../../models';
+import { Router, ActivatedRoute } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 
 
@@ -19,8 +21,12 @@ export class AccountListComponent implements OnInit {
     roleList: string[];
     error: any;
     isLoading = false;
+    showDeleteConf = false;
 
-    constructor(private userService: UserService) {
+    constructor(private userService: UserService,
+        private router: Router,
+        private route: ActivatedRoute,
+        private toast: ToastrService) {
     }
 
     ngOnInit() {
@@ -29,17 +35,20 @@ export class AccountListComponent implements OnInit {
     }
 
 
+    confirmDelete(user: LoggedInUser) {
+        this.selectedUser = user;
+        this.showDeleteConf = true;
+    }
 
-
-   /*  onDelete(id: number) {
-        if (confirm('Are you sure to delete this record?') === true) {
-            this.userService.delete(id)
-                .subscribe(x => {
-                  //  this.snackBar.open('User has been deleted', '', {duration: 2000});
-                    this.getList();
-                });
-        }
-    } */
+    onDelete() {
+        this.showDeleteConf = false;
+        this.userService.delete(this.selectedUser.currentUser.userName)
+            .subscribe(x => {
+                this.toast.success('User Deleted');
+                this.getList();
+            },
+            error => this.toast.error(error, 'Oops'));
+    }
 
     getList() {
         this.isLoading = true;
@@ -48,34 +57,23 @@ export class AccountListComponent implements OnInit {
                 this.users = results;
                 this.isLoading = false;
             },
-            error => this.error);
+                error => this.error);
         this.selectedUser = undefined;
     }
 
     getRoles() {
-        this.userService.getRoles().subscribe( result => { this.roleList = result; },
-        errors => this.error);
+        this.userService.getRoles().subscribe(result => { this.roleList = result; },
+            errors => this.error);
     }
 
     add() {
-        const user = new LoggedInUser();
-
-        // add all the standard roles to the user
-        this.roleList.forEach(role => {
-            const _userRole = new UserRole();
-            _userRole.roleName = role;
-            _userRole.selected = false;
-            user.roles.push(_userRole);
-        });
-        this.selectedUser = user;
+        this.router.navigate(['./register'], { queryParams: { userId: -1 }, relativeTo: this.route });
     }
 
     edit(user: LoggedInUser) {
-
-     this.selectedUser = user;
-
-
+        this.router.navigate(['./register'], { queryParams: { userId: user.currentUser.userName }, relativeTo: this.route });
     }
+
 
     updateList(event: any) {
         this.getList();

@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class UserService {
+   
   _url = 'http://localhost:5000/api';
   loggedIn = false;
   loggedInUser: LoggedInUser;
@@ -57,6 +58,19 @@ export class UserService {
       })
       .catch(x => this.handleAuthError(x));
 
+  }
+
+  delete(userName: string): any {
+    const authToken = this.authorityToken;
+    const headerOptions = new HttpHeaders()
+      .set('Content-Type', 'application/json')
+      .set('Authorization', 'Bearer ' + authToken);
+      return this.http.delete(
+        this._url + '/accounts/' + userName, { headers: headerOptions,  responseType: 'text' })
+        .map( res => {
+          return true;
+        })
+        .catch(x => this.handleAuthError(x));
   }
 
   getLoggedInUser(userName: string) {
@@ -138,7 +152,7 @@ export class UserService {
   private handleAuthError(err: HttpErrorResponse): Observable<any> {
     const errMsg = JSON.parse(err.error);
     // handle your auth error or rethrow
-    if (err.status === 400 || err.status === 401 || err.status === 403) {
+    if (err.status === 401 || err.status === 403) {
       // navigate /delete cookies or whatever
       this.router.navigateByUrl('/login');
       // tslint:disable-next-line:max-line-length

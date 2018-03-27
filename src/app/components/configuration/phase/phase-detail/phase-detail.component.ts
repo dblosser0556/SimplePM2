@@ -38,7 +38,7 @@ export class PhaseDetailComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
     this.phaseForm.reset( {
-      phaseID: this.phase.phaseId,
+      phaseId: this.phase.phaseId,
       phaseName: this.phase.phaseName,
       phaseDesc: this.phase.phaseDesc} );
   }

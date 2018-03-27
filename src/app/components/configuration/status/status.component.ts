@@ -4,6 +4,7 @@ import { Status } from '../../../models';
 import { Observable } from 'rxjs/Observable';
 
 import '../../../rxjs-extensions';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-status',
@@ -12,12 +13,15 @@ import '../../../rxjs-extensions';
 })
 export class StatusComponent implements OnInit {
 
-   items: Status[];
+  items: Status[];
   selectedItem: Status;
+  selectedDelete: Status;
   error: any;
+  showDeleteConf = false;
   isLoading = false;
 
-  constructor(private itemService: StatusService) {
+  constructor(private itemService: StatusService,
+    private toast: ToastrService) {
   }
 
   ngOnInit() {
@@ -25,17 +29,22 @@ export class StatusComponent implements OnInit {
   }
 
 
+  confirmDelete(status: Status) {
+    this.selectedDelete = status;
+    this.showDeleteConf = true;
+  }
 
-
-  onDelete(id: number) {
-    if (confirm('Are you sure to delete this record?') === true) {
-      this.itemService.delete(id)
-        .subscribe(x => {
-          //  this.snackBar.open('Phase has been deleted', '', { duration: 2000 });
-          this.getList();
-        },
-        error =>  this.error = error);
-    }
+  onDelete() {
+    this.showDeleteConf = false;
+    this.itemService.delete(this.selectedDelete.statusId)
+      .subscribe(x => {
+        this.toast.success('Status has been deleted', 'Success');
+        this.getList();
+      },
+        error => {
+          this.toast.error(error);
+          console.log(error);
+        });
   }
 
   getList() {
@@ -45,7 +54,7 @@ export class StatusComponent implements OnInit {
         this.items = results;
         this.isLoading = false;
       },
-      error => this.error = error);
+        error => this.error = error);
     this.selectedItem = undefined;
   }
 

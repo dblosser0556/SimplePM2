@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { GroupService } from './group.service';
 import { Group, User, LoggedInUser } from '../../../models';
 import { UserService } from '../../../services';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-project-group',
@@ -13,38 +15,40 @@ export class GroupComponent implements OnInit {
   groups: Group[];
   selectedGroup: Group;
   managers: LoggedInUser[];
-  groupOptionsList: Group[];
-
+  
   error: any;
   isLoading = false;
+  showDeleteConf = false;
 
   constructor(private groupService: GroupService,
-    private userService: UserService) {
+    private userService: UserService,
+    private router: Router,
+    private route: ActivatedRoute,
+    private toast: ToastrService) {
   }
 
   ngOnInit() {
 
-    this.getGroupList();
+
     this.getList();
 
   }
 
 
+  confirmDelete(group: Group) {
+    this.selectedGroup = group;
+    this.showDeleteConf = true;
+  }
 
+  onDelete() {
+    this.showDeleteConf = false;
+    this.groupService.delete(this.selectedGroup.groupId)
+      .subscribe(x => {
+        this.toast.success('Group Deleted');
+        this.getList();
+      },
+        error => this.toast.error(error, 'Oops'));
 
-  onDelete(id: number) {
-    if (confirm('Are you sure to delete this record?') === true) {
-      // don't delete if there is a child or project assigned.
-      ////////
-
-      this.groupService.delete(id)
-        .subscribe(x => {
-          // this.snackBar.open('Phase has been deleted', '', { duration: 2000 });
-          this.getGroupList();
-          this.getList();
-        },
-          error => this.error = error);
-    }
   }
 
   getList() {
@@ -89,31 +93,19 @@ export class GroupComponent implements OnInit {
 
 
       },
-      error => this.error = error);
+        error => this.error = error);
   }
 
-getGroupList() {
-  this.groupService.getOptionList().subscribe(
-    results => {
-    this.groupOptionsList = results;
-    },
-    error => this.error = error);
-}
 
 
 
 
-add() {
-  this.selectedGroup = new Group();
-}
+  add() {
+    this.router.navigate(['./details'], { queryParams: { groupId: -1 }, relativeTo: this.route });
+  }
 
-edit(group: Group) {
-  this.selectedGroup = group;
-}
-
-updateList(event: any) {
-  this.getGroupList();
-  this.getList();
-}
+  edit(group: Group) {
+    this.router.navigate(['./details'], { queryParams: { groupId: group.groupId }, relativeTo: this.route });
+  }
 
 }

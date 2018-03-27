@@ -1,0 +1,45 @@
+
+
+.container {
+	max-height: 10em;
+	max-width: 40rem;
+	overflow-y: scroll;
+	outline: 1px solid rgb(199, 198, 198);
+	outline-offset: -1px;
+	padding: 0;
+	margin: 0;
+}
+/* CUSTOM TABLE */
+#budget {
+	position: relative;
+	overflow: hidden;
+}
+
+#budget th {
+	white-space: nowrap;
+}
+
+#budget th:first-child {
+	border-left: none;
+}
+
+#budget th {
+	position: absolute;
+	z-index: 2;
+	font-weight: bold;
+	width: 100%;
+	//color: white;
+	//background-color: dimgrey;
+	padding: 1rem;
+	border-left: 1px solid white;
+	margin-left: calc(-1rem - 1px);
+}
+
+#budget thead {
+	top: 0;
+}
+
+#budget tfoot {
+	bottom: 0;
+}
+/* CUSTOM TABLE END */

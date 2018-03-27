@@ -2,52 +2,52 @@
   <div class="card">
     <div class="card-block">
       <div *ngIf="isLoading">Loading User List ...</div>
-      <table class="table" *ngIf="!isLoading">
-        <tr>
-          <td>UserName</td>
-          <td>First Name</td>
-          <td>Last Name</td>
-          <td>Email</td>
-          <td>Edit</td>
-          <td>Delete</td>
-        </tr>
-        <tr *ngFor="let user of users">
-          <td>
-            {{user.currentUser.userName}}
-          </td>
-          <td>
-            {{user.currentUser.firstName}}
-          </td>
-          <td>
-            {{user.currentUser.lastName}}
-          </td>
-          <td>
-            {{user.currentUser.email}}
-          </td>
-          
-          <td>
-
-            <a (click)="edit(user)">
-              <i class="fas fa-edit"></i>
-            </a>
-          </td>
-          <td>
-            <a ref (click)="onDelete(user.userId)">
-              <i class="fas fa-trash"></i>
-            </a>
-          </td>
-        </tr>
-
-      </table>
-      <div class="card-body">
+      <div *ngIf="!isLoading">
+      <clr-datagrid>
+          <clr-dg-column>User ID</clr-dg-column>
+          <clr-dg-column>First Name</clr-dg-column>
+          <clr-dg-column>Last Name</clr-dg-column>
+          <clr-dg-column>Email</clr-dg-column>
+          <clr-dg-column>Edit</clr-dg-column>
+          <clr-dg-column>Delete</clr-dg-column>
+          <clr-dg-row *ngFor="let user of users">
+              <clr-dg-cell>{{user.currentUser.userName}}</clr-dg-cell>
+              <clr-dg-cell>{{user.currentUser.lastName}}</clr-dg-cell>
+              <clr-dg-cell>{{user.currentUser.firstName}}</clr-dg-cell>
+              <clr-dg-cell>{{user.currentUser.email}}</clr-dg-cell>
+              <clr-dg-cell> <a (click)="edit(user)">
+                  <clr-icon shape="pencil" class="is-solid" ></clr-icon>
+                </a></clr-dg-cell>
+              <clr-dg-cell><a ref (click)="confirmDelete(user)">
+                  <clr-icon shape="trash" class="is-solid"></clr-icon>
+                </a></clr-dg-cell>
+          </clr-dg-row>
+      
+          <clr-dg-footer>
+              <clr-dg-pagination #pagination [clrDgPageSize]="10">
+                  {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+                  of {{pagination.totalItems}} users
+              </clr-dg-pagination>
+            
+          </clr-dg-footer>
+        </clr-datagrid>
+      </div>
+      <div class="card-block">
         <button class="btn btn-primary" (click)="add()">
-          <i class="fas fa-plus-square"></i>Add New</button>
+          <clr-icon shape="plus"></clr-icon>Add New</button>
       </div>
     </div>
   </div>
-  <div class="card" *ngIf="selectedUser">
-    <div class="card-block">
-
-    </div>
-  </div>
 </div>
+<clr-modal [(clrModalOpen)]="showDeleteConf">
+    <h3 class="modal-title">Confirm Deletion</h3>
+    <div class="modal-body">
+        <p>Are you sure you want to delete?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>  
+        <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+  
+    </div>
+</clr-modal>
+

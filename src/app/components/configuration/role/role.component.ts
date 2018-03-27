@@ -3,6 +3,7 @@ import { RoleService } from './role.service';
 import { Role } from '../../../models';
 
 import '../../../rxjs-extensions';
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-role',
   templateUrl: './role.component.html',
@@ -14,8 +15,11 @@ export class RoleComponent implements OnInit {
   selectedItem: Role;
   error: any;
   isLoading = false;
+  selectedDelete: Role;
+  showDeleteConf = false;
 
-  constructor(private itemService: RoleService) {
+  constructor(private itemService: RoleService,
+    private toast: ToastrService) {
   }
 
   ngOnInit() {
@@ -23,17 +27,22 @@ export class RoleComponent implements OnInit {
   }
 
 
+  confirmDelete(status: Role) {
+    this.selectedDelete = status;
+    this.showDeleteConf = true;
+  }
 
-
-  onDelete(id: number) {
-    if (confirm('Are you sure to delete this record?') === true) {
-      this.itemService.delete(id)
-        .subscribe(x => {
-           // this.snackBar.open('Phase has been deleted', '', { duration: 2000 });
-          this.getList();
-        },
-        error =>  this.error = error);
-    }
+  onDelete() {
+    this.showDeleteConf = false;
+    this.itemService.delete(this.selectedDelete.roleId)
+      .subscribe(x => {
+        this.toast.success('Role has been deleted', 'Success');
+        this.getList();
+      },
+        error => {
+          this.toast.error(error);
+          console.log(error);
+        });
   }
 
   getList() {

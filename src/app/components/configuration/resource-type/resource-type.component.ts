@@ -5,6 +5,7 @@ import { ResourceType } from '../../../models';
 import { Observable } from 'rxjs/Observable';
 
 import '../../../rxjs-extensions';
+import { ToastrService } from 'ngx-toastr';
 
 
 @Component({
@@ -14,13 +15,16 @@ import '../../../rxjs-extensions';
 })
 export class ResourceTypeComponent implements OnInit {
 
-   items: ResourceType[];
+  items: ResourceType[];
   selectedItem: ResourceType;
   error: any;
   successMessage: string;
   isLoading = false;
+  selectedDelete: ResourceType;
+  showDeleteConf = false;
 
-  constructor(private itemService: ResourceTypeService) {
+  constructor(private itemService: ResourceTypeService,
+    private toast: ToastrService) {
   }
 
   ngOnInit() {
@@ -28,18 +32,26 @@ export class ResourceTypeComponent implements OnInit {
   }
 
 
-
-
-  onDelete(id: number) {
-    if (confirm('Are you sure to delete this record?') === true) {
-      this.itemService.delete(id)
-        .subscribe(x => {
-          this.successMessage = 'Resource type has been deleted';
-          this.getList();
-        },
-        error =>  this.error = error);
-    }
+  confirmDelete(status: ResourceType) {
+    this.selectedDelete = status;
+    this.showDeleteConf = true;
   }
+
+  onDelete() {
+    this.showDeleteConf = false;
+    this.itemService.delete(this.selectedDelete.resourceTypeId)
+      .subscribe(x => {
+        this.toast.success('Status has been deleted', 'Success');
+        this.getList();
+      },
+        error => {
+          this.toast.error(error);
+          console.log(error);
+        });
+  }
+
+
+ 
 
   getList() {
     this.isLoading = true;

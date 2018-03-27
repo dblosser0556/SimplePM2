@@ -1,4 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 import { NgModule } from '@angular/core';
 import { ClarityModule } from '@clr/angular';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -10,12 +12,17 @@ import { routing } from './app.routing';
 
 @NgModule({
   declarations: [
-    AppComponent, HomeComponent, HeaderComponent
+    AppComponent,
+    HomeComponent,
+    HeaderComponent
   ],
   imports: [
-    BrowserModule, ClarityModule,
+    BrowserModule,
+    BrowserAnimationsModule,
+    ClarityModule,
     FormsModule,
     ReactiveFormsModule,
+    ToastrModule.forRoot(),
     routing,
     LoginModule,
     ConfigurationModule

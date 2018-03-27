@@ -1,21 +1,7 @@
 <div class="container" fxLayout="column" fxLayoutGap="20px">
   <div class="card">
     <div class="card-block">
-        <clr-alert [clrAlertType]="'alert-warning'" [(clrAlertClosed)]="error">
-            <div class="alert-item">
-                <span class="alert-text">
-                    {{error}}
-                </span>
-            </div>
-        </clr-alert>
-        <clr-alert [clrAlertType]="'alert-success'" [(clrAlertClosed)]="successMessage">
-            <div class="alert-item">
-                <span class="alert-text">
-                    {{successMessage}}
-                </span>
-            </div>
-        </clr-alert>
-      
+       
       <div *ngIf="isLoading">Loading Resource Types ...</div>
       <table class="table" *ngIf="!isLoading">
         <thead>
@@ -39,17 +25,17 @@
             </a>
           </td>
           <td>
-            <a ref (click)="onDelete(item.resourceTypeId)">
+            <a ref (click)="confirmDelete(item)">
                 <clr-icon shape="trash" class="is-solid"></clr-icon>
             </a>
           </td>
         </tr>
 
       </table>
-      <div class="card-footer">
-        <a class="card link" (click)="add()">
-            <clr-icon shape="plus"></clr-icon>Add New</a>
-      </div>
+      <div class="card-block">
+          <button class="btn btn-primary" (click)="add()">
+            <clr-icon shape="plus"></clr-icon>Add New</button>
+        </div>
     </div>
   </div>
   <div class="card" *ngIf="selectedItem">
@@ -58,3 +44,15 @@
     </div>
   </div>
 </div>
+<clr-modal [(clrModalOpen)]="showDeleteConf">
+    <h3 class="modal-title">Confirm Deletion</h3>
+    <div class="modal-body">
+        <p>Are you sure you want to delete?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>  
+        <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+  
+    </div>
+</clr-modal>
+

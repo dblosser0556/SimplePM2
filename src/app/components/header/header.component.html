@@ -4,15 +4,15 @@
       <span class="title">SimplePM</span>
     </a>
   </div>
+  
   <div *ngIf="status" class="header-nav" [clr-nav-level]="1">
-    <a href="..." routerLink="/dashboard" class="active nav-link">
+    <a href="..." routerLink="/dashboard" class="nav-link">
       <span class="nav-text">Dashboard</span>
     </a>
     <a href="..." routerLink="/configuration" class="nav-link">
       <span class="nav-text">Configuration</span>
     </a>
   </div>
-
   <div *ngIf="!status" class="header-actions">
     <a class="nav-link" href="#" routerLinkActive="active" routerLink="/login">
       <span class="nav-text">Login</span>

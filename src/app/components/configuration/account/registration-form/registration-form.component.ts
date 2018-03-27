@@ -1,9 +1,10 @@
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
-import { UserService} from '../../../../services';
+import { UserService } from '../../../../services';
 import { UserRegistration, LoggedInUser, User, UserRole } from '../../../../models';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl, FormArray } from '@angular/forms';
 import { Subscriber } from 'rxjs/Subscriber';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-registration-form',
@@ -13,35 +14,38 @@ import { Subscriber } from 'rxjs/Subscriber';
 
 export class RegistrationFormComponent implements OnInit, OnChanges {
 
-  @Input() user: LoggedInUser;
-  @Input() roles: string[];
-  @Output() userChange = new EventEmitter<LoggedInUser>();
+  user: LoggedInUser;
+  roles: string[];
 
 
   submitted = false;
-  isRequesting = false;
+  isLoading = false;
   errors = '';
   userRegistration: UserRegistration;
   registrationForm: FormGroup;
 
+
   constructor(private userService: UserService,
     private router: Router,
-    private fb: FormBuilder) {
-      this.createForm();
+    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private toast: ToastrService) {
+    this.createForm();
   }
 
   ngOnInit() {
+    this.getData();
   }
 
   ngOnChanges() {
-    this.registrationForm.reset( {
+    this.registrationForm.reset({
       userId: this.user.currentUser.userId,
       firstName: this.user.currentUser.firstName,
       lastName: this.user.currentUser.lastName,
       userName: this.user.currentUser.userName,
       email: this.user.currentUser.email,
       password: this.user.currentUser.password,
-    } );
+    });
     this.registrationForm.setControl('roleList', this.buildRoles());
   }
 
@@ -55,29 +59,37 @@ export class RegistrationFormComponent implements OnInit, OnChanges {
 
     this.user = this.getUserRegistrationFromFormValue(this.registrationForm.value);
     this.submitted = true;
-    this.isRequesting = true;
     this.errors = '';
 
     if (this.user.currentUser.userId === null) {
-    this.userService.register(this.user)
-      .subscribe(result => {
-        if (result) {
-          this.isRequesting = false;
-          this.userChange.emit(this.user);
-        }
-      },
-        errors => this.errors = errors);
-  } else {
-    this.userService.update(this.user.currentUser.userId, this.user)
-      .subscribe(result => {
-        if (result) {
-          this.isRequesting = false;
-          this.userChange.emit(this.user);
-        }
-      },
-    errors => this.errors = errors);
+      this.userService.register(this.user)
+        .subscribe(result => {
+          if (result) {
+
+            this.toast.success('User Added', 'Success');
+            this.router.navigate(['/configuration/accounts']);
+          }
+        },
+          errors => {
+            this.toast.error('Oops', errors);
+            console.log(errors);
+
+          });
+    } else {
+      this.userService.update(this.user.currentUser.userId, this.user)
+        .subscribe(result => {
+          if (result) {
+ 
+            this.toast.success('User Updated', 'Success');
+            this.router.navigate(['/configuration/accounts']);
+          }
+        },
+          errors => {
+            this.toast.error(errors, 'Oops');
+            console.log(errors);
+          });
+    }
   }
-}
 
 
 
@@ -93,7 +105,7 @@ export class RegistrationFormComponent implements OnInit, OnChanges {
     _loggedInUser.currentUser.email = formValue.email;
     _loggedInUser.currentUser.password = formValue.password;
 
-    formValue.roleList.map((r , i) => {
+    formValue.roleList.map((r, i) => {
       const _userRole = new UserRole();
       _userRole.roleName = this.user.roles[i].roleName;
       _userRole.selected = r;
@@ -118,7 +130,7 @@ export class RegistrationFormComponent implements OnInit, OnChanges {
   }
 
   buildRoles() {
-    const arr = this.user.roles.map( r => {
+    const arr = this.user.roles.map(r => {
       return this.fb.control(r.selected);
     });
     return this.fb.array(arr);
@@ -128,8 +140,54 @@ export class RegistrationFormComponent implements OnInit, OnChanges {
     return this.registrationForm.get('roleList') as FormArray;
   }
 
-  revert() {this.ngOnChanges(); }
+  revert() { this.ngOnChanges(); }
 
-  cancel() { this.userChange.emit(this.user); }
+  cancel() { this.router.navigate(['/configuration/accounts']); }
 
+  getData() {
+    this.isLoading = true;
+    this.userService.getRoles().subscribe(
+      results => {
+        this.roles = results;
+        this.getUser();
+      },
+      errors => {
+        this.toast.error(errors, 'Oops' );
+        console.log(errors);
+      });
+  }
+
+  getUser() {
+    this.isLoading = true;
+    this.route.queryParams
+      .filter(params => params.userId)
+      .subscribe(params => {
+        const id = params.userId;
+        if (id === '-1') {
+
+          // this is an add as a negative id is passed
+          this.user = new LoggedInUser();
+          this.roles.forEach(role => {
+            const _userRole = new UserRole();
+            _userRole.roleName = role;
+            _userRole.selected = false;
+            this.user.roles.push(_userRole);
+        });
+          this.ngOnChanges();
+          this.isLoading = false;
+        } else {
+          this.userService.getLoggedInUser(id).subscribe(
+            results => {
+              this.user = results;
+              this.ngOnChanges();
+              this.isLoading = false;
+            },
+            errors => {
+              this.toast.error(errors, 'Oops');
+              console.log(errors);
+            });
+        }
+      });
+  }
 }
+

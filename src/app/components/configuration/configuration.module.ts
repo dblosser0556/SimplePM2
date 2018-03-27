@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../modules/shared.module';
-import { GroupBudgetModule } from '../group-budget/group-budget.module';
 import { routing } from './configuration.routing';
 import { ClarityModule } from '@clr/angular';
 import { HttpModule } from '@angular/http';
@@ -38,6 +39,7 @@ import {
   GroupComponent,
   GroupDetailComponent
 } from '../configuration';
+import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
 
 
 
@@ -48,9 +50,10 @@ import {
     routing,
     SharedModule,
     ReactiveFormsModule,
-    GroupBudgetModule,
     ClarityModule,
-    HttpModule
+    HttpModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   declarations: [
     RootComponent,
@@ -67,7 +70,8 @@ import {
     GroupComponent,
     AccountListComponent,
     RegistrationFormComponent,
-    GroupDetailComponent
+    GroupDetailComponent,
+    BreadcrumbsComponent
   ],
   providers: [
     PhaseService,

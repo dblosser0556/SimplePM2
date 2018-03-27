@@ -1,85 +1,97 @@
-
-
-<div class="container-fluid">
-
-  <form name="registrationForm" [formGroup]="registrationForm" novalidate (ngSubmit)="onSubmit()">
-    <div class="row">
-      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
-        <label class="center-block">First name:</label>
-        <input type="text" class="form-control" formControlName="firstName" placeholder="First name" name="firstName" tmFocus required>
-        <div align="start" *ngIf="registrationForm.controls.firstName.errors && !registrationForm.controls.firstName.pristine">
-          <div class="invalid-input">
-            First Name is required!
-          </div>
-        </div>
-
-      </div>
-      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
-        <label class="center-block">Last name</label>
-        <input type="text" class="form-control" formControlName="lastName" placeholder="Last name" name="lastName" required>
-        <div align="start" *ngIf="registrationForm.controls.lastName.errors && !registrationForm.controls.lastName.pristine">
-          <div class="invalid-input">
-            Last Name is required!
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
-        <label class="center-block">UserName</label>
-        <input type="text" class="form-control" formControlName="userName" placeholder="User Name" name="userName" required>
-        <div align="start" *ngIf="registrationForm.controls.userName.errors && !registrationForm.controls.userName.pristine">
-          <div class="invalid-input">
-            User Name is required and must be at least 8 characters long!
-          </div>
-        </div>
-      </div>
-      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
-        <label class="center-block">Email</label>
-        <input type="text" class="form-control" formControlName="email" placeholder="Email" name="eMail" required>
-        <div align="start" *ngIf="registrationForm.controls.email.errors && !registrationForm.controls.email.pristine">
-          <div class="invalid-input">
-            Email is required and must be in the form name@service
-          </div>
-        </div>
-
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
-        <label class="center-block">Password</label>
-        <input type="password" class="form-control" formControlName="password" name="password" placeholder="Password" required>
-
-        <div align="start" *ngIf="registrationForm.controls.password.errors && !registrationForm.controls.password.pristine">
-          <div class="invalid-input">
-            Password is required and must be between 8 and 12 characters.
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <div class="form-group checkbox col-xs-24 col-12 col-sm-12 col-md-8">
-      <h5>Roles:</h5>
-      <div formArrayName="roleList">
-      <div *ngFor="let role of roleList.controls; let i= index" class="form-check form-check-inline">
-        <label class="center-block">
-          <input type="checkbox"  [formControlName]="i" />{{roles[i]}}</label>
-      </div>
-    </div>
+<div class="card">
+  <div *ngIf="isLoading" class="card-block">
+    Loading Registration Details ...
   </div>
- 
+  <div *ngIf="!isLoading" class="card-block">
+
+    <form name="registrationForm" [formGroup]="registrationForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="row">
+        <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+          <label class="required">First name</label>
+          <label for="firstName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="registrationForm.get('firstName').invalid
+                && (registrationForm.get('firstName').dirty || registrationForm.get('firstName').touched)">
+
+            <input type="text" id="firstName" class="form-control" formControlName="firstName" placeholder="First name" name="firstName"
+              tmFocus required>
+              <span class="tooltip-content">First Name is required!</span>
+          </label>
+        </div>
+        <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+          <label class="required">Last name</label>
+          <label for="lastName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="registrationForm.get('lastName').invalid
+                && (registrationForm.get('lastName').dirty || registrationForm.get('lastName').touched)">
+          
+            <input id="lastName" type="text" class="form-control" formControlName="lastName" placeholder="Last name" name="lastName">
+            <span class="tooltip-content">Last Name is required!</span>
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+          <label class="required">UserName</label>
+          <label for="userName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="registrationForm.get('userName').invalid
+                && (registrationForm.get('userName').dirty || registrationForm.get('userName').touched)">
+           
+
+            <input type="text" id="userName" class="form-control" formControlName="userName" placeholder="User Name" name="userName"
+              required>
+              <span class="tooltip-content">
+                  User Name is required!
+                </span>
+          </label>
+        </div>
+        <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+          <label class="required">Email</label>
+          <label for="email" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="registrationForm.get('email').invalid
+            && (registrationForm.get('email').dirty || registrationForm.get('email').touched)">
+            
+
+            <input type="text" id="email" class="form-control" formControlName="email" placeholder="Email" name="eMail" required>
+            <span class="tooltip-content">
+                Email is required and must be in the form name@service
+              </span>
+          </label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-xs-12 col-12 col-sm-6 col-md-4">
+          <label class="required">Password</label>
+          <label for="password" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="registrationForm.get('password').invalid
+            && (registrationForm.get('password').dirty || registrationForm.get('password').touched)">
+            
+
+            <input type="password" id="password" class="form-control" formControlName="password" name="password" placeholder="Password"
+              required>
+              <span class="tooltip-content">
+                  Password is required and must be between 8 and 12 characters.
+                </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group checkbox col-xs-24 col-12 col-sm-12 col-md-8">
+        <label>Roles</label>
+        <div formArrayName="roleList">
+          <clr-checkbox *ngFor="let role of roleList.controls; let i=index"
+             [formControlName]="i">
+            {{roles[i]}}
+          </clr-checkbox>
+        </div>
+      </div>
 
 
 
-<div class="form-group-row">
-  <button class="btn btn-primary" type="submit" [disabled]="!registrationForm.valid">
-    <i class="fas fa-save"></i>Save</button>
-  <button type="button" class="btn btn-warning" (click)="revert()">
-    <i class="fas fa-window-restore"></i>Reset</button>
-  <button type="button" class="btn btn-warning" (click)="cancel()">
-    <i class="fas fa-ban"></i>Cancel</button>
-</div>
 
-</form>
+      <div class="form-group-row">
+        <button class="btn btn-primary" type="submit" [disabled]="!registrationForm.valid">
+          <clr-icon shape="floppy" class="is-solid"></clr-icon>Save</button>
+        <button type="button" class="btn btn-warning-outline" (click)="revert()">
+          <clr-icon shape="redo"></clr-icon>Reset</button>
+        <button type="button" class="btn btn-warning-outline" (click)="cancel()">
+          <clr-icon shape="ban"></clr-icon>Cancel</button>
+      </div>
 
+    </form>
+
+  </div>
 </div>

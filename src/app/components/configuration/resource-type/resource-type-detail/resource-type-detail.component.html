@@ -1,27 +1,29 @@
 <form (ngSubmit)="onSubmit()" name="itemForm" class="item-form" [formGroup]="itemForm" novalidate>
   <input readonly hidden formControlName="itemID" class="required">
   <div class="form-group">
-    <label class="center-block">Name:</label>
-    <input class="form-control" formControlName="itemName" required>
-    <div align="start" *ngIf="itemForm.controls.itemName.errors && !itemForm.controls.itemName.pristine">
-      <div class="invalid-input">
-        Resource Type Name is required!
-      </div>
-    </div>
+      <label class="required">Name:</label>
+      <label for="itemName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="itemForm.get('itemName').invalid
+      && (itemForm.get('itemName').dirty || itemForm.get('itemName').touched)">
+        <input id="itemName" type="text" size="25" formControlName="itemName" placeholder="Type Name" required>
+  
+        <span class="tooltip-content">
+          Name is required!
+        </span>
+      </label>
   </div>
   <div class="form-group">
-    <label class="center-block">Description:</label>
-    <input class="form-control" formControlName="itemDesc">
-  </div>
+      <label class="center-block">Description:</label>
+      <input type="text" size="35" formControlName="itemDesc" placeholder="Description">
+    </div>
 
 
   <div class="form-group-row">
     <button class="btn btn-primary" type="submit" [disabled]="!itemForm.valid">
         <clr-icon shape="floppy"></clr-icon>Save</button>
-    <button type="button" class="btn btn-warning" (click)="revert()">
+    <button type="button" class="btn btn-warning-outline" (click)="revert()">
         <clr-icon shape="redo"></clr-icon>Reset</button>
 
-    <button type="button" class="btn btn-warning" (click)="cancel()">
+    <button type="button" class="btn btn-warning-outline" (click)="cancel()">
         <clr-icon shape="ban"></clr-icon>Cancel</button>
   </div>
 

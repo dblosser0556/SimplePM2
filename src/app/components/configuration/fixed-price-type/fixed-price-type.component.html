@@ -1,20 +1,20 @@
 <div class="container" fxLayout="column" fxLayoutGap="20px">
   <div class="card">
-    <div class="card-body">
+    <div class="card-block">
       <div *ngIf="isLoading">Loading Fixed Price Types ...</div>
       <table class="table" *ngIf="!isLoading">
         <tr>
-          <td>Fixed Cost Types</td>
-          <td>Description</td>
-          <td>Edit</td>
-          <td>Delete</td>
+          <th>Fixed Cost Types</th>
+          <th>Description</th>
+          <th>Edit</th>
+          <th>Delete</th>
         </tr>
         <tr *ngFor="let item of items">
           <td>
             {{item.fixedPriceTypeName}}
           </td>
           <td>
-            {{item.fixedPriceDesc}}
+            {{item.fixedPriceTypeDesc}}
           </td>
           <td>
             <a (click)="edit(item)" title="Edit">
@@ -22,23 +22,34 @@
             </a>
           </td>
           <td>
-            <a ref (click)="onDelete(item.fixedPriceTypeId)" title="Delete">
+            <a ref (click)="confirmDelete(item)" title="Delete">
               <clr-icon shape="trash" class="is-solid"></clr-icon>
             </a>
           </td>
         </tr>
 
       </table>
-      <div class="card-body">
+      <div class="card-block">
         <button class="btn btn-primary" (click)="add()">
           <clr-icon shape="plus"></clr-icon>Add New</button>
         </div>
     </div>
   </div>
   <div class="card" *ngIf="selectedItem">
-    <div class="card-body">
+    <div class="card-block">
       <app-fixed-price-type-detail [item]="selectedItem" (itemChange)="updateList($event)" ></app-fixed-price-type-detail>
     </div>
   </div>
 </div>
+<clr-modal [(clrModalOpen)]="showDeleteConf">
+    <h3 class="modal-title">Confirm Deletion</h3>
+    <div class="modal-body">
+        <p>Are you sure you want to delete?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>  
+        <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+  
+    </div>
+</clr-modal>
 

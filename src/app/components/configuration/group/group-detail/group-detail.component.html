@@ -1,183 +1,150 @@
-<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-  <div class="card">
-    <div class="card-block">
-      <form (ngSubmit)="onSubmit()" name="groupForm" class="group-form" [formGroup]="groupForm" novalidate>
-        <input readonly hidden formControlName="groupId" class="required">
-        <div class="row">
-          <div class="column">
-            <section class="form-block">
-              <label>Edit Group</label>
-              <div class="form-group">
-                <label for="parentgroup">Parent Group</label>
-                <label for="parentgroup" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="groupFrom.get('parentId').invalid
-                    && (groupFrom.get('parentId').dirty || groupFrom.get('parentId').touched)"></label>
-                <div class="select">
-                  <select id="parentgroup" formControlName="parentId">
-                    <option *ngFor="let group of groupOptions" [value]="group.groupId">{{group.groupName}}</option>
-                  </select>
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="groupName">Group Name</label>
-                <label for="groupName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="groupFrom.get('groupName').invalid
-          && (groupFrom.get('groupName').dirty || groupFrom.get('groupName').touched)">
-                  <input type="text" id="groupName" formControlName="groupName" required>
-                </label>
-              </div>
-              <div class="form-group">
-                <label for="groupDesc">Description</label>
-                <input type="text" id="groupDesc" formControlName="groupDesc" size="45" placeholder="Group Description">
-              </div>
-              <div class="form-group">
-                <label for="groupManager">Group Manager</label>
-                <div class="select">
-                  <select id="groupManager" formControlName="groupManager">
-                    <option *ngFor="let pm of  pmList" [value]="pm.currentUser.userId">{{pm.currentUser.lastName}},&nbsp;{{pm.currentUser.firstName}}</option>
-                  </select>
-                </div>
-              </div>
+<div class="card">
+  <div *ngIf="isLoading" class="card-block">
+    Loading Group Details ...
+  </div>
+  <div *ngIf="!isLoading" class="card-block">
+    <form (ngSubmit)="onSubmit()" name="groupForm" class="group-form" [formGroup]="groupForm" novalidate>
 
-              <div class="form-group">
-                <label for="levelDesc">Level Description</label>
-                <input type="text" id="levelDesc" formControlName="levelDesc" size="45" placeholder="e.g. Program">
+      <div class="row">
+        <div class="column">
+          <section class="form-block">
+            <label>Edit Group</label>
+            <div class="form-group">
+              <label class="required">Parent Group</label>
+              <label for="parentgroup" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="groupForm.get('parentId').invalid
+                    && (groupForm.get('parentId').dirty || groupForm.get('parentId').touched)">
+              
+              <div class="select">
+                <select id="parentgroup" formControlName="parentId">
+                  <option *ngFor="let group of groupOptions" [value]="group.groupId">{{group.groupName}}</option>
+                </select>
               </div>
-            </section>
-          </div>
-          <div class="column">
-            <section class="form-block">
-              <label>Captial Budget Details</label>
-              <div>
-                <clr-datagrid>
-                  <clr-dg-column>Approved Date</clr-dg-column>
-                  <clr-dg-column>Budget Year</clr-dg-column>
-                  <clr-dg-column>Amount</clr-dg-column>
-                  <clr-dg-column>Delete</clr-dg-column>
+              <span class="tooltip-content">
+                  This field cannot be empty!
+                </span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label class="required">Group Name</label>
+              <label for="groupName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" 
+                  [class.invalid]="groupForm.get('groupName').invalid && (groupForm.get('groupName').dirty || groupForm.get('groupName').touched)">
+               
+              
+              <input type="text" id="groupName" formControlName="groupName" required>
+              <span class="tooltip-content">
+                  This field cannot be empty!
+                </span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="groupDesc">Description</label>
+              <input type="text" id="groupDesc" formControlName="groupDesc" size="45" placeholder="Group Description">
+            </div>
+            <div class="form-group">
+              <label for="groupManager">Group Manager</label>
+              <div class="select">
+                <select id="groupManager" formControlName="groupManager">
+                  <option *ngFor="let pm of  pmList" [value]="pm.currentUser.userId">{{pm.currentUser.lastName}},&nbsp;{{pm.currentUser.firstName}}</option>
+                </select>
+              </div>
+            </div>
 
-                  <clr-dg-row *ngFor="let budget of group.groupBudgets; let i=index">
-                    <clr-dg-cell>{{budget.approvedDateTime}}</clr-dg-cell>
-                    <clr-dg-cell>{{budget.budgetYear}}</clr-dg-cell>
-                    <clr-dg-cell>{{budget.amount}}</clr-dg-cell>
-                    <clr-dg-cell>
+            <div class="form-group">
+              <label for="levelDesc">Level Description</label>
+              <input type="text" id="levelDesc" formControlName="levelDesc" size="45" placeholder="e.g. Program">
+            </div>
+            <input readonly hidden formControlName="groupId">
+            <input readonly hidden formControlName="level">
+          </section>
+        </div>
+        <div class="column">
+          <section class="form-block">
+            <label>Captial Budget Details</label>
+
+            <table class="table table-compact">
+              <thead>
+                <tr>
+                  <th>Approved Date</th>
+                  <th>Budget Year</th>
+                  <th>Amount</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody formArrayName="capBudgets">
+                <tr *ngFor="let budget of groupForm.get('capBudgets').controls; let i=index" [formGroupName]="i">
+                  <td>
+                    <input type="text" formControlName="approvedDateTime" size="10">
+                  </td>
+                  <td class="pull-right">
+                    <input type="text" formControlName="budgetYear" size="10">
+                  </td>
+                  <td class="pull-right">
+                    <input type="text" formControlName="amount" size="10">
+                  </td>
+                  <td>
+                    <a ref (click)="confirmDeleteBudget(budget)" title="Delete Budget">
                       <clr-icon shape="trash" class="is-solid"></clr-icon>
-                    </clr-dg-cell>
-                  </clr-dg-row>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
 
-                  <clr-dg-footer>{{group.groupBudgets.length}} budget years</clr-dg-footer>
-                </clr-datagrid>
-              </div>
-              <!--  <table class="table table-compact">
-                <thead>
-                  <tr>
-                    <th>Approved Date</th>
-                    <th>Budget Year</th>
-                    <th>Amount</th>
-                    <th>Delete</th>
-                  </tr>
-                </thead>
-                <tbody formArrayName="capBudgets">
-                  <tr  *ngFor="let budget of groupForm.get('capBudgets').controls; let i=index" [formGroupName]="i">
-                    <td>
-                      <input type="text" formControlName="approvedDateTime">
-                    </td>
-                    <td class="pull-right">
-                      <input type="text" formControlName="budgetYear">
-                    </td>
-                    <td class="pull-right">
-                      <input type="text" formControlName="amount">
-                    </td>
-                    <td>
-                      <a ref (click)="confirmDeleteBudget(budget)" title="Delete Budget">
-                        <clr-icon shape="trash" class="is-solid"></clr-icon>
-                      </a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table> -->
-              <div>
-                <button type="button" class="btn btn-sm btn-link" (click)="addBudget(0)">
-                  <clr-icon shape="plus"></clr-icon>Add Budget</button>
-              </div>
-            </section>
-            <section class="form-block">
-              <label>Expense Budget Details</label>
-              <div class="form-group row">
-                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
-                  <label>Approved Date</label>
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
-                  <label>Budget Year</label>
-                </div>
-                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
-                  <label>Amount</label>
-                </div>
-              </div>
-              <div formArrayName="expBudgets">
-                <div *ngFor="let budget of groupForm.get('expBudgets').controls; let j=index">
-                  <div [formGroupName]="j" class="form-group row">
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
-                      <input type="date" formControlName="approvedDateTime">
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
-                      <input type="number" formControlName="budgetYear">
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
-                      <input type="number" formControlName="amount">
-                    </div>
-                    <div class="col-lg-3 col-md-3 col-sm-6 col-xs-6">
-                      <a ref (click)="confirmDeleteBudget(budget)" title="Delete Budget">
-                        <clr-icon shape="trash" class="is-solid"></clr-icon>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <!-- <table class="table table-sm">
-                  <thead>
-                    <tr>
-                      <th>Approved Date</th>
-                      <th>Budget Year</th>
-                      <th>Amount</th>
-                      <th>Delete</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                  <tr  *ngFor="let budget of groupForm.get('expBudgets').controls; let j = index;" [formGroupName]="j">
-                    <td>
-                      <input type="date" formControlName="approvedDateTime">
-                    </td>
-                    <td class="pull-right">
-                      <input type="number" formControlName="budgetYear">
-                    </td>
-                    <td class="pull-right">
-                      <input type="number" formControlName="amount" >
-                    </td>
-                    <td>
-                      <a ref (click)="confirmDeleteBudget(budget)" title="Delete Budget">
-                        <clr-icon shape="trash" class="is-solid"></clr-icon>
-                      </a>
-                    </td>
-                  </tr>
-                </tbody>
-                </table> -->
-              <div>
-                <button type="button" class="btn btn-sm btn-link" (click)="addBudget(1)">
-                  <clr-icon shape="plus"></clr-icon>Add Budget</button>
-              </div>
-            </section>
 
-          </div>
+            <div>
+              <button type="button" class="btn btn-sm btn-link" (click)="addBudget(0)">
+                <clr-icon shape="plus"></clr-icon>Add Budget</button>
+            </div>
+          </section>
+          <section class="form-block">
+            <label>Expense Budget Details</label>
+
+            <table class="table table-compact">
+              <thead>
+                <tr>
+                  <th>Approved Date</th>
+                  <th>Budget Year</th>
+                  <th>Amount</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody formArrayName="expBudgets">
+                <tr *ngFor="let budget of groupForm.get('expBudgets').controls; let j = index;" [formGroupName]="j">
+                  <td>
+                    <input type="date" formControlName="approvedDateTime">
+                  </td>
+                  <td class="pull-right">
+                    <input type="number" formControlName="budgetYear">
+                  </td>
+                  <td class="pull-right">
+                    <input type="number" formControlName="amount">
+                  </td>
+                  <td>
+                    <a ref (click)="confirmDeleteBudget(budget)" title="Delete Budget">
+                      <clr-icon shape="trash" class="is-solid"></clr-icon>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div>
+              <button type="button" class="btn btn-sm btn-link" (click)="addBudget(1)">
+                <clr-icon shape="plus"></clr-icon>Add Budget</button>
+            </div>
+          </section>
+
         </div>
-        <div>
-          <button class="btn btn-primary" type="submit" [disabled]="!groupForm.valid">
-            <clr-icon shape="floppy" class="is-solid"></clr-icon>Save</button>
-          <button type="button" class="btn btn-warning-outline" (click)="revert()">
-            <clr-icon shape="redo"></clr-icon>Reset</button>
+      </div>
+      <div>
+        <button class="btn btn-primary" type="submit" [disabled]="!groupForm.valid">
+          <clr-icon shape="floppy" class="is-solid"></clr-icon>Save</button>
+        <button type="button" class="btn btn-warning-outline" (click)="revert()">
+          <clr-icon shape="redo"></clr-icon>Reset</button>
 
-          <button type="button" class="btn btn-warning-outline" (click)="cancel()">
-            <clr-icon shape="ban"></clr-icon>Cancel</button>
-        </div>
+        <button type="button" class="btn btn-warning-outline" (click)="cancel()">
+          <clr-icon shape="ban"></clr-icon>Cancel</button>
+      </div>
 
-      </form>
-    </div>
+    </form>
   </div>
 </div>

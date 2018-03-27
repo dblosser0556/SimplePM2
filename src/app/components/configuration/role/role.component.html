@@ -1,13 +1,13 @@
 <div class="container" fxLayout="column" fxLayoutGap="20px">
   <div class="card">
-    <div class="card-body">
+    <div class="card-block">
       <div *ngIf="isLoading">Loading Project Cost Types ...</div>
       <table class="table" *ngIf="!isLoading">
         <tr>
-          <td>Role Name</td>
-          <td>Description</td>
-          <td>Edit</td>
-          <td>Delete</td>
+          <th>Role Name</th>
+          <th>Description</th>
+          <th>Edit</th>
+          <th>Delete</th>
         </tr>
         <tr *ngFor="let item of items">
           <td>
@@ -18,26 +18,37 @@
           </td>
           <td>
             <a (click)="edit(item)">
-              <i class="fas fa-edit" ></i>
+                <clr-icon shape="pencil" class="is-solid"></clr-icon>
             </a>
           </td>
           <td>
-            <a ref (click)="onDelete(item.roleID)">
-              <i class="fas fa-trash"></i>
+            <a ref (click)="confirmDelete(item)">
+              <clr-icon shape="trash" class="is-solid"></clr-icon>
             </a>
           </td>
         </tr>
 
       </table>
-      <div class="card-body">
+      <div class="card-block">
         <button class="btn btn-primary" (click)="add()">
-          <i class="fas fa-plus-square" ></i>Add New</button>
+          <clr-icon shape="plus" class="is-solid"></clr-icon>Add New</button>
       </div>
     </div>
   </div>
   <div class="card" *ngIf="selectedItem">
-    <div class="card-body">
+    <div class="card-block">
       <app-role-detail [item]="selectedItem" (itemChange)="updateList($event)" ></app-role-detail>
     </div>
   </div>
 </div>
+<clr-modal [(clrModalOpen)]="showDeleteConf">
+    <h3 class="modal-title">Confirm Deletion</h3>
+    <div class="modal-body">
+        <p>Are you sure you want to delete?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>  
+        <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+  
+    </div>
+</clr-modal>

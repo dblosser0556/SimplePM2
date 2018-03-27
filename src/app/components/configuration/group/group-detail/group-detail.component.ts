@@ -3,9 +3,10 @@ import { GroupService } from './../group.service';
 import { Group, LoggedInUser, GroupBudget, BudgetType } from '../../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl, FormArray } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
-import { GroupBudgetComponent } from '../../../group-budget/group-budget.component';
 
 import * as moment from 'moment';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UserService } from '../../../../services';
 
 interface CreateGroup {
   groupName: string;
@@ -21,18 +22,16 @@ interface CreateGroup {
 @Component({
   selector: 'app-group-detail',
   templateUrl: './group-detail.component.html',
-  styleUrls: ['./group-detail.component.css']
+  styleUrls: ['./group-detail.component.scss']
 })
 export class GroupDetailComponent implements OnInit, OnChanges {
 
 
-  @Input() group: Group;
-  @Input() pmList: LoggedInUser[];
-  @Input() groupOptions: Group[];
-  @Output() groupChange = new EventEmitter<Group>();
+  group: Group;
+  pmList: LoggedInUser[];
+  groupOptions: Group[];
 
-  //  public budgetListModal: BsModalRef;
-  //  public budgetDetailModal: BsModalRef;
+
 
   expBudget: number;
   capBudget: number;
@@ -46,23 +45,30 @@ export class GroupDetailComponent implements OnInit, OnChanges {
   showBudgetForm = false;
   showConfirmDelete = false;
 
+  isLoading = false;
+
   error: any;
-  opened = false;
+
 
   constructor(private groupService: GroupService,
     private fb: FormBuilder,
-    //  private modalService: BsModalService
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService
+
   ) {
     this.createForm();
   }
 
   ngOnInit() {
-
+    this.getGroupList();
   }
+
+
 
   ngOnChanges() {
     this.currentYear = moment().year();
-    
+
     if (this.group.level === undefined) {
       this.group.level = 0;
     }
@@ -91,7 +97,7 @@ export class GroupDetailComponent implements OnInit, OnChanges {
     if (group.groupId !== null && group.groupId !== undefined) {
       this.groupService.update(group.groupId, group).subscribe(data => {
         // this.snackBar.open('Project Cost Type has been updated', '', {duration: 2000});
-        this.groupChange.emit(group);
+        this.router.navigate(['/configuration/groups']);
       },
         error => this.error = error);
     } else {
@@ -108,7 +114,7 @@ export class GroupDetailComponent implements OnInit, OnChanges {
         // this.resetForm();
         this.group = data;
         // this.snackBar.open('Project Cost Type has been Added', '', { duration: 2000 });
-        this.groupChange.emit(group);
+        this.router.navigate(['/configuration/groups']);
       },
         error => this.error = error);
     }
@@ -158,19 +164,19 @@ export class GroupDetailComponent implements OnInit, OnChanges {
   }
 
   createBudget(budget: GroupBudget) {
-    return this.fb.group( {
-        groupBudgetId: budget.groupBudgetId,
-        budgetType: [budget.budgetType, Validators.required],
-        budgetYear: [budget.budgetYear, Validators.required],
-        approvedDateTime: [budget.approvedDateTime, Validators.required],
-        amount: [budget.amount, Validators.required]
+    return this.fb.group({
+      groupBudgetId: budget.groupBudgetId,
+      budgetType: [budget.budgetType, Validators.required],
+      budgetYear: [budget.budgetYear, Validators.required],
+      approvedDateTime: [budget.approvedDateTime, Validators.required],
+      amount: [budget.amount, Validators.required]
     });
   }
 
-  
+
   revert() { this.ngOnChanges(); }
 
-  cancel() { this.groupChange.emit(this.group); }
+  cancel() { this.router.navigate(['/configuration/groups']); }
 
   onChange(groupId: number) {
     this.groupOptions.forEach(g => {
@@ -180,6 +186,51 @@ export class GroupDetailComponent implements OnInit, OnChanges {
     });
   }
 
+
+  getGroupList() {
+    this.isLoading = true;
+    this.groupService.getOptionList().subscribe(
+      results => {
+        this.groupOptions = results;
+        this.getPMList();
+      },
+      error => this.error = error);
+  }
+
+  getPMList() {
+    this.isLoading = true;
+    // call the pm list and add the group manager name.
+    this.userService.getUserInRoles('editPrograms').subscribe(
+      res => {
+        this.pmList = res;
+        this.getGroup();
+      },
+      error => this.error = error
+    );
+  }
+
+  getGroup() {
+    this.isLoading = true;
+    this.route.queryParams
+      .filter(params => params.groupId)
+      .subscribe(params => {
+        const id = params.groupId;
+        if (id === '-1') {
+          this.group = new Group();
+          this.ngOnChanges();
+          this.isLoading = false;
+        } else {
+          this.groupService.getOne(id).subscribe(
+            results => {
+              this.group = results;
+              this.ngOnChanges();
+              this.isLoading = false;
+            },
+            error => this.error = error
+          );
+        }
+      });
+  }
   addBudget(type: BudgetType) {
 
     if (type === BudgetType.Capital) {
