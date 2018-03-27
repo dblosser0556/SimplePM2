@@ -1,0 +1,105 @@
+<div class="card w-75">
+  <div class="card-body">
+    <form (ngSubmit)="onSubmit()" name="projectForm" class="project-form" [formGroup]="projectForm" novalidate>
+      <input readonly hidden formControlName="projectID" class="required">
+      <div class="row">
+        <div class="w-25 p-2 form-group">
+          <label class="center-block">Name:</label>
+          <input class="form-control" formControlName="projectName" required>
+          <div align="start" *ngIf="projectForm.controls.projectName.errors && !projectForm.controls.projectName.pristine">
+            <div class="invalid-input">
+              Project Name is required!
+            </div>
+          </div>
+        </div>
+        <div class="w-25 p-2 form-group">
+          <label class="center-block">Description:</label>
+          <input class="form-control" formControlName="projectDesc">
+        </div>
+        <div class="w-25 p-2 form-group">
+          <label class="center-block">Project Group:</label>
+          <select class="form-control" formControlName="groupId">
+            <option *ngFor="let group of groupList" [value]="group.groupId">{{group.groupName}}</option>
+          </select>
+        </div>
+
+
+      </div>
+      <div class="row">
+        <div class="w-25 p-2 form-group">
+          <label class="center-block">Project Manager:</label>
+          <select class="form-control" formControlName="projectManager">
+            <option *ngFor="let pm of  pmList" [value]="pm.currentUser.userId">{{pm.currentUser.lastName}},&nbsp;{{pm.currentUser.firstName}}</option>
+          </select>
+        </div>
+        <div class="w-25 p-2 form-group">
+          <label class="center-block">Project Status:</label>
+          <select class="form-control" formControlName="statusId">
+            <option *ngFor="let status of statusList" [value]="status.statusId">{{status.statusName}}</option>
+          </select>
+        </div>
+        <div class="w-25 p-2 form-check" *ngIf="createTemplate">
+          <input type="checkbox" class="form-check-input" id="exampleCheck1" disabled="true" formControlName="isTemplate">
+          <label class="form-check-label" for="exampleCheck1">Is Template</label>
+        </div>
+
+        <div class="w-25 p-2 form-group" *ngIf="project.months.length==0&&project.projectId!=null">
+          <label class="center-block">Project Template:</label>
+          <select class="form-control" formControlName="templateId" (change)="selectTemplate($event.target.value)">
+            <option [value]=-1>--Select--</option>
+            <option *ngFor="let template of  templateList" [value]="template.projectId">{{template.projectName}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="w-25 p-2 form-group">
+          <label class="center-block">Planned Start:</label>
+          <input type="text" class="form-control" bsDatepicker [bsConfig]="bsConfig" formControlName="plannedStartDate">
+        </div>
+        <div class="w-25 p-2 form-group">
+          <label class="center-block">Actual Start:</label>
+          <input type="text" class="form-control" bsDatepicker [bsConfig]="bsConfig" formControlName="actualStartDate">
+        </div>
+        <div class="w-25 p-2 form-group">
+          <a class="center-block btn" (click)="showBudget(true)">Capital Budget</a>
+          <a tooltip="Add Capital Budget" (click)="addBudget(true)">
+            <i class="fas fa-plus-square"></i>
+          </a>
+          <input type="number" class="form-control" formControlName="capBudget">
+        </div>
+        <div class="w-25 p-2 form-group">
+          <a class="center-block btn" (click)="showBudget(false)">Expense Budget</a>
+          <a tooltip="Add Expense Budget" (click)="addBudget(false)">
+            <i class="fas fa-plus-square"></i>
+          </a>
+          <input type="number" class="form-control" formControlName="expBudget">
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn btn-primary" type="submit" [disabled]="!projectForm.valid">
+          <i class="fas fa-save"></i>Save</button>
+        <button type="button" class="btn btn-warning" (click)="revert()" [disabled]="!projectForm.dirty">
+          <i class="fas fa-window-restore"></i>Reset</button>
+        <button type="button" class="btn btn-warning" (click)="cancel()">
+          <i class="fas fa-ban"></i>Cancel</button>
+        <button type="button" *ngIf="project.months.length>0" class="btn btn-danger" (click)="removePeriods()">
+          <i class="fas fa-trash"></i>Remove Months</button>
+      </div>
+
+
+    </form>
+  </div>
+</div>
+<clr-modal [(clrModalOpen)]="showDeleteConf">
+  <h3 class="modal-title">Confirm Deletion</h3>
+  <div class="modal-body">
+      <p>Are you sure you want to delete all months?</p>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>  
+      <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+
+  </div>
+</clr-modal>
+

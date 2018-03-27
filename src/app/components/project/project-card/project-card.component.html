@@ -1,0 +1,18 @@
+<div class="card">
+  <div class="card-header">
+    <h6>{{projectSummary.projectName}}</h6>
+
+    <div>{{projectSummary.projectDesc}}</div>
+  </div>
+  <div class="project-card-body">
+    <app-project-card-summary [projectSummary]="projectSummary" *ngIf="showView=='summary'"></app-project-card-summary>
+    <app-project-chart [project]="project" [enableModal]="true" *ngIf="showView=='chart'"></app-project-chart>
+    <app-project-card-monthly-summary [project]="project" [projectSummary]="projectSummary" *ngIf="showView=='month'"></app-project-card-monthly-summary>
+  </div>
+  <div class="card-footer">
+    <a (click)="showView='summary'" *ngIf="showView!='summary'" class="card-link pull-right">Summary</a>
+    <a (click)="showView='chart'" *ngIf="showView!='chart'" class="card-link pull-right">Chart</a>
+    <a (click)="showView='month'" *ngIf="showView!='month'" class="card-link pull-right">Details</a>
+    <a *ngIf="allowEdit" (click)="editDetails(project.projectId)" class="card-link pull-right">Edit</a>
+  </div>
+</div>

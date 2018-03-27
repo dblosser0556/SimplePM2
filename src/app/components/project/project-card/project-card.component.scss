@@ -1,0 +1,27 @@
+.card {
+    box-shadow: 1 rem, 1rem, .5rem grey;
+    width: 25rem;
+    height: 25rem;
+    position: relative;
+}
+
+a {
+    cursor: pointer;
+}
+
+.project-card-body {
+    position: relative;
+}
+.card-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+
+.modal .modal-dialog {
+    width: 850px !important;
+  }
+
+ 

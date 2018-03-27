@@ -1,0 +1,62 @@
+<div id="table3">
+  <div class="container">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>
+            Month
+          </th>
+          <th colspan="2">
+            Expense
+          </th>
+          <th colspan="2">Capital</th>
+        </tr>
+        <tr>
+          <th>Month</th>
+          <th>Planned</th>
+          <th>Actual To Date</th>
+          <th>Planned</th>
+          <th>Actual To Date</th>
+
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let month of project.months">
+          <td>{{project.startDate().setMonth(project.startDate().getMonth() + month.monthNo - 1) |date:'MMM-yy' }}</td>
+          <td>{{month.totalPlannedExpense | currency:'USD':'symbol-narrow':'0.0-0'}} </td>
+          <td>{{month.totalActualExpense | currency:'USD':'symbol-narrow':'0.0-0'}}</td>
+          <td>{{month.totalPlannedCapital | currency:'USD':'symbol-narrow':'0.0-0'}}</td>
+          <td>{{month.totalActualCapital | currency:'USD':'symbol-narrow':'0.0-0'}}</td>
+        </tr>
+      </tbody>
+      <tfoot>
+
+        <tr>
+          <th>Total</th>
+          <th>Exp Budget:</th>
+          <th>{{projectSummary.totalExpenseBudget | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
+          <th>Cap Budget:</th>
+          <th>{{projectSummary.totalCapitalBudget | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
+        </tr>
+        <tr>
+          <th>Total</th>
+          <th>{{projectSummary.totalPlannedExpense | currency:'USD':'symbol-narrow':'0.0-0'}} </th>
+          <th>{{projectSummary.totalActualExpense | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
+
+          <th>{{projectSummary.totalPlannedCapital | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
+          <th>{{projectSummary.totalActualCapital | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
+        </tr>
+        <tr>
+          <th>Diff</th>
+          <th>{{projectSummary.totalExpenseBudget - projectSummary.totalPlannedExpense | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
+          <th>{{projectSummary.totalExpenseBudget - projectSummary.totalActualExpense | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
+
+          <th>{{projectSummary.totalCapitalBudget - projectSummary.totalPlannedCapital | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
+          <th>{{projectSummary.totalCapitalBudget - projectSummary.totalActualCapital | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
+        </tr>
+
+
+      </tfoot>
+    </table>
+  </div>
+</div>

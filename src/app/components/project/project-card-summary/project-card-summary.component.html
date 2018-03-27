@@ -1,0 +1,50 @@
+<div class="container-fluid">
+  <div class="p-1 d-flex flex-row">
+    <div class="label">Project Manager:</div>
+    <div>{{projectSummary.projectManagerName}}</div>
+  </div>
+  <div class="p-1 d-flex flex-row">
+    <div class="label">Planned Start:</div>
+    <div>{{projectSummary.plannedStartDate}}</div>
+  </div>
+  <div class="p-1 d-flex flex-row">
+    <div class="label">Actual Start:</div>
+    <div>{{projectSummary.actualStartDate}}</div>
+  </div>
+  <div class="p-1 d-flex flex-row">
+    <div class="label">Project Group:</div>
+    <div>{{projectSummary.groupName}}</div>
+  </div>
+  <div class="p-1 d-flex flex-row">
+    <div class="label">Project Status:</div>
+    <div>{{projectSummary.statusName}}</div>
+  </div>
+  <div>
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th colspan="3">
+            Expense
+          </th>
+          <th colspan="3">Capital</th>
+        </tr>
+        <tr>
+          <th>Planned</th>
+          <th>Actual To Date</th>
+          <th>Budget</th>
+          <th>Planned</th>
+          <th>Actual To Date</th>
+          <th>Budget</th>
+        </tr>
+      </thead>
+      <tr>
+        <td>{{projectSummary.totalPlannedExpense | currency:'USD':'symbol-narrow':'0.0-0'}} </td>
+        <td>{{projectSummary.totalActualExpense | currency:'USD':'symbol-narrow':'0.0-0'}}</td>
+        <td>{{projectSummary.totalExpenseBudget | currency:'USD':'symbol-narrow':'0.0-0'}}</td>
+        <td>{{projectSummary.totalPlannedCapital | currency:'USD':'symbol-narrow':'0.0-0'}}</td>
+        <td>{{projectSummary.totalActualCapital | currency:'USD':'symbol-narrow':'0.0-0'}}</td>
+        <td>{{projectSummary.totalExpenseBudget | currency:'USD':'symbol-narrow':'0.0-0'}}</td>
+      </tr>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+<h4 *ngIf="isLoading">
+  <i>Loading project ... </i>
+</h4>
+<div class="container-fluid" *ngIf="currentProject">
+  
+    <clr-tabs>
+        <clr-tab>
+            <button clrTabLink (select)="setCurrentTab('Details')">Details</button>
+            <ng-template [(clrIfActive)]="DetailsActive">
+                <clr-tab-content>
+                    <app-project-detail [(project)]="currentProject" [createTemplate]="isTemplate" [groupList]="groups" 
+                    [statusList]="status" [pmList]="projectManagers" [selectedView]="currentTab" [templateList]="templateList"></app-project-detail>
+                </clr-tab-content>
+            </ng-template>
+        </clr-tab>
+    
+        <clr-tab>
+            <button clrTabLink (select)="setCurrentTab('Forecast')">Forecast</button>
+            <ng-template [(clrIfActive)]="forecastActive">
+                <clr-tab-content>
+                        <app-project-monthly-detail [(project)]="currentProject" [selectedView]="currentTab"></app-project-monthly-detail>
+                </clr-tab-content>
+            </ng-template>
+        </clr-tab>
+    
+        <clr-tab>
+            <button clrTabLink (select)="setCurrentTab('Actuals')">Actuals</button>
+            <ng-template [(clrIfActive)]="actualsActive">
+                <clr-tab-content>
+                    <app-project-monthly-detail [(project)]="currentProject" [selectedView]="currentTab"></app-project-monthly-detail>
+                </clr-tab-content>
+            </ng-template>
+        </clr-tab>
+    
+        <clr-tab>
+            <button clrTabLink (select)="setCurrentTab('Vedors')">Vendors</button>
+            <ng-template [(clrIfActive)]="vendorActive">
+                <clr-tab-content>
+                    ...
+                </clr-tab-content>
+            </ng-template>
+        </clr-tab>
+    </clr-tabs>
+
+
+
+
+
+ <tabset>
+    <tab heading="Details" (select)="setCurrentTab('Details')" id="tab1">
+        
+    </tab>
+    
+   
+    
+  </tabset>
+</div>
