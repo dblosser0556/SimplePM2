@@ -20,6 +20,7 @@ export class GroupComponent implements OnInit {
   isLoading = false;
   showDeleteConf = false;
 
+
   constructor(private groupService: GroupService,
     private userService: UserService,
     private router: Router,
@@ -62,7 +63,7 @@ export class GroupComponent implements OnInit {
           // get the parent group name if available.
           if (group.parentId !== 0 || group.parentId !== null) {
             for (const parent of groups) {
-              if (parent.groupId = group.parentId) {
+              if (parent.groupId === group.parentId) {
                 group.parentName = parent.groupName;
               }
             }

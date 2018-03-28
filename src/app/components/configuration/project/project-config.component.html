@@ -1,7 +1,14 @@
 <div class="container" fxLayout="column" fxLayoutGap="20px">
   <div class="card">
     <div class="card-block">
-      <div *ngIf="isLoading">Loading Project List ...</div>
+      <div *ngIf="isLoading">
+        <span class="spinner spinner-inline">
+          Loading...
+        </span>
+        <span>
+          Loading...
+        </span>
+      </div>
       <div *ngIf="!isLoading">
         <clr-datagrid>
           <clr-dg-column>Project Name</clr-dg-column>
@@ -10,7 +17,6 @@
           <clr-dg-column>Status</clr-dg-column>
           <clr-dg-column>Edit</clr-dg-column>
           <clr-dg-column>Delete</clr-dg-column>
-          <clr-dg-column>Details</clr-dg-column>
           <clr-dg-row *ngFor="let project of projects">
 
             <clr-dg-cell>{{project.projectName}}</clr-dg-cell>
@@ -27,11 +33,6 @@
                 <clr-icon shape="trash" class="is-solid"></clr-icon>
               </a>
             </clr-dg-cell>
-            <clr-dg-cell>
-              <a ref (click)="showDetails(project.projectId)">
-                <clr-icon shape="trash" class="is-solid"></clr-icon>
-              </a>
-            </clr-dg-cell>
           </clr-dg-row>
 
           <clr-dg-footer>
@@ -42,9 +43,9 @@
           </clr-dg-footer>
         </clr-datagrid>
         <div class="card-block">
-            <button class="btn btn-primary" (click)="add()">
-              <clr-icon shape="plus"></clr-icon>Add New</button>
-          </div>
+          <button class="btn btn-primary" (click)="add()">
+            <clr-icon shape="plus"></clr-icon>Add New</button>
+        </div>
       </div>
 
 

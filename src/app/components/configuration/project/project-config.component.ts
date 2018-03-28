@@ -33,12 +33,12 @@ export class ProjectConfigComponent implements OnInit {
   isLoading = false;
 
   constructor(private projectService: ProjectService,
-      private toast: ToastrService,
-      private statusService: StatusService,
-      private groupService: GroupService,
-      private userService: UserService,
-      private route: ActivatedRoute,
-      private router: Router) {
+    private toast: ToastrService,
+    private statusService: StatusService,
+    private groupService: GroupService,
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private router: Router) {
   }
 
   ngOnInit() {
@@ -56,17 +56,18 @@ export class ProjectConfigComponent implements OnInit {
 
   onDelete(id: number) {
 
-      this.projectService.delete(this.selectedProject.projectId)
-        .subscribe(x => {
-          this.toast.success('Project has been deleted', 'Success');
+    this.projectService.delete(this.selectedProject.projectId)
+      .subscribe(x => {
+        this.toast.success('Project has been deleted', 'Success');
 
-          this.getList();
-        },
-        error => { this.toast.error(error, 'Oop Something went wrong');
-                    console.log(error);
-                  });
-    
-      }
+        this.getList();
+      },
+        error => {
+          this.toast.error(error, 'Oop Something went wrong');
+          console.log(error);
+        });
+
+  }
 
 
 
@@ -75,18 +76,19 @@ export class ProjectConfigComponent implements OnInit {
     this.selectedProject = undefined;
     this.route.queryParams.subscribe(
       params => {
-        const queryParams = {...params.keys, ...params};
+        const queryParams = { ...params.keys, ...params };
         if (params['$filter'] === 'IsTemplate eq true') {
           this.isTemplate = true;
         }
         this.projectService.getList(queryParams)
-        .subscribe(results => {
-          this.projects = results;
-          this.isLoading = false;
-        },
-        error => { this.toast.error(error, 'Oop Something went wrong');
-                    console.log(error);
-                  });
+          .subscribe(results => {
+            this.projects = results;
+            this.isLoading = false;
+          },
+            error => {
+              this.toast.error(error, 'Oop Something went wrong');
+              console.log(error);
+            });
       }
     );
   }
@@ -94,48 +96,46 @@ export class ProjectConfigComponent implements OnInit {
   getStatusList() {
     this.statusService.getOptionList().subscribe(
       results => this.status = results,
-      error => { this.toast.error(error, 'Oop Something went wrong');
-                    console.log(error);
-                  });
+      error => {
+        this.toast.error(error, 'Oop Something went wrong');
+        console.log(error);
+      });
   }
 
   getGroupList() {
     this.groupService.getOptionList().subscribe(
       results => this.groups = results,
-      error => { this.toast.error(error, 'Oop Something went wrong');
-                    console.log(error);
-                  });
+      error => {
+        this.toast.error(error, 'Oop Something went wrong');
+        console.log(error);
+      });
   }
 
   getPMList() {
     this.userService.getUserInRoles('editProjects').subscribe(
       results => { this.projectManagers = results; },
-      error => { this.toast.error(error, 'Oop Something went wrong');
-                    console.log(error);
-                  });
+      error => {
+        this.toast.error(error, 'Oop Something went wrong');
+        console.log(error);
+      });
   }
 
   getTemplateList() {
     const queryParams = { '$filter': 'IsTemplate eq true' };
     this.projectService.getList(queryParams).subscribe(
       results => this.templateList = results,
-      error => { this.toast.error(error, 'Oop Something went wrong');
-                    console.log(error);
-                  });
+      error => {
+        this.toast.error(error, 'Oop Something went wrong');
+        console.log(error);
+      });
   }
 
   add() {
-    this.selectedProject = new Project();
-
+    this.showDetails(-1);
   }
 
   edit(project: Project) {
-    this.projectService.getOne(project.projectId).subscribe(
-      res => this.selectedProject = res,
-      error => { this.toast.error(error, 'Oop Something went wrong');
-      console.log(error);
-    });
-
+    this.showDetails(project.projectId);
   }
 
   updateList(event: any) {
@@ -144,9 +144,9 @@ export class ProjectConfigComponent implements OnInit {
 
   showDetails(id: number) {
     if (this.isTemplate) {
-      this.router.navigate(['/configuration/project-templates/template'], { queryParams: { projectId: id } });
+      this.router.navigate(['/configuration/project-templates/details'], { queryParams: { projectId: id } });
     } else {
-      this.router.navigate(['/configuration/projects/project'], { queryParams: { projectId: id } });
+      this.router.navigate(['/configuration/projects/details'], { queryParams: { projectId: id } });
     }
 
   }

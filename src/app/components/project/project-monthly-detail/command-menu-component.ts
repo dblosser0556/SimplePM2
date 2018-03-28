@@ -24,11 +24,6 @@ export class CommandMenuComponent implements OnInit {
         this.renderer.setAttribute(this.el.nativeElement.childNodes[1], 'innerText', this.menuItem.title);
         this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'backgroundColor', this.menuItem.color);
 
-
-
-
-
-
     }
     updateCapWeightPercent(percent: number, style: number) {
         // the ids are added to the selected ids array through the multi-select directive

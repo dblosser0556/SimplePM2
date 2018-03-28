@@ -3,10 +3,11 @@ import { Component, OnInit, Input, OnChanges, Output, EventEmitter, QueryList } 
 import { ProjectService, } from '../../../services';
 import { Project, Status, Group, Role, LoggedInUser, BudgetType, Budget, ProjectList, FixedPrice, FixedPriceMonth } from '../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl, FormArray } from '@angular/forms';
-
+import { invalidSelectValidator } from '../../../directives/invalid-select.directive';
 import * as moment from 'moment';
 import { of } from 'rxjs/observable/of';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 
 interface CreateProject {
@@ -37,7 +38,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   @Output() projectChange = new EventEmitter<Project>();
 
-  showDeleteConfirmation = false;
+  showDeleteBudget = false;
+  showDeleteMonths = false;
+
+  selectedBudget: any;
 
   projectForm: FormGroup;
   error: any;
@@ -46,7 +50,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   constructor(private projectService: ProjectService,
     private fb: FormBuilder,
-    private toast: ToastrService) {
+    private toast: ToastrService,
+    private router: Router) {
 
     this.createForm();
   }
@@ -56,6 +61,11 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
 
+    const plannedStartDate = moment(this.project.plannedStartDate).format('YYYY-MM-DD');
+    let actualStartDate = null;
+    if (this.project.actualStartDate !== null) {
+      actualStartDate = moment(this.project.plannedStartDate).format('YYYY-MM-DD');
+    }
     this.projectForm.reset({
       projectID: this.project.projectId,
 
@@ -65,8 +75,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
       projectName: this.project.projectName,
       projectDesc: this.project.projectDesc,
       projectManager: this.project.projectManager,
-      plannedStartDate: this.project.plannedStartDate,
-      actualStartDate: this.project.actualStartDate,
+      plannedStartDate: plannedStartDate,
+      actualStartDate: actualStartDate,
       groupId: this.project.groupId,
       statusId: this.project.statusId,
       templateId: -1,
@@ -113,10 +123,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         this.toast.success('Project successfully added.', 'Success');
         this.projectChange.emit(project);
       },
-      error => {
-        this.toast.error(error, 'Oops! Something went wrong');
-        console.log(error);
-      });
+        error => {
+          this.toast.error(error, 'Oops! Something went wrong');
+          console.log(error);
+        });
     }
   }
 
@@ -130,23 +140,22 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     this.project.projectManager = formValue.projectManager;
 
     // the date picker return an instance of date so convert it back to string.
-    if (formValue.plannedStartDate instanceof Date) {
-      const plannedStartDate = moment(formValue.plannedStartDate);
-      this.project.plannedStartDate = plannedStartDate.format('YYYY-MM-DD');
-    } else {
-      this.project.plannedStartDate = formValue.plannedStartDate;
-    }
-
-    if (formValue.actualStartDate instanceof Date) {
-      const actualStartDate = moment(formValue.actualStartDate);
-      this.project.actualStartDate = actualStartDate.format('YYYY-MM-DD');
-    } else {
-      this.project.actualStartDate = formValue.actualStartDate;
-    }
-
-
+    const plannedStartDate = moment(formValue.plannedStartDate);
+    this.project.plannedStartDate = plannedStartDate.format('YYYY-MM-DD');
+    const actualStartDate = moment(formValue.actualStartDate);
+    this.project.actualStartDate = actualStartDate.format('YYYY-MM-DD');
     this.project.groupId = formValue.groupId;
     this.project.statusId = formValue.statusId;
+
+    const capBudgets: Budget[] = formValue.capBudgets.map(
+      (budget: Budget) => Object.assign({}, budget)
+    );
+
+    const expBudgets: Budget[] = formValue.expBudgets.map(
+      (budget: Budget) => Object.assign({}, budget)
+    );
+
+    this.project.budgets = capBudgets.concat(expBudgets);
     return this.project;
 
   }
@@ -157,17 +166,40 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
       projectName: ['', Validators.required],
       isTemplate: this.createTemplate,
       projectDesc: '',
-      projectManager: '',
+      projectManager: ['', Validators.required, invalidSelectValidator()],
       plannedStartDate: '',
       actualStartDate: '',
-      groupId: '',
-      statusId: '',
+      groupId: ['', Validators.required, invalidSelectValidator()],
+      statusId: ['', Validators.required, invalidSelectValidator()],
       templateId: '',
       capBudgets: this.fb.array([]),
       expBudgets: this.fb.array([])
     }
     );
   }
+
+  // sort cuts for validation logic
+  get projectName() {
+    return this.projectForm.get('projectName');
+  }
+
+  get projectGroup() {
+    return this.projectForm.get('groupId');
+  }
+
+  get projectManager() {
+    return this.projectForm.get('projectManager');
+  }
+
+  get projectStatus() {
+    return this.projectForm.get('statusId');
+  }
+
+  get plannedStartDate() {
+    return this.projectForm.get('plannedStartDate');
+  }
+
+
 
   setBudget(type: BudgetType, budgets: Budget[]) {
     const budgetFGs = budgets.filter(budget => budget.budgetType === type)
@@ -183,16 +215,21 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
 
   createBudget(budget: Budget) {
+    let approvedDateTime = null;
+    if (budget.approvedDateTime !== undefined) {
+      approvedDateTime = moment(budget.approvedDateTime).format('YYYY-MM-DD');
+    }
     return this.fb.group({
       budgetId: budget.budgetId,
+      projectId: budget.projectId,
       budgetType: [budget.budgetType, Validators.required],
-      approvedDateTime: [budget.approvedDateTime, Validators.required],
+      approvedDateTime: [approvedDateTime, Validators.required],
       amount: [budget.amount, Validators.required]
     });
   }
 
   confirmDelete() {
-    this.showDeleteConfirmation = true;
+    this.showDeleteMonths = true;
   }
   removePeriods() {
     this.project.fixedPriceCosts = [];
@@ -233,17 +270,38 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   revert() { this.ngOnChanges(); }
 
-  cancel() { this.projectChange.emit(this.project); }
+  cancel() {  this.router.navigate(['/configuration/projects']); }
 
 
   addBudget(type: BudgetType) {
+    const budget = new Budget();
+    budget.budgetId = 0;
+    budget.projectId = this.project.projectId;
     if (type === BudgetType.Capital) {
       const budgets = this.projectForm.get('capBudgets') as FormArray;
-      budgets.push(this.createBudget(new Budget()));
+      budget.budgetType = BudgetType.Capital;
+      budgets.push(this.createBudget(budget));
     } else {
       const budgets = this.projectForm.get('expBudgets') as FormArray;
-      budgets.push(this.createBudget(new Budget()));
+      budget.budgetType = BudgetType.Expense;
+      budgets.push(this.createBudget(budget));
     }
 
+  }
+
+  confirmDeleteBudget(type: BudgetType, index: number) {
+    this.selectedBudget = [type, index];
+    this.showDeleteBudget = true;
+  }
+
+  removeBudget() {
+    let budgets;
+    if (this.selectedBudget[0] === BudgetType.Capital) {
+      budgets = this.projectForm.get('capBudgets') as FormArray;
+    } else {
+      budgets = this.projectForm.get('expBudgets') as FormArray;
+    }
+    budgets.removeAt(this.selectedBudget[1]);
+    this.showDeleteBudget = false;
   }
 }

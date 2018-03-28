@@ -73,7 +73,7 @@ export class ProjectComponent implements OnInit {
         this.toast.error(error);
         console.log(error);
       });
-    }
+  }
 
   getProject() {
     this.isLoading = true;
@@ -81,35 +81,35 @@ export class ProjectComponent implements OnInit {
       .filter(params => params.projectId)
       .subscribe(params => {
         const id = params.projectId;
+        if (id === '-1') {
+          this.currentProject = new Project();
+        } else {
+          this.projectService.getOne(id).subscribe(
+            results => {
+              this.currentProject = new Project();
+              this.currentProject = results;
 
-        this.projectService.getOne(id).subscribe(
-          results => {
-            this.currentProject = new Project();
-            this.currentProject = results;
+              // fill in the names of the drop downs for diplay.
+              for (const resource of this.currentProject.resources) {
+                resource.roleName = this.util.findRoleName(resource.roleId);
+                resource.resourceTypeName = this.util.findTypeName(resource.resourceTypeId);
+              }
+              for (const fixedCost of this.currentProject.fixedPriceCosts) {
+                fixedCost.fixedPriceTypeName = this.util.findFixedPriceTypeName(fixedCost.fixedPriceTypeId);
+                fixedCost.resourceTypeName = this.util.findTypeName(fixedCost.resourceTypeId);
+              }
 
-            // fill in the names of the drop downs for diplay.
-            for (const resource of this.currentProject.resources) {
-              resource.roleName = this.util.findRoleName(resource.roleId);
-              resource.resourceTypeName = this.util.findTypeName(resource.resourceTypeId);
+              for (const month of this.currentProject.months) {
+                month.phaseName = this.util.findPhaseName(month.phaseId);
+              }
+            },
+            error => {
+              this.toast.error(error);
+              console.log(error);
             }
-            for (const fixedCost of this.currentProject.fixedPriceCosts) {
-              fixedCost.fixedPriceTypeName = this.util.findFixedPriceTypeName(fixedCost.fixedPriceTypeId);
-              fixedCost.resourceTypeName = this.util.findTypeName(fixedCost.resourceTypeId);
-            }
-
-            for (const month of this.currentProject.months) {
-              month.phaseName = this.util.findPhaseName(month.phaseId);
-            }
-
-
-
-            this.isLoading = false;
-          },
-          error => {
-            this.toast.error(error);
-            console.log(error);
-          }
-        );
+          );
+        }
+        this.isLoading = false;
       });
   }
   getTemplateList() {
@@ -132,7 +132,7 @@ export class ProjectComponent implements OnInit {
       case 'Forecast':
         this.forecastActive = true;
         break;
-        case 'Actuals':
+      case 'Actuals':
         this.actualsActive = true;
         break;
       case 'Vendors':

@@ -18,7 +18,7 @@ import {
     ProjectConfigComponent,
  } from '../configuration';
 
-import { ProjectDetailComponent } from '../project/project-detail/project-detail.component';
+import { ProjectComponent } from '../project/project.component';
 
 
 
@@ -62,7 +62,12 @@ import { ProjectDetailComponent } from '../project/project-detail/project-detail
               { path: 'projects', data: {'title': 'Configure Projects', 'breadcrumb': 'Projects'},
               children: [
                 { path: '', component: ProjectConfigComponent, data: {'title': 'Configure Projects', 'breadcrumb': 'Projects'}},
-                { path: 'details', component: ProjectDetailComponent, data: {'title': 'Edit Project', 'breadcrumb': 'Project'}},
+                { path: 'details', component: ProjectComponent, data: {'title': 'Edit Project', 'breadcrumb': 'Project'}},
+              ]},
+              { path: 'templates', data: {'title': 'Configure Templates', 'breadcrumb': 'Templates'},
+              children: [
+                { path: '', component: ProjectConfigComponent, data: {'title': 'Configure Templates', 'breadcrumb': 'Templates'}},
+                { path: 'details', component: ProjectComponent, data: {'title': 'Edit Project Template', 'breadcrumb': 'Template'}},
               ]},
           ]
         }
