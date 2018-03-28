@@ -1,0 +1,64 @@
+<div class="container" fxLayout="column" fxLayoutGap="20px">
+  <div class="card">
+    <div class="card-block">
+      <div *ngIf="isLoading">Loading Project List ...</div>
+      <div *ngIf="!isLoading">
+        <clr-datagrid>
+          <clr-dg-column>Project Name</clr-dg-column>
+          <clr-dg-column>Description</clr-dg-column>
+          <clr-dg-column>Group Name</clr-dg-column>
+          <clr-dg-column>Status</clr-dg-column>
+          <clr-dg-column>Edit</clr-dg-column>
+          <clr-dg-column>Delete</clr-dg-column>
+          <clr-dg-column>Details</clr-dg-column>
+          <clr-dg-row *ngFor="let project of projects">
+
+            <clr-dg-cell>{{project.projectName}}</clr-dg-cell>
+            <clr-dg-cell> {{project.projectDesc}}</clr-dg-cell>
+            <clr-dg-cell>{{project.groupName}}</clr-dg-cell>
+            <clr-dg-cell>{{project.statusName}}</clr-dg-cell>
+            <clr-dg-cell>
+              <a (click)="edit(project)">
+                <clr-icon shape="pencil" class="is-solid"></clr-icon>
+              </a>
+            </clr-dg-cell>
+            <clr-dg-cell>
+              <a ref (click)="confirmDelete(project)">
+                <clr-icon shape="trash" class="is-solid"></clr-icon>
+              </a>
+            </clr-dg-cell>
+            <clr-dg-cell>
+              <a ref (click)="showDetails(project.projectId)">
+                <clr-icon shape="trash" class="is-solid"></clr-icon>
+              </a>
+            </clr-dg-cell>
+          </clr-dg-row>
+
+          <clr-dg-footer>
+            <clr-dg-pagination #pagination [clrDgPageSize]="10">
+              {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{pagination.totalItems}} users
+            </clr-dg-pagination>
+
+          </clr-dg-footer>
+        </clr-datagrid>
+        <div class="card-block">
+            <button class="btn btn-primary" (click)="add()">
+              <clr-icon shape="plus"></clr-icon>Add New</button>
+          </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+<clr-modal [(clrModalOpen)]="showDeleteConf">
+  <h3 class="modal-title">Confirm Deletion</h3>
+  <div class="modal-body">
+    <p>Are you sure you want to delete?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>
+    <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+
+  </div>
+</clr-modal>

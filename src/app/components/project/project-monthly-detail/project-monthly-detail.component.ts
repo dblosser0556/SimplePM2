@@ -6,10 +6,10 @@ import {
   CapWeightPercent
 } from '../../../models';
 import { ProjectService } from '../../../services';
-import { ErrorMsgService, ToastrType } from '../../../services';
 import { UtilityService } from '../../../services/utility.service';
 import { ElementRef } from '@angular/core/src/linker/element_ref';
 import { ConfigService } from '../../../services/config.service';
+import { ToastrService } from 'ngx-toastr';
 
 
 
@@ -89,7 +89,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
-    private errors: ErrorMsgService,
+    private toast: ToastrService,
     private util: UtilityService,
     private config: ConfigService) {
 
@@ -121,9 +121,12 @@ export class ProjectMonthlyDetailComponent implements OnInit {
   saveProject() {
     this.projectService.update(this.project.projectId, this.project).subscribe(
       results => {
-        this.errors.showUserMessage(ToastrType.success, 'Congrates', 'Project has been saved', false, 2000);
+        this.toast.success.apply('Project has been saved', 'Congrates');
       },
-      errors => this.errors.showUserMessage(ToastrType.warning, 'Oops - Bad on Me', errors)
+      error => {
+        this.toast.error( error, 'Oops - Bad on Me');
+        console.log(error);
+      }
     );
 
 
@@ -167,7 +170,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
 
     const actualWidth = window.innerWidth;
     this.calcPageSize(actualWidth);
-    this.errors.showUserMessage(ToastrType.success, 'Congrates', 'Month has been added', false, 2000);
+    this.toast.success('Month has been added');
 
   }
 
@@ -199,9 +202,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
         this.addResourceMonth(resource, projectMonth.monthNo);
       }
     }
-
-    this.errors.showUserMessage(ToastrType.success, 'Congrates', 'Resource has been added', false, 2000);
-
+    this.toast.success('Resource has been add', 'Congrates');
   }
 
   addResourceMonth(resource: Resource, monthNo: number) {
@@ -256,8 +257,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
         this.addFixedPriceMonth(fixedPrice, projectMonth.monthNo);
       }
     }
-
-    this.errors.showUserMessage(ToastrType.success, 'Congrates', 'Fixed Price Row has been added', false, 2000);
+    this.toast.success('Fixed row has been added.', 'Congrates');
   }
 
   addFixedPriceMonth(projectFixedPrice: FixedPrice, monthNo: number) {
@@ -318,7 +318,6 @@ export class ProjectMonthlyDetailComponent implements OnInit {
       this.editingType = EditingType.resource;
       this.savedResource = new Resource(resource);
     } else if (this.editingIndex !== index || this.editingType !== EditingType.resource) {
-      // this.errors.showUserMessage(ToastrType.info, 'Sorry', 'Only one row at a time', false, 2000);
       this.saveOrCancelEdit();
       this.editResource(resource, index);
     }
@@ -408,8 +407,6 @@ export class ProjectMonthlyDetailComponent implements OnInit {
 
   // support fixed price entry rows
   // Manage in-line editing for the Project Resource
-
-
   editFixedPrice(fixedPrice, index) {
     if (this.editingIndex === -1) {
       fixedPrice.editMode = true;
@@ -591,7 +588,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
       this.lcol++;
       this.fcol++;
     } else {
-      this.errors.showUserMessage(ToastrType.info, 'Sorry', 'At the end', false, 2000);
+      this.toast.info('At the end', 'Sorry');
     }
 
   }
@@ -604,7 +601,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
       this.lcol = this.project.months.length;
       this.fcol = this.lcol - this.pageSize;
     } else {
-      this.errors.showUserMessage(ToastrType.info, 'Sorry', 'At the end', false, 2000);
+      this.toast.info('At the end', 'Sorry');
     }
 
   }
@@ -614,7 +611,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
       this.lcol--;
       this.fcol--;
     } else {
-      this.errors.showUserMessage(ToastrType.info, 'Sorry', 'At the end', false, 2000);
+      this.toast.info('At the end', 'Sorry');
     }
   }
 
@@ -626,7 +623,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
       this.lcol = this.pageSize;
       this.fcol = 0;
     } else {
-      this.errors.showUserMessage(ToastrType.info, 'Sorry', 'At the end', false, 2000);
+      this.toast.info('At the end', 'Sorry');
     }
 
   }

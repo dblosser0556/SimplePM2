@@ -5,7 +5,7 @@ import { CapWeightPercent, Project, Resource } from '../../../models';
     selector: 'app-command-menu',
     template: ` <button type="button" class="btn btn-secondary"
         (click)="updateCapWeightPercent([menuItem.capWeight], [menuItem.order])"
-        tooltip={{menuItem.description}}>{{menuItem.title}}</button>`
+        title={{menuItem.description}}>{{menuItem.title}}</button>`
 })
 export class CommandMenuComponent implements OnInit {
 

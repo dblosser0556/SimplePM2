@@ -37,14 +37,13 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   @Output() projectChange = new EventEmitter<Project>();
 
-  capBudget: number;
-  expBudget: number;
-
+  showDeleteConfirmation = false;
 
   projectForm: FormGroup;
   error: any;
-  colorTheme = 'theme-blue';
- 
+
+
+
   constructor(private projectService: ProjectService,
     private fb: FormBuilder,
     private toast: ToastrService) {
@@ -56,7 +55,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-   
+
     this.projectForm.reset({
       projectID: this.project.projectId,
 
@@ -71,7 +70,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
       groupId: this.project.groupId,
       statusId: this.project.statusId,
       templateId: -1,
-     
+
     });
     this.setBudget(BudgetType.Capital, this.project.budgets);
     this.setBudget(BudgetType.Expense, this.project.budgets);
@@ -191,22 +190,13 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
       amount: [budget.amount, Validators.required]
     });
   }
+
+  confirmDelete() {
+    this.showDeleteConfirmation = true;
+  }
   removePeriods() {
-    const initialState = {
-      title: 'Please Confirm',
-      message:  'Confirm removing all periods. ' +
-      'Once deleted, they can be recovered if not saved, by cancelling and refreshing the page. '
-    };
-
-    this.confirmModal = this.modalService.show(ConfirmationComponent, { initialState });
-    this.confirmModal.content.onClose.subscribe(res => {
-      if (res) {
-        this.project.fixedPriceCosts = [];
-        this.project.resources = [];
-        this.project.months = [];
-      }
-    });
-
+    this.project.fixedPriceCosts = [];
+    this.project.resources = [];
   }
 
   selectTemplate(templateId: number) {
@@ -245,7 +235,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   cancel() { this.projectChange.emit(this.project); }
 
- 
+
   addBudget(type: BudgetType) {
     if (type === BudgetType.Capital) {
       const budgets = this.projectForm.get('capBudgets') as FormArray;

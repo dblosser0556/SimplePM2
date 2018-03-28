@@ -14,10 +14,11 @@ import {
     AccountListComponent,
     RegistrationFormComponent,
     GroupComponent,
-    GroupDetailComponent
+    GroupDetailComponent,
+    ProjectConfigComponent,
  } from '../configuration';
 
-
+import { ProjectDetailComponent } from '../project/project-detail/project-detail.component';
 
 
 
@@ -57,6 +58,11 @@ import {
               children: [
                 { path: '', component: GroupComponent, data: {'title': 'Configure Project Groups', 'breadcrumb': 'Groups'}},
                 { path: 'details', component: GroupDetailComponent, data: {'title': 'Edit Project Group', 'breadcrumb': 'Group'}},
+              ]},
+              { path: 'projects', data: {'title': 'Configure Projects', 'breadcrumb': 'Projects'},
+              children: [
+                { path: '', component: ProjectConfigComponent, data: {'title': 'Configure Projects', 'breadcrumb': 'Projects'}},
+                { path: 'details', component: ProjectDetailComponent, data: {'title': 'Edit Project', 'breadcrumb': 'Project'}},
               ]},
           ]
         }

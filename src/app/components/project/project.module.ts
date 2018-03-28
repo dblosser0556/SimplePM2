@@ -17,7 +17,7 @@ import { ProjectChartComponent } from './project-chart/project-chart.component';
 import { ProjectService} from '../../services';
 
 import { ProjectCardMonthlySummaryComponent } from './project-card-monthly-summary/project-card-monthly-summary.component';
-import { ProjectCardModalComponent } from './project-card-modal/project-card-modal.component';
+
 
 
 
@@ -32,18 +32,15 @@ import { ProjectCardModalComponent } from './project-card-modal/project-card-mod
     ProjectCardSummaryComponent,
     ProjectChartComponent,
     CommandMenuComponent,
-    ProjectCardMonthlySummaryComponent,
-    ProjectCardModalComponent],
-    entryComponents: [ProjectCardModalComponent,
-      ProjectChartComponent],
+    ProjectCardMonthlySummaryComponent],
+   
   exports:      [
     ProjectComponent,
     ProjectDetailComponent,
     ProjectMonthlyDetailComponent,
     ProjectCardComponent,
     ProjectCardSummaryComponent,
-    ProjectChartComponent,
-    ProjectCardModalComponent
+    ProjectChartComponent
   ],
       providers:    [ProjectService]
 })

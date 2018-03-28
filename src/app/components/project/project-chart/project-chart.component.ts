@@ -1,8 +1,6 @@
 import { Component, OnInit, Input, ElementRef, HostListener } from '@angular/core';
 import { Project } from '../../../models';
 import * as moment from 'moment';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
-import { ProjectCardModalComponent } from '../project-card-modal/project-card-modal.component';
 
 export interface SeriesData {
   name: string;
@@ -43,13 +41,10 @@ export class ProjectChartComponent implements OnInit {
     domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA', '#CCCCCC', '#0756E4', '#987645', '#FF34589']
   };
 
-  chartModal: BsModalRef;
   // line, area
   autoScale = true;
 
-  constructor(private bsModalService: BsModalService,
-    private el: ElementRef) {
-
+  constructor(private el: ElementRef) {
   }
 
   

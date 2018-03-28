@@ -19,6 +19,7 @@ import { RegistrationFormComponent } from './account/registration-form/registrat
 
 import { RootComponent } from './root/root.component';
 
+import { ProjectConfigComponent } from './project/project-config.component';
 
 import { GroupComponent } from './group/group.component';
 import { GroupDetailComponent } from './group/group-detail/group-detail.component';
@@ -39,6 +40,7 @@ export {
     ResourceTypeDetailComponent,
     GroupComponent,
     GroupDetailComponent,
+    ProjectConfigComponent
 };
 
 export default [
@@ -56,5 +58,6 @@ export default [
     ResourceTypeComponent,
     ResourceTypeDetailComponent,
     GroupComponent,
-    GroupDetailComponent
+    GroupDetailComponent,
+    ProjectConfigComponent
 ];

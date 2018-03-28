@@ -7,11 +7,7 @@ import { SharedModule } from '../../modules/shared.module';
 import { routing } from './configuration.routing';
 import { ClarityModule } from '@clr/angular';
 import { HttpModule } from '@angular/http';
-
-/* import { AlertModule } from 'ngx-bootstrap/alert';
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker'; */
-
+import { ProjectModule } from '../project/project.module';
 
 import { FixedPriceTypeService } from './fixed-price-type/fixed-price-type.service';
 import { RoleService } from './role/role.service';
@@ -37,7 +33,8 @@ import {
   AccountListComponent,
   RegistrationFormComponent,
   GroupComponent,
-  GroupDetailComponent
+  GroupDetailComponent,
+  ProjectConfigComponent
 } from '../configuration';
 import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
 
@@ -53,7 +50,8 @@ import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
     ClarityModule,
     HttpModule,
     BrowserAnimationsModule,
-    ToastrModule.forRoot()
+    ToastrModule.forRoot(),
+    ProjectModule
   ],
   declarations: [
     RootComponent,
@@ -71,7 +69,8 @@ import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
     AccountListComponent,
     RegistrationFormComponent,
     GroupDetailComponent,
-    BreadcrumbsComponent
+    BreadcrumbsComponent,
+    ProjectConfigComponent
   ],
   providers: [
     PhaseService,

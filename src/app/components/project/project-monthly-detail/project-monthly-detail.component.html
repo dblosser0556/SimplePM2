@@ -34,7 +34,7 @@
           <th class="fixed-col">Vendor</th>
           <th class="fixed-col">Rate</th>
           <th class="month-col">
-            <a tooltip="Add Month" (click)="addMonth()">
+            <a title="Add Month" (click)="addMonth()">
               <i class="fas fa-plus-square"></i>
             </a>
           </th>
@@ -45,7 +45,7 @@
           <th class="action-col" [ngClass]="{
             'sub-header-row-forecast':selectedView==='Forecast',
             'sub-header-row-actual':selectedView==='Actuals'}">
-            <a tooltip="Add Resource" (click)="addResource()">
+            <a title="Add Resource" (click)="addResource()">
               <i class="fas fa-plus-square"></i>
             </a>
           </th>
@@ -156,7 +156,7 @@
         'sub-header-row-actual':selectedView==='Actuals'}">
 
         <th class="action-col">
-          <a class="btn btn-sm" tooltip="Add Fixed Cost" (click)="addProjectFixedPrice()">
+          <a class="btn btn-sm" title="Add Fixed Cost" (click)="addProjectFixedPrice()">
             <i class="fas fa-plus-square"></i>
           </a>
         </th>
