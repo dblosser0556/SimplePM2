@@ -22,7 +22,7 @@
 <div class="table-scroll">
 
   <div>
-    <table appMultiselect multi-cell-select (selectedCells)="getSelectedCells($event)" class="table table-sm" id="monthlydetail">
+    <table appMultiselect multi-cell-select (selectedCells)="getSelectedCells($event)"  id="monthlydetail">
       <thead [ngClass]="{
           'header-row-forecast':selectedView==='Forecast',
           'header-row-actual':selectedView==='Actuals'}">
@@ -35,7 +35,7 @@
           <th class="fixed-col">Rate</th>
           <th class="month-col">
             <a title="Add Month" (click)="addMonth()">
-              <i class="fas fa-plus-square"></i>
+              <clr-icon shape="plus-circle" class="is-solid"></clr-icon>
             </a>
           </th>
           <th class="month-col" *ngFor="let month of project.months.slice([fcol],[lcol])">{{project.startDate().setMonth(project.startDate().getMonth() + month.monthNo - 1) |date:'MMM-yy' }}</th>
@@ -46,7 +46,7 @@
             'sub-header-row-forecast':selectedView==='Forecast',
             'sub-header-row-actual':selectedView==='Actuals'}">
             <a title="Add Resource" (click)="addResource()">
-              <i class="fas fa-plus-square"></i>
+              <clr-icon shape="plus-circle" class="is-solid"></clr-icon>
             </a>
           </th>
           <th class="fixed-col"></th>
@@ -68,16 +68,16 @@
       <tr *ngFor="let resource of project.resources; let i = index">
         <th class="action">
           <a *ngIf="!resource.editMode" (click)="deleteResource(resource, i)">
-            <i class="fas fa-trash"></i>
+            <clr-icon shape="trash" class="is-solid"></clr-icon>
           </a>
           <a *ngIf="!resource.editMode" (click)="editResource(resource, i)">
-            <i class="fas fa-edit"></i>
+            <clr-icon shape="pencil" class="is-solid"></clr-icon>
           </a>
           <a *ngIf="resource.editMode" (click)="saveResourceEdit(resource, i)">
-            <i class="fas fa-save"></i>
+            <clr-icon shape="floppy" class="is-solid"></clr-icon>
           </a>
           <a *ngIf="resource.editMode" (click)="cancelResourceEdit(resource, i)">
-            <i class="fas fa-ban"></i>
+            <clr-icon shape="ban"></clr-icon>
           </a>
         </th>
         <th class="fixed-col" (click)="editResource(resource, i)" title="Click to edit">
@@ -127,7 +127,7 @@
             }">
               <div *ngIf="!resource.editMode"> {{month.plannedEffort}}</div>
               <input (blur)="updateResource($event, 'effortmonth', resource, month, m)" *ngIf="resource.editMode" name="resourceMonth"
-                class="form-control" type="text" [value]="month.plannedEffort">
+                class="form-control" type="text" size="5" [value]="month.plannedEffort">
             </div>
           </ng-container>
           <ng-container *ngIf="selectedView=='Actuals'">
@@ -143,7 +143,7 @@
             }">
               <div *ngIf="!resource.editMode"> {{month.actualEffort}}</div>
               <input (blur)="updateResource($event, 'actualmonth', resource, month, m)" *ngIf="resource.editMode" name="resourceMonth"
-                class="form-control" type="text" [value]="month.actualEffort">
+                class="form-control" type="text" size="5"  [value]="month.actualEffort">
             </div>
           </ng-container>
 
@@ -157,7 +157,7 @@
 
         <th class="action-col">
           <a class="btn btn-sm" title="Add Fixed Cost" (click)="addProjectFixedPrice()">
-            <i class="fas fa-plus-square"></i>
+            <clr-icon shape="plus-circle" class="is-solid"></clr-icon>
           </a>
         </th>
 
@@ -173,16 +173,16 @@
       <tr *ngFor="let fixedPrice of project.fixedPriceCosts; let f = index">
         <th class="action">
           <a *ngIf="!fixedPrice.editMode" (click)="deleteFixedPrice(fixedPrice, f)">
-            <i class="fas fa-trash"></i>
+            <clr-icon shape="trash" class="is-solid"></clr-icon>
           </a>
           <a *ngIf="!fixedPrice.editMode" (click)="editFixedPrice(fixedPrice, f)">
-            <i class="fas fa-edit"></i>
+            <clr-icon shape="pencil" class="is-solid"></clr-icon>
           </a>
           <a *ngIf="fixedPrice.editMode" (click)="saveFixedPriceEdit(fixedPrice, f)">
-            <i class="fas fa-save"></i>
+            <clr-icon shape="floppy" class="is-solid"></clr-icon>
           </a>
           <a *ngIf="fixedPrice.editMode" (click)="cancelFixedPriceEdit(fixedPrice, f)">
-            <i class="fas fa-ban"></i>
+            <clr-icon shape="ban"></clr-icon>
           </a>
         </th>
         <th class="fixed-col" (click)="editFixedPrice(fixedPrice, f)">
@@ -227,7 +227,7 @@
               'error':month.plannedCostInError && selectedView == 'Forecast'}">
               <div *ngIf="!fixedPrice.editMode">{{month.plannedCost | currency:'USD':'symbol-narrow':'0.0-0'}}</div>
               <input (blur)="updateFixedPrice($event, 'plannedcost', fixedPrice, month, fm)" *ngIf="fixedPrice.editMode" name="fixedPriceMonth"
-                class="form-control" type="text" [value]="month.plannedCost">
+                class="form-control" type="text" size="5" [value]="month.plannedCost">
             </div>
           </ng-container>
           <ng-container *ngIf="selectedView=='Actuals'">
@@ -315,18 +315,18 @@
           <th [appColspan]="pageSize">
             <div *ngIf="showPaginator" class="pagination">
               <a (click)="pageLeft()">
-                <i class="fas fa-angle-double-left"></i>
+                <clr-icon shape="angle-double left"></clr-icon>
               </a>
               <a (click)="scrollLeft()">
-                <i class="fas fa-angle-left"></i>
+                <clr-icon shape="angle left"></clr-icon>
               </a>
               <a>{{fcol + 1}}&nbsp;-{{lcol + 1}}&nbsp;of&nbsp;{{project.months.length + 1}}&nbsp;Months
               </a>
               <a (click)="scrollRight()">
-                <i class="fas fa-angle-right"></i>
+                <clr-icon shape="angle right"></clr-icon>
               </a>
               <a (click)="pageRight()">
-                <i class="fas fa-angle-double-right"></i>
+                <clr-icon shape="angle-double"></clr-icon>
               </a>
             </div>
           </th>
