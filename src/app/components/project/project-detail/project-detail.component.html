@@ -3,97 +3,97 @@
     <form (ngSubmit)="onSubmit()" name="projectForm" class="project-form" [formGroup]="projectForm" novalidate>
       <div class="row">
         <div class="column">
-          <input readonly hidden formControlName="projectID" class="required">
+          <section class="form-block">
+            <label>Project Details Details</label>
+            <input readonly hidden formControlName="projectID" class="required">
 
-          <div class="form-group">
-            <label class="required">Name:</label>
-            <label for="projectName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" 
-            [class.invalid]="projectName.invalid && projectName.dirty || projectName.touched">
-              <input id="projectName" type="text" size="15" formControlName="projectName" placeholder="Project Name" required>
-              <span class="tooltip-content">
-                Project Name is required!
-              </span>
-            </label>
-          </div>
-          <div class="form-group">
-            <label for="projectDesc">Description:</label>
-            <input type="text" id="projectDesc" formControlName="projectDesc">
-          </div>
-          <div class="form-group">
-            <label class="required">Project Group:</label>
-            <div class="select">
-              <select  formControlName="groupId" required>
-                <option *ngFor="let group of groupList" [value]="group.groupId">{{group.groupName}}</option>
-              </select>
-            </div>
-            <clr-tooltip *ngIf="projectGroup.invalid && (projectGroup.dirty || projectGroup.touched)">
-                <clr-icon class="is-error" clrTooltipTrigger shape="info-circle" size="24"></clr-icon>
-                <clr-tooltip-content clrPosition="top-left" clrSize="sm" *clrIfOpen>
-                    <span>Group is Required</span>
-                </clr-tooltip-content>
-            </clr-tooltip>
-          </div>
-
-
-
-          <div class="form-group">
-            <label for="projectManager" class="required">Project Manager:</label>
-            <div class="select">
-              <select id="projectManager" formControlName="projectManager">
-                <option *ngFor="let pm of  pmList" [value]="pm.currentUser.userId">{{pm.currentUser.lastName}},&nbsp;{{pm.currentUser.firstName}}</option>
-              </select>
-            </div>
-            <clr-tooltip *ngIf="projectManager.invalid && (projectManager.dirty || projectManager.touched)">
-                <clr-icon class="is-error" clrTooltipTrigger shape="info-circle" size="24"></clr-icon>
-                <clr-tooltip-content clrPosition="top-left" clrSize="sm" *clrIfOpen>
-                    <span>Project Manager is Required</span>
-                </clr-tooltip-content>
-            </clr-tooltip>
-          </div>
-          <div class="form-group">
-            <label for="projectStatus">Project Status:</label>
-            <div class="select">
-              <select id="projectStatus" formControlName="statusId">
-                <option *ngFor="let status of statusList" [value]="status.statusId">{{status.statusName}}</option>
-              </select>
-            </div>
-            <clr-tooltip *ngIf="projectStatus.invalid && (projectStatus.dirty || projectStatus.touched)">
-                <clr-icon class="is-error" clrTooltipTrigger shape="info-circle" size="24"></clr-icon>
-                <clr-tooltip-content clrPosition="top-left" clrSize="sm" *clrIfOpen>
-                    <span>Project status is Required</span>
-                </clr-tooltip-content>
-            </clr-tooltip>
-          </div>
-          <div class="form-group" *ngIf="createTemplate">
-            <clr-checkbox [clrDisabled]="true" formControlName="isTemplate" [clrChecked]="true">
-              Is Template?
-            </clr-checkbox>
-          </div>
-
-          <div class="form-group" *ngIf="project.months.length==0&&project.projectId!=null">
-            <label class="center-block">Project Template:</label>
-            <select class="form-control" formControlName="templateId" (change)="selectTemplate($event.target.value)">
-              <option [value]=-1>--Select--</option>
-              <option *ngFor="let template of  templateList" [value]="template.projectId">{{template.projectName}}</option>
-            </select>
-          </div>
-          <div class="form-group">
-              <label class="required">Planned Start:</label>
-              <label for="plannedStartDate" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" 
-              [class.invalid]="plannedStartDate.invalid && (plannedStartDate.dirty || plannedStartDate.touched)">
-                <input id="plannedStartDate" type="date" size="15" formControlName="projectName" placeholder="Project Name" required>
+            <div class="form-group">
+              <label class="required">Name:</label>
+              <label for="projectName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="projectName.invalid && projectName.dirty || projectName.touched">
+                <input id="projectName" type="text" size="15" formControlName="projectName" placeholder="Project Name" required>
                 <span class="tooltip-content">
-                    Planned Start Date is required!
+                  Project Name is required!
                 </span>
               </label>
-            
-          </div>
-          <div class="form-group">
-            <label class="center-block">Actual Start:</label>
-            <input type="date" formControlName="actualStartDate">
-          </div>
+            </div>
+            <div class="form-group">
+              <label for="projectDesc">Description:</label>
+              <input type="text" id="projectDesc" formControlName="projectDesc">
+            </div>
+            <div class="form-group">
+              <label class="required">Project Group:</label>
+              <div class="select">
+                <select formControlName="groupId" required>
+                  <option *ngFor="let group of groupList" [value]="group.groupId">{{group.groupName}}</option>
+                </select>
+              </div>
+              <clr-tooltip *ngIf="projectGroup.invalid && (projectGroup.dirty || projectGroup.touched)">
+                <clr-icon class="is-error" clrTooltipTrigger shape="info-circle" size="24"></clr-icon>
+                <clr-tooltip-content clrPosition="top-left" clrSize="sm" *clrIfOpen>
+                  <span>Group is Required</span>
+                </clr-tooltip-content>
+              </clr-tooltip>
+            </div>
 
 
+
+            <div class="form-group">
+              <label for="projectManager" class="required">Project Manager:</label>
+              <div class="select">
+                <select id="projectManager" formControlName="projectManager">
+                  <option *ngFor="let pm of  pmList" [value]="pm.currentUser.userId">{{pm.currentUser.lastName}},&nbsp;{{pm.currentUser.firstName}}</option>
+                </select>
+              </div>
+              <clr-tooltip *ngIf="projectManager.invalid && (projectManager.dirty || projectManager.touched)">
+                <clr-icon class="is-error" clrTooltipTrigger shape="info-circle" size="24"></clr-icon>
+                <clr-tooltip-content clrPosition="top-left" clrSize="sm" *clrIfOpen>
+                  <span>Project Manager is Required</span>
+                </clr-tooltip-content>
+              </clr-tooltip>
+            </div>
+            <div class="form-group">
+              <label for="projectStatus">Project Status:</label>
+              <div class="select">
+                <select id="projectStatus" formControlName="statusId">
+                  <option *ngFor="let status of statusList" [value]="status.statusId">{{status.statusName}}</option>
+                </select>
+              </div>
+              <clr-tooltip *ngIf="projectStatus.invalid && (projectStatus.dirty || projectStatus.touched)">
+                <clr-icon class="is-error" clrTooltipTrigger shape="info-circle" size="24"></clr-icon>
+                <clr-tooltip-content clrPosition="top-left" clrSize="sm" *clrIfOpen>
+                  <span>Project status is Required</span>
+                </clr-tooltip-content>
+              </clr-tooltip>
+            </div>
+            <div class="form-group" *ngIf="createTemplate">
+              <clr-checkbox [clrDisabled]="true" formControlName="isTemplate" [clrChecked]="true">
+                Is Template?
+              </clr-checkbox>
+            </div>
+
+            <div class="form-group" *ngIf="project.months.length==0&&project.projectId!=null">
+              <label class="center-block">Project Template:</label>
+              <select class="form-control" formControlName="templateId" (change)="selectTemplate($event.target.value)">
+                <option [value]=-1>--Select--</option>
+                <option *ngFor="let template of  templateList" [value]="template.projectId">{{template.projectName}}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="required">Planned Start:</label>
+              <label for="plannedStartDate" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="plannedStartDate.invalid && (plannedStartDate.dirty || plannedStartDate.touched)">
+                <input id="plannedStartDate" type="date" size="15" formControlName="projectName" placeholder="Project Name" required>
+                <span class="tooltip-content">
+                  Planned Start Date is required!
+                </span>
+              </label>
+
+            </div>
+            <div class="form-group">
+              <label class="center-block">Actual Start:</label>
+              <input type="date" formControlName="actualStartDate">
+            </div>
+
+          </section>
         </div>
         <div class="column">
           <section class="form-block">
@@ -112,7 +112,7 @@
                   <td>
                     <input type="date" formControlName="approvedDateTime" size="10">
                   </td>
-                 
+
                   <td class="pull-right">
                     <input type="text" formControlName="amount" size="10">
                   </td>
@@ -196,12 +196,12 @@
   </div>
 </clr-modal>
 <clr-modal [(clrModalOpen)]="showDeleteBudget">
-    <h3 class="modal-title">Confirm Deletion</h3>
-    <div class="modal-body">
-      <p>Are you sure you want to delete this budget?</p>
-    </div>
-    <div class="modal-footer">   
-      <button type="button" class="btn btn-outline" (click)="showDeleteBudget = false">Cancel</button>
-      <button type="button" class="btn btn-warning" (click)="removeBudget()">Delete</button>
-    </div>
-  </clr-modal>
+  <h3 class="modal-title">Confirm Deletion</h3>
+  <div class="modal-body">
+    <p>Are you sure you want to delete this budget?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="showDeleteBudget = false">Cancel</button>
+    <button type="button" class="btn btn-warning" (click)="removeBudget()">Delete</button>
+  </div>
+</clr-modal>

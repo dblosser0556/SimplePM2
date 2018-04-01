@@ -22,7 +22,7 @@ import { ProjectComponent } from '../project/project.component';
 
 
 
-    export const routing: ModuleWithProviders = RouterModule.forChild([
+    export const configurationRouting: ModuleWithProviders = RouterModule.forChild([
         {
           path: 'configuration',
           component: RootComponent, data: {'title': 'root', 'breadcrumb': 'Configuration'},

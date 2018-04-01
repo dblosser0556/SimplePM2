@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit, ViewChild } from '@angular/core';
 import { ProjectList, Project } from '../../../models';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../../../services';
@@ -12,6 +12,11 @@ export class ProjectCardComponent implements OnInit, AfterViewInit {
 
   @Input() projectSummary: ProjectList;
   @Input() allowEdit: boolean;
+
+
+
+  showCap = true;
+  showExp = true;
 
   project: Project;
   view = 'summary';
@@ -31,10 +36,10 @@ export class ProjectCardComponent implements OnInit, AfterViewInit {
       }
     );
   }
-
   ngAfterViewInit() {
-    this.showView = 'summary';
+    
   }
+ 
   editDetails(id: number) {
     this.router.navigate(['./project'], { queryParams: { projectId: id },  relativeTo: this.route });
   }

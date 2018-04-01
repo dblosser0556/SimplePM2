@@ -1,20 +1,40 @@
-<div>
+<div class="row">
   <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [results]="data" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis"
     [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
     [autoScale]="autoScale" (select)="staticModal.show()">
   </ngx-charts-line-chart>
 </div>
+<div class="row">
+  <clr-checkbox [clrChecked]="viewCapValues" [clrInline]="true" (change)="showCapChart()" title="Show Capital Projections">
+    Capital
+  </clr-checkbox>
+
+  <clr-checkbox [clrChecked]="viewExpValues" [clrInline]="true" (change)="showExpChart()" title="Show Expense Projections">
+    Expense
+  </clr-checkbox>
 
 
-<clr-modal [(clrModalOpen)]="showDeleteConf" [clrModalSize]="'lg'">
+  <button class="btn btn-info btn-sm" (click)="showEnlargedChart()">Enlarge</button>
+</div>
+
+
+<clr-modal [(clrModalOpen)]="viewEnlargedChartModal" [clrModalSize]="'lg'">
   <h3 class="modal-title"></h3>
   <div class="modal-body">
-    <ngx-charts-line-chart [view]="[800,600]" [scheme]="colorScheme" [results]="data" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis"
-      [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
-      [autoScale]="autoScale" (select)="onSelect($event)">
+    <ngx-charts-line-chart [view]="[800,600]" [scheme]="colorScheme" [results]="data" [gradient]="gradient" [xAxis]="showXAxis"
+      [yAxis]="showYAxis" [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel"
+      [yAxisLabel]="yAxisLabel" [autoScale]="autoScale" (select)="onSelect($event)">
     </ngx-charts-line-chart>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+
+      <clr-checkbox [clrChecked]="viewCapValues" [clrInline]="true" (change)="showCapChart()" title="Show Capital Projections">
+          Show Capital
+        </clr-checkbox>
+      
+        <clr-checkbox [clrChecked]="viewExpValues" [clrInline]="true" (change)="showExpChart()" title="Show Expense Projections">
+          Show Expense
+        </clr-checkbox>
+         <button type="button" class="btn btn-outline" (click)="viewEnlargedChartModal = false">Cancel</button>
   </div>
 </clr-modal>

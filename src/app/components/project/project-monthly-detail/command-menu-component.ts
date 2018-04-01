@@ -3,7 +3,7 @@ import { CapWeightPercent, Project, Resource } from '../../../models';
 
 @Component({
     selector: 'app-command-menu',
-    template: ` <button type="button" class="btn btn-secondary"
+    template: ` <button type="button" class="btn"
         (click)="updateCapWeightPercent([menuItem.capWeight], [menuItem.order])"
         title={{menuItem.description}}>{{menuItem.title}}</button>`
 })

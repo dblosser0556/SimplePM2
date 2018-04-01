@@ -121,7 +121,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
   saveProject() {
     this.projectService.update(this.project.projectId, this.project).subscribe(
       results => {
-        this.toast.success.apply('Project has been saved', 'Congrates');
+        this.toast.success('Project has been saved', 'Congrates');
       },
       error => {
         this.toast.error( error, 'Oops - Bad on Me');

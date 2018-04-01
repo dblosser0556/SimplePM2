@@ -1,23 +1,14 @@
-<div class="container-fluid planning-grid">
-  <nav class="navbar navbar-expand-lg navbar-light bg-light fixed">
 
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-      aria-expanded="false" aria-label="Toggle navigation">
-      <div class="navbar-toggler-icon"></div>
-    </button>
-
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-        <div class="btn-group mr-2" role="group" aria-label="Second group">
-          <div *ngFor="let menuItem of menuItems let i = index">
-            <app-command-menu [menuItem]="menuItem" [selectedCells]="selectedCells" [project]="project" [selectedView]="selectedView"
-              (updateAllMonthlyTotals)="updateAllMonthlyTotals()"></app-command-menu>
-          </div>
-        </div>
-      </ul>
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit" [disabled]="editingIndex !== -1" (click)="saveProject()">Save</button>
-    </div>
-  </nav>
+<div style="height: 60px">
+  <div class="btn-group btn-primary" style="float:left" *ngFor="let menuItem of menuItems let i = index">
+    <app-command-menu [menuItem]="menuItem" [selectedCells]="selectedCells" [project]="project" [selectedView]="selectedView"
+    (updateAllMonthlyTotals)="updateAllMonthlyTotals()"></app-command-menu>
+  </div>
+  <div style="float:right">
+  <div class="btn-group btn-primary">
+    <button class="btn"  type="submit" [disabled]="editingIndex !== -1" (click)="saveProject()">Save</button>
+  </div>
+  </div>
 </div>
 <div class="table-scroll">
 

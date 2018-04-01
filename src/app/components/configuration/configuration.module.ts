@@ -4,11 +4,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from '../../modules/shared.module';
-import { routing } from './configuration.routing';
+import { configurationRouting } from './configuration.routing';
 import { ClarityModule } from '@clr/angular';
 import { HttpModule } from '@angular/http';
 import { ProjectModule } from '../project/project.module';
-
+import { BreadcrumbsModule } from '../breadcrumbs/breadcrumbs.module';
 import { FixedPriceTypeService } from './fixed-price-type/fixed-price-type.service';
 import { RoleService } from './role/role.service';
 import { StatusService } from './status/status.service';
@@ -36,22 +36,21 @@ import {
   GroupDetailComponent,
   ProjectConfigComponent
 } from '../configuration';
-import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
-
 
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
-    routing,
+    configurationRouting,
     SharedModule,
     ReactiveFormsModule,
     ClarityModule,
     HttpModule,
     BrowserAnimationsModule,
     ToastrModule.forRoot(),
-    ProjectModule
+    ProjectModule,
+    BreadcrumbsModule
   ],
   declarations: [
     RootComponent,
@@ -69,7 +68,6 @@ import { BreadcrumbsComponent } from '../breadcrumbs/breadcrumbs.component';
     AccountListComponent,
     RegistrationFormComponent,
     GroupDetailComponent,
-    BreadcrumbsComponent,
     ProjectConfigComponent
   ],
   providers: [

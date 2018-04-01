@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ElementRef, HostListener } from '@angular/core';
-import { Project } from '../../../models';
+import { Project, BudgetType } from '../../../models';
 import * as moment from 'moment';
 
 export interface SeriesData {
@@ -19,13 +19,16 @@ export interface ChartData {
 })
 export class ProjectChartComponent implements OnInit {
   @Input() project: Project;
-  @Input() enableModal: boolean;
+  @Input() enableModal: Boolean;
+  viewCapValues = true;
+  viewExpValues = true;
+  viewEnlargedChartModal = false;
 
   title: string;
   data: ChartData[] = [];
 
   // view: any[] = [500, 400];
-  view: any[] = [370, 275];
+  view: any[] = [];
 
   // options
   showXAxis = true;
@@ -47,171 +50,213 @@ export class ProjectChartComponent implements OnInit {
   constructor(private el: ElementRef) {
   }
 
-  
+  showCapChart() {
+    this.viewCapValues = !this.viewCapValues;
+    this.convertData();
+  }
+
+  showExpChart() {
+    this.viewExpValues = !this.viewExpValues;
+    this.convertData();
+  }
+
+  showEnlargedChart() {
+    this.viewEnlargedChartModal = true;
+  }
+
   ngOnInit() {
     this.convertData();
 
     const height = this.el.nativeElement.parentElement.clientHeight;
     const width = this.el.nativeElement.parentElement.clientWidth;
-     console.log('height: ', height, ' width: ', width);
-   // this.view = [width, height];
+    console.log('height: ', height, ' width: ', width);
+    this.view = [width - 30, height];
     this.title = this.project.projectName;
   }
 
 
   // convert the monthly data to an array of cummulative data
   convertData() {
+    // empty the data
+    this.data = [];
+
     const plannedCapitalSeries = new Array();
     const actualCapitalSeries = new Array();
     const capitalBudgetSeries = new Array();
     const plannedExpenseSeries = new Array();
     const actualExpenseSeries = new Array();
     const expenseBudgetSeries = new Array();
-
+    const capEAC = new Array();
+    const expEAC = new Array();
 
 
     const plannedStartDate = moment(this.project.startDate());
     let cumPlannedCap = 0;
-    let cumActualCap = 0;
     let cumPlannedExp = 0;
-    let cumActualExp = 0;
+
+    let cumCapEAC = 0;
+    let cumExpEAC = 0;
 
     let countActualCapMonths = 0;
     let countActualExpMonths = 0;
+    let countPlannedMonths = 0;
 
+    // for EAC find the last actual month
+    // the assumption is the last actual month
+    // with a value will be used
+    // also find the last planned month so we only
+    // chart planned months.  There maybe project
+    // months that are unplanned but in the array.
+    let count = 0;
     for (const month of this.project.months) {
+      if (month.totalActualCapital > 0) {
+        countActualCapMonths = count;
+      }
 
-        const monthName = plannedStartDate.month(month.monthNo).format('YYYY-MM');
-        cumPlannedCap += month.totalPlannedCapital;
-        let rowData: SeriesData = {
+      if (month.totalActualExpense > 0) {
+        countActualExpMonths = count;
+      }
+
+      if (month.totalPlannedCapital > 0 || month.totalPlannedExpense > 0) {
+        countPlannedMonths = count;
+      }
+      count++;
+
+    }
+    const lastActualMonth = (countActualExpMonths >= countActualCapMonths) ? countActualExpMonths : countActualCapMonths;
+
+    // calculate the total budget
+    count = 0;
+    let totalCapitalBudget = 0;
+    let totalExpenseBudget = 0;
+    for (const budget of this.project.budgets) {
+      if (budget.budgetType === BudgetType.Capital) {
+        totalCapitalBudget += budget.amount;
+      } else {
+        totalExpenseBudget += budget.amount;
+      }
+    }
+
+    const months = this.project.months;
+
+
+    for (let i = 0; i <= countPlannedMonths; i++) {
+
+      const monthName = plannedStartDate.month(months[i].monthNo).format('YYYY-MM');
+      let rowData: SeriesData;
+
+      if (this.viewCapValues) {
+
+        // add a series element for all planned months
+        cumPlannedCap += months[i].totalPlannedCapital;
+        rowData = {
           name: monthName,
           value: cumPlannedCap
         };
         plannedCapitalSeries.push(rowData);
 
-        cumActualCap += month.totalActualCapital;
+        // create the EAC series which is the actual series
+        // extended by the EAC series so we can show a
+        // two colored line.
+        if (count < lastActualMonth) {
+          cumCapEAC += months[i].totalActualCapital;
 
-        rowData = {
-          name: monthName,
-          value: cumActualCap
-        };
-        actualCapitalSeries.push(rowData);
-        if (month.totalActualCapital > 0 ) {
-          countActualCapMonths = actualCapitalSeries.length;
+        } else {
+          cumCapEAC += months[i].totalPlannedCapital;
         }
+        rowData = {
+          name: monthName,
+          value: cumCapEAC
+        };
+        capEAC.push(rowData);
+
 
 
         rowData = {
           name: monthName,
-          value: 50000
+          value: totalCapitalBudget
         };
         capitalBudgetSeries.push(rowData);
+      }
 
-        cumPlannedExp += month.totalPlannedExpense;
+      if (this.viewExpValues) {
+
+
+        cumPlannedExp += months[i].totalPlannedExpense;
         rowData = {
           name: monthName,
           value: cumPlannedExp
         };
         plannedExpenseSeries.push(rowData);
 
-        cumActualExp += month.totalActualExpense;
-        rowData = {
-          name: monthName,
-          value: cumActualExp
-        };
-        actualExpenseSeries.push(rowData);
-        if (month.totalActualExpense > 0 ) {
-          countActualExpMonths = actualExpenseSeries.length;
+        // create the EAC series which is the actual series
+        // extended by the EAC series so we can show a
+        // two colored line.
+        if (count < lastActualMonth) {
+
+          cumExpEAC += months[i].totalActualExpense;
+          actualExpenseSeries.push(rowData);
+        } else {
+          cumCapEAC += months[i].totalPlannedExpense;
         }
         rowData = {
           name: monthName,
-          value: 100000
-        };
-        expenseBudgetSeries.push(rowData);
-
-    }
-
-    let chartData: ChartData = {
-      name: 'Planned Capital',
-      series: plannedCapitalSeries
-    };
-    this.data.push(chartData);
-
-    chartData = {
-      name: 'Actual Capital',
-      series: actualCapitalSeries
-    };
-    this.data.push(chartData);
-
-    chartData = {
-      name: 'Capital Budget',
-      series: expenseBudgetSeries
-    };
-
-    this.data.push(chartData);
-
-    chartData = {
-      name: 'Planned Expense',
-      series: plannedExpenseSeries
-    };
-    this.data.push(chartData);
-
-    chartData = {
-      name: 'Actual Expense',
-      series: actualExpenseSeries
-    };
-    this.data.push(chartData);
-
-    chartData = {
-      name: 'Expense Budget',
-      series: expenseBudgetSeries
-    };
-    this.data.push(chartData);
-
-     // estimated at completion (EAC) uses all of the actual months
-    // then continues with the planned months.
-    const capEAC = new Array();
-    const expEAC = new Array();
-
-    let cumCapEAC = 0;
-    let cumExpEAC = 0;
-
-    const lastActualMonth = (countActualExpMonths >= countActualCapMonths) ? countActualExpMonths : countActualCapMonths;
-    for (let i = 0; i < lastActualMonth; i++) {
-      capEAC.push(actualCapitalSeries[i]);
-      expEAC.push(actualExpenseSeries[i]);
-    }
-    cumCapEAC = actualCapitalSeries[lastActualMonth].value;
-    cumExpEAC = actualExpenseSeries[lastActualMonth].value;
-
-    for (let i = lastActualMonth; i < this.project.months.length; i++) {
-        cumCapEAC += this.project.months[i].totalPlannedCapital;
-        let rowData: SeriesData = {
-          name: actualCapitalSeries[i].name,
           value: cumCapEAC
         };
-        capEAC.push(rowData);
-
-        cumExpEAC += this.project.months[i].totalPlannedExpense;
-        rowData = {
-          name: actualExpenseSeries[i].name,
-          value: cumExpEAC
-        };
         expEAC.push(rowData);
+
+        rowData = {
+          name: monthName,
+          value: totalExpenseBudget
+        };
+        expenseBudgetSeries.push(rowData);
+      }
     }
-    chartData = {
-      name: 'Exp EAC',
-      series: expEAC
-    };
-    this.data.push(chartData);
 
-    chartData = {
-      name: 'Cap EAC',
-      series: capEAC
-    };
+    let chartData: ChartData;
 
-    this.data.push(chartData);
+    if (this.viewCapValues) {
+      chartData = {
+        name: 'Planned Capital',
+        series: plannedCapitalSeries
+      };
+      this.data.push(chartData);
 
+
+      chartData = {
+        name: 'Capital Budget',
+        series: expenseBudgetSeries
+      };
+      this.data.push(chartData);
+
+      chartData = {
+        name: 'Cap EAC',
+        series: capEAC
+      };
+      this.data.push(chartData);
+
+    }
+
+    if (this.viewExpValues) {
+      chartData = {
+        name: 'Planned Expense',
+        series: plannedExpenseSeries
+      };
+      this.data.push(chartData);
+
+      chartData = {
+        name: 'Expense Budget',
+        series: expenseBudgetSeries
+      };
+      this.data.push(chartData);
+
+      chartData = {
+        name: 'Exp EAC',
+        series: expEAC
+      };
+      this.data.push(chartData);
+
+    }
     console.log(this.data);
   }
 }

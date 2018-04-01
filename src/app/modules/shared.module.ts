@@ -11,12 +11,9 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { BrowserAnimationsModule  } from '@angular/platform-browser/animations';
 
-
-
-
 import { ColspanDirective } from '../directives/colspan.directive';
 import { MultiselectDirective } from '../directives/multiselect.directive';
-
+import { FixedHeaderDirective } from '../directives/fixed-header.directive';
 
 // import { ConfirmationComponent } from '../components/confirmation/confirmation.component';
 
@@ -26,8 +23,8 @@ import { UtilityService } from '../services/utility.service';
 
 @NgModule({
   imports:      [CommonModule, HttpClientModule,  BrowserAnimationsModule],
-  declarations: [ColspanDirective, MultiselectDirective],
-  exports:      [ColspanDirective, MultiselectDirective],
+  declarations: [ColspanDirective, MultiselectDirective, FixedHeaderDirective],
+  exports:      [ColspanDirective, MultiselectDirective, FixedHeaderDirective],
   providers:    [ConfigService, UserService, UtilityService]
 })
 export class SharedModule { }

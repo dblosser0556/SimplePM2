@@ -7,6 +7,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginModule } from './components/login/login.module';
 import { ConfigService } from './services';
 import { ConfigurationModule } from './components/configuration/configuration.module';
+import { DashboardModule } from './components/dashboard/dashboard.module';
 import { AppComponent, HomeComponent, HeaderComponent } from './components';
 import { routing } from './app.routing';
 
@@ -25,7 +26,8 @@ import { routing } from './app.routing';
     ToastrModule.forRoot(),
     routing,
     LoginModule,
-    ConfigurationModule
+    ConfigurationModule,
+    DashboardModule
   ],
   providers: [ConfigService],
   bootstrap: [AppComponent]
