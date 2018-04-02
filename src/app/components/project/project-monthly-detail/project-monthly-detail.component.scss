@@ -1,15 +1,20 @@
-
-
-
-.table, .table-sm {
+.table {
   font-size: .7rem;
   table-layout: auto;
   width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: #fff;
 
 }
 
 
 
+.table th {
+  font-size: .55rem;
+  padding-top: 2px;
+  padding-bottom: 2px;
+}
 
 
 .scrolling {
@@ -91,19 +96,23 @@ select.form-control {
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
 }
-.header-row-forecast { 
-  background: #7386D5;
-  color: #fff;
+
+ .header-row-forecast { 
+  background: rgb(197, 198, 204);
+  color: rgb(73, 73, 73);
+  border-bottom: 1px solid #000000;
 }
 
 .sub-header-row-forecast { 
   background: rgb(154, 167, 216);
   color: #fff;
+  border-bottom: 1px solid #000000;
 }
 
 .footer-row-forecast {
   background: #7386D5;
   color: #fff;
+  border-bottom: 1px solid #000000;
 }
 
 .header-row-actual { 
@@ -135,16 +144,18 @@ td:hover {
 td {
   text-align: center;
   font-weight: normal;
-  color: #858584;
+ // color: #858584;
   padding: 0px;
+ 
 }
 
 th {
   text-align: center;
   font-weight: bolder;
-  color: #2c2c2c;
+ // color: #2c2c2c;
   padding: 0px;
-}
+
+} 
 
 [multi-cell-select] div {
   padding: 2px;
@@ -202,7 +213,7 @@ th {
   background: linear-gradient(#8deaed, #9fedf0);
   box-shadow: inset 0 0 0 1px #b9f2f5;
 }
-
+/* 
 [multi-cell-select] .fontcolor1 {
   // DARKGREY
   background-color: #34495e;
@@ -283,6 +294,115 @@ th {
   // RED
   background-color: #c03928;
   color: #ecf0f1;
+}
+[multi-cell-select] .fontcolor6:hover {
+  background: #8deaed;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  background: -moz-linear-gradient(#8deaed, #9fedf0);
+  background: linear-gradient(#8deaed, #9fedf0);
+  box-shadow: inset 0 0 0 1px #b9f2f5;
+}
+
+
+[multi-cell-select] .error {
+  background-color: darkred;
+}
+
+[multi-cell-select] .error:hover {
+  background: #8deaed;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  background: -moz-linear-gradient(#8deaed, #9fedf0);
+  background: linear-gradient(#8deaed, #9fedf0);
+  box-shadow: inset 0 0 0 1px #b9f2f5;
+}
+ */
+ 
+[multi-cell-select] .fontcolor1 {
+  // DARKGREY
+  background-color: #fff;
+  color: #34495e;
+  font-weight: bolder;
+}
+
+[multi-cell-select] .fontcolor1:hover {
+  background: #8deaed;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  background: -moz-linear-gradient(#8deaed, #9fedf0);
+  background: linear-gradient(#8deaed, #9fedf0);
+  box-shadow: inset 0 0 0 1px #b9f2f5;
+}
+
+
+
+[multi-cell-select] .fontcolor2 {
+  // GREEN
+  background-color: #fff;
+  color: #229954;
+  font-weight: bolder;
+}
+[multi-cell-select] .fontcolor2:hover {
+  background: #8deaed;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  background: -moz-linear-gradient(#8deaed, #9fedf0);
+  background: linear-gradient(#8deaed, #9fedf0);
+  box-shadow: inset 0 0 0 1px #b9f2f5;
+}
+
+
+
+[multi-cell-select] .fontcolor3 {
+  // BLUE
+  background-color: #fff;
+  color: #2471a3;
+  font-weight: bolder;
+}
+
+[multi-cell-select] .fontcolor3:hover {
+  background: #8deaed;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  background: -moz-linear-gradient(#8deaed, #9fedf0);
+  background: linear-gradient(#8deaed, #9fedf0);
+  box-shadow: inset 0 0 0 1px #b9f2f5;
+}
+
+
+[multi-cell-select] .fontcolor4 {
+  // PURPLE
+  background-color: #fff;
+  color: #8e44ad;
+  font-weight: bolder;
+}
+
+[multi-cell-select] .fontcolor4:hover {
+  background: #8deaed;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  background: -moz-linear-gradient(#8deaed, #9fedf0);
+  background: linear-gradient(#8deaed, #9fedf0);
+  box-shadow: inset 0 0 0 1px #b9f2f5;
+}
+
+
+[multi-cell-select] .fontcolor5 {
+  // BURNT-ORANGE
+  background-color: #fff;
+  color: #16a085;
+  font-weight: bolder;
+}
+
+[multi-cell-select] .fontcolor5:hover {
+  background: #8deaed;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  background: -moz-linear-gradient(#8deaed, #9fedf0);
+  background: linear-gradient(#8deaed, #9fedf0);
+  box-shadow: inset 0 0 0 1px #b9f2f5;
+}
+
+
+[multi-cell-select] .fontcolor6 {
+  // RED
+  background-color: #fff;
+  color: #c03928;
+  font-weight: bolder;
 }
 [multi-cell-select] .fontcolor6:hover {
   background: #8deaed;

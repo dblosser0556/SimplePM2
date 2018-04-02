@@ -11,6 +11,7 @@ export class CommandMenuComponent implements OnInit {
 
     @Input() menuItem: CapWeightPercent;
     @Input() project: Project;
+    @Input() item: number;
     @Input() selectedCells: any[];
     @Input() selectedView: string;
 
@@ -23,6 +24,21 @@ export class CommandMenuComponent implements OnInit {
 
         this.renderer.setAttribute(this.el.nativeElement.childNodes[1], 'innerText', this.menuItem.title);
         this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'backgroundColor', this.menuItem.color);
+        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderColor', this.menuItem.color);
+        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'color', '#FFFFFF');
+        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'margin-right', '0px');
+        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderRadius', '0px');
+        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'padding', '0px');
+
+        if (this.item === 0) {
+            this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderBottomLeftRadius', '5px');
+            this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderTopLeftRadius', '5px');
+        }
+
+        if (this.item === 5) {
+            this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderBottomRightRadius', '5px');
+            this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderTopRightRadius', '5px');
+        }
 
     }
     updateCapWeightPercent(percent: number, style: number) {
