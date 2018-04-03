@@ -1,79 +1,12 @@
 <div class="container">
-  <div *ngIf="project.vendors.length == 0">
-    <div class="card">
-      <div class="card-block">
-        <div class="card-title">Add New Vendor</div>
-        <button class="btn btn-primary" (click)="add()">
-          <clr-icon shape="plus"></clr-icon>Add New</button>
+  <div style="height: 40px; margin-top: 10px">
+    <div style="float:right">
+      <div class="btn-group btn-primary">
+        <button class="btn" (click)="addVendor()">Add Tracked Vendor</button>
       </div>
     </div>
   </div>
-  <div *ngIf="project.vendors.length > 0">
-    <div *ngFor="let vendor of project.vendors">
-      <div class="card">
-        <app-vendor-card></app-vendor-card>
-      </div>
-    </div>
+  <div *ngFor="let vendor of project.vendors">
+    <app-vendor-card [vendor]="vendor"></app-vendor-card>
   </div>
 </div>
-<clr-modal [(clrModalOpen)]="showEditDetails">
-  <form (ngSubmit)="onSubmit()" name="vendorForm"  [formGroup]="vendorForm" novalidate>
-    <input readonly hidden placeholder="Vendor Id" formControlName="vendorId" class="required">
-    <section>
-      <label>Edit Vendor</label>
-
-      <div class="form-group">
-        <label class="required">Name:</label>
-        <label for="vendorName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="vendorForm.get('vendorName').invalid
-      && (vendorForm.get('vendorName').dirty || vendorForm.get('vendorName').touched)">
-          <input id="vendorName" type="text" size="15" formControlName="vendorName" placeholder="Status Name" required>
-
-          <span class="tooltip-content">
-            Vendor Name is required!
-          </span>
-        </label>
-      </div>
-      <div class="form-group">
-        <label for="contact">Contact:</label>
-        <input type="text" size="25" formControlName="contact" placeholder="Contact">
-      </div>
-      <div class="form-group">
-        <label for="contact">Contact:</label>
-        <input id="contact" type="text" size="25" formControlName="contact" placeholder="Contact">
-      </div>
-      <div class="form-group">
-        <label for="contactPhone">Phone:</label>
-        <input id="contactPhone" type="tel" size="15" formControlName="contactPhone" placeholder="Phone">
-      </div>
-      <div class="form-group">
-        <label for="contactEmail">Email:</label>
-        <input id="contactEmail" type="email" size="15" formControlName="contactEmail" placeholder="Email">
-      </div>
-      <div class="form-group">
-        <label for="contractIdentifier">Contract No</label>
-        <input id="contractIdentifier" type="text" size="15" formControlName="contractIdentifier" placeholder="Contract Identifier">
-      </div>
-      <div class="form-group">
-        <label for="contractTerms">Cpmments</label>
-        <textarea id="contractTerms" rows="3" formControlName="contractTerms" placeholder="Terms/Notes">
-      </div>
-      <div class="form-group">
-        <label for="contractAmount">Amount:</label>
-        <input id="contractAmount" type="number" size="15" formControlName="contractAmount" placeholder="Amount">
-      </div>
-      <div class="form-group">
-        <label for="contractEndDate">End Date:</label>
-        <input id="contractEndDate" type="date" size="15" formControlName="contractEndDate" placeholder="End Date">
-      </div>
-    </section>
-    <div class="form-group-row">
-      <button class="btn btn-primary" type="submit" [disabled]="!vendorForm.valid">
-        <clr-icon shape="floppy" class="is-solid"></clr-icon>Save</button>
-      <button type="button" class="btn btn-warning-outline" (click)="revert()">
-        <clr-icon shape="redo"></clr-icon>Reset</button>
-
-      <button type="button" class="btn btn-warning-outline" (click)="cancel()">
-        <clr-icon shape="ban"></clr-icon>Cancel</button>
-    </div>
-  </form>
-</clr-modal>

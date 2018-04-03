@@ -1,0 +1,63 @@
+<table class="table table-condensed" appFixedHeader [height]="400">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Period Forecast</th>
+      <th>Invoice Estimate</th>
+      <th>Invoice Ammount</th>
+      <th>Comments</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let row of forecasts; let i = index">
+      <td>
+        <button class="btn btn-sm btn-link" (click)="showDetails(i)">{{row.date}}</button>
+      </td>
+      <td>{{row.forecast}}</td>
+      <td>{{row.invoiceEstimate}}</td>
+      <td>{{row.invoiceAmount}}</td>
+      <td>{{row.comments}}</td>
+    </tr>
+  </tbody>
+  <tfoot>
+    <tr>
+      <th>Total</th>
+      <th>{{forecastTotal}}</th>
+      <th>{{estimateTotal}}</th>
+      <th>{{invoiceTotal}}</th>
+      <th></th>
+    </tr>
+
+    <tr>
+      <th>Contract</th>
+      <th>{{vendor.contractAmount}}</th>
+      <th>YTB Invoiced</th>
+      <th>{{outstanding}}</th>
+    </tr>
+    <tr>
+      <th>Remaining</th>
+      <th>{{forecastRemaining}}</th>
+      <th>{{estimatedRemaining}}</th>
+      <th>{{invoiceRemaining}}</th>
+    </tr>
+  </tfoot>
+</table>
+<clr-modal [(clrModalOpen)]="displayInvoice">
+  <h3 class="modal-title">Edit Invoice</h3>
+  <div class="modal-body">
+    <p>Are you sure you want to delete?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="displayInvoice = false">Close</button>
+  </div>
+</clr-modal>
+<clr-modal [(clrModalOpen)]="displayMonthDetails">
+  <h3 class="modal-title">Month Deltails</h3>
+  <div class="modal-body">
+    <p>Are you sure you want to delete?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="displayMonthDetails = false">Close</button>
+
+  </div>
+</clr-modal>

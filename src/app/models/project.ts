@@ -3,12 +3,14 @@ import { Resource } from './resource';
 import { Month } from './month';
 import { FixedPrice } from './fixed-price';
 import { ResourceLoader } from '@angular/compiler';
+import { Vendor } from './vendor';
 
 export class Project {
     budgets: Budget[] = [];
     months: Month[] = [];
     resources: Resource[] = [];
     fixedPriceCosts: FixedPrice[] = [];
+    vendors: Vendor[] = [];
     isTemplate: boolean = null;
     projectId: number = null;
     projectName: string = null;
@@ -108,6 +110,9 @@ export class Project {
                         break;
                     case 'resources':
                         this.resources = (data != null) ? data.map(d => new Resource(d)) : [];
+                        break;
+                    case 'vendors':
+                        this.vendors = (data != null) ? data.map(d => new Vendor(d)) : [];
                         break;
                     default:
                         this[key] = data;

@@ -1,114 +1,49 @@
-import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Vendor, Project } from '../../../models';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { VendorService } from '../../../services';
+
 @Component({
   selector: 'app-vendor',
   templateUrl: './vendor.component.html',
   styleUrls: ['./vendor.component.scss']
 })
-export class VendorComponent implements OnInit, OnChanges {
-  vendor = new Vendor();
+export class VendorComponent implements OnInit, OnDestroy {
   @Input() project: Project;
-  showEditDetails = false;
+  newVendorCounter = 0;
+  constructor() { }
 
-
-  vendorForm: FormGroup;
-  error: any;
-
-  constructor(private vendorService: VendorService,
-    private fb: FormBuilder) {
-      this.createForm();
-     }
-
-  ngOnInit() {}
-
-  ngOnChanges() {
-    this.vendorForm.reset( {
-      vendorId: this.vendor.vendorId,
-      vendorName: this.vendor.vendorName,
-      contact: this.vendor.contact,
-      contactPhone: this.vendor.contactPhone,
-      contactEmail: this.vendor.contactEmail,
-      contractIdentifier: this.vendor.contractIdentifier,
-      contractTerms: this.vendor.contractTerms,
-      contractAmount: this.vendor.contractAmount,
-      contractEndDate: this.vendor.contractEndDate });
-  }
-
-  onSubmit() {
-    this.vendorForm.updateValueAndValidity();
-    if (this.vendorForm.invalid) {
-      return;
+  ngOnInit() { }
+  ngOnDestroy() {
+    // go through the count of new vendors
+    // if they don't have a legitimate vendor id then remove
+    // them
+    for (let i = 0; i > this.newVendorCounter; i--) {
+      const index = this.project.vendors.findIndex(v => v.vendorId === i);
+      // if found
+      if (index > 0) {
+        this.project.vendors.slice(index, 1);
+      }
     }
 
-    const vendor: Vendor = this.getVendorFromFormValue(this.vendorForm.value);
-    if (vendor.vendorId !== null) {
-      this.vendorService.update(vendor.vendorId, vendor).subscribe(data => {
-
-          // this.snackBar.open('vendor has been updated', '', {duration: 2000});
-        this.showEditDetails = false;
-      });
-    } else {
-
-      vendor.vendorId = 0;
-      this.vendorService.create(JSON.stringify(vendor)).subscribe(data => {
-        // this.resetForm();
-        this.vendor = data;
-
-        //  this.snackBar.open('vendor has been Added', '', {duration: 2000});
-        this.showEditDetails = false;
-      },
-      error => this.error = error);
-    }
   }
-
-  getVendorFromFormValue(formValue: any): Vendor {
-    let vendor: Vendor;
-    vendor = new Vendor();
-
-    vendor.vendorId = formValue.vendorId;
-    vendor.vendorName = formValue.vendorName;
-    vendor.contact = formValue.contact;
-    vendor.contactPhone = formValue.contactPhone;
-    vendor.contactEmail = formValue.contactEmail;
-    vendor.contractIdentifier = formValue.contractIdentifier;
-    vendor.contractTerms = formValue.contractTerms;
-    vendor.contractAmount = formValue.contractAmount;
-    vendor.contractEndDate = formValue.contractEndDate;
+  addVendor() {
+    const vendor = new Vendor();
+    // keep track that this is a new vendor
+    // by giving a negative vendor id.
+    // on save it will updated.
+    vendor.vendorId = --this.newVendorCounter;
     vendor.projectId = this.project.projectId;
-    return vendor;
 
-  }
-
-  createForm() {
-    this.vendorForm = this.fb.group({
-      vendorId: '',
-      vendorName: ['', Validators.required],
-      contact: '',
-      contactPhone: '',
-      contactEmail: '',
-      contractIdentifier: '',
-      contractTerms: '',
-      contractAmount: '',
-      contractEndDate: ''
+    // make sure vendor exists or will cause error on push
+    if (this.project.vendors === null) {
+      this.project.vendors = new Array<Vendor>();
     }
-    );
+
+    // by pushing will add card to view.
+    this.project.vendors.push(vendor);
   }
 
-  add() {
-    this.vendor = new Vendor();
-    this.ngOnChanges();
-    this.showEditDetails = true;
+  deleteVendor(vendorId: number) {
+    const index = this.project.vendors.findIndex(v => v.vendorId === vendorId);
+    this.project.vendors.slice(index, 1);
   }
-
-  edit(vendor: Vendor) {
-    this.vendor = vendor;
-    this.ngOnChanges();
-    this.showEditDetails = true;
-  }
-
-  revert() {this.ngOnChanges(); }
-
-  cancel() { this.showEditDetails = false; }
 }
