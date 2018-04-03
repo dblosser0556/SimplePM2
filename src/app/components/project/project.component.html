@@ -18,7 +18,7 @@
             <button clrTabLink (select)="setCurrentTab('Forecast')">Forecast</button>
             <ng-template [(clrIfActive)]="forecastActive">
                 <clr-tab-content>
-                        <app-project-monthly-detail [(project)]="currentProject" [selectedView]="currentTab"></app-project-monthly-detail>
+                        <app-project-monthly-detail [(project)]="currentProject" [selectedView]="'Forecast'"></app-project-monthly-detail>
                 </clr-tab-content>
             </ng-template>
         </clr-tab>
@@ -27,7 +27,7 @@
             <button clrTabLink (select)="setCurrentTab('Actuals')">Actuals</button>
             <ng-template [(clrIfActive)]="actualsActive">
                 <clr-tab-content>
-                    <app-project-monthly-detail [(project)]="currentProject" [selectedView]="currentTab"></app-project-monthly-detail>
+                    <app-project-monthly-detail [(project)]="currentProject" [selectedView]="'Actuals'"></app-project-monthly-detail>
                 </clr-tab-content>
             </ng-template>
         </clr-tab>
@@ -36,7 +36,7 @@
             <button clrTabLink (select)="setCurrentTab('Vedors')">Vendors</button>
             <ng-template [(clrIfActive)]="vendorActive">
                 <clr-tab-content>
-                    ...
+                   <app-vendor [(project)]="currentProject" ></app-vendor>
                 </clr-tab-content>
             </ng-template>
         </clr-tab>

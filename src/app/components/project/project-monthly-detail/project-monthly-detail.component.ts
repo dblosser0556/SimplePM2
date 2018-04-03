@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostListener, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, HostListener,  ElementRef } from '@angular/core';
 import {
   Project, Resource, ResourceMonth, Month,
   Phase, ResourceType, FixedPriceType, Role, FixedPrice,
@@ -7,9 +7,10 @@ import {
 } from '../../../models';
 import { ProjectService } from '../../../services';
 import { UtilityService } from '../../../services/utility.service';
-import { ElementRef } from '@angular/core/src/linker/element_ref';
 import { ConfigService } from '../../../services/config.service';
 import { ToastrService } from 'ngx-toastr';
+
+
 
 
 
@@ -25,7 +26,7 @@ export enum EditingType {
   templateUrl: './project-monthly-detail.component.html',
   styleUrls: ['./project-monthly-detail.component.scss']
 })
-export class ProjectMonthlyDetailComponent implements OnInit {
+export class ProjectMonthlyDetailComponent implements OnInit, AfterViewInit {
 
 
   @Input() project: Project;
@@ -61,7 +62,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
-    this.calcPageSize(event.target.innerWidth);
+    this.calcPageSize();
   }
 
   @HostListener('document:keyup', ['$event']) handleKeyUpEvent(event: KeyboardEvent) {
@@ -91,7 +92,8 @@ export class ProjectMonthlyDetailComponent implements OnInit {
     private projectService: ProjectService,
     private toast: ToastrService,
     private util: UtilityService,
-    private config: ConfigService) {
+    private config: ConfigService,
+    private el: ElementRef) {
 
     this.phaseList = this.util.getPhaseList();
     this.fixedPriceTypeList = this.util.getFixedPriceTypeList();
@@ -102,13 +104,14 @@ export class ProjectMonthlyDetailComponent implements OnInit {
 
 
   ngOnInit() {
-    const actualHeight = window.innerHeight;
-    const actualWidth = window.innerWidth;
-    this.calcPageSize(actualWidth);
-    this.selectedView = 'Forecast';
+   
+    
     this.menuItems = this.config.capWeightConfig;
-
   }
+
+  ngAfterViewInit() {
+    this.calcPageSize();
+  } 
 
 
   getSelectedCells(event) {
@@ -124,7 +127,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
         this.toast.success('Project has been saved', 'Congrates');
       },
       error => {
-        this.toast.error( error, 'Oops - Bad on Me');
+        this.toast.error(error, 'Oops - Bad on Me');
         console.log(error);
       }
     );
@@ -168,8 +171,7 @@ export class ProjectMonthlyDetailComponent implements OnInit {
       }
     }
 
-    const actualWidth = window.innerWidth;
-    this.calcPageSize(actualWidth);
+    this.calcPageSize();
     this.toast.success('Month has been added');
 
   }
@@ -628,12 +630,34 @@ export class ProjectMonthlyDetailComponent implements OnInit {
 
   }
 
-  calcPageSize(windowSize) {
-    // the size of the left columns including name etc.
+  calcPageSize() {
+    // find the inner client witdh
+    // find first parent with width
+    let width = 0;
+    let notFound = true;
+    let element = this.el.nativeElement.parentElement;
+    do {
 
-    const staticColWidth = 900;
+      if (element.clientWidth > 0) {
+        notFound = false;
+        width = element.clientWidth;
+      } else {
+        element = element.parentElement;
+      }
+    } while (notFound);
+
+
+    // the size of the left columns including name etc.
+    // find table element
+    const tableElem = this.el.nativeElement.querySelector('table');
+
+    let staticColWidth = 0;
+    for (let i = 0; i < 7; i++) {
+      staticColWidth += tableElem.rows[0].cells[i].clientWidth;
+    }
+    
     const staticMonthWidth = 75;
-    this.pageSize = Math.floor((windowSize - staticColWidth) / staticMonthWidth);
+    this.pageSize = Math.floor((width - staticColWidth) / staticMonthWidth);
 
     if (this.lcol + this.pageSize) {
       this.lcol = this.fcol + this.pageSize;

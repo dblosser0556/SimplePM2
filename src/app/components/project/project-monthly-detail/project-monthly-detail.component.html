@@ -1,19 +1,19 @@
-
 <div style="height: 40px; margin-top: 10px">
   <div style="float:left" *ngFor="let menuItem of menuItems let i = index">
     <app-command-menu [menuItem]="menuItem" [selectedCells]="selectedCells" [item]="i" [project]="project" [selectedView]="selectedView"
-    (updateAllMonthlyTotals)="updateAllMonthlyTotals()"></app-command-menu>
+      (updateAllMonthlyTotals)="updateAllMonthlyTotals()"></app-command-menu>
   </div>
   <div style="float:right">
-  <div class="btn-group btn-primary">
-    <button class="btn"  type="submit" [disabled]="editingIndex !== -1" (click)="saveProject()">Save</button>
-  </div>
+    <div class="btn-group btn-primary">
+      <button class="btn" type="submit" [disabled]="editingIndex !== -1" (click)="saveProject()">Save</button>
+    </div>
   </div>
 </div>
 <div class="">
 
   <div>
-    <table class="table table-condensed" appMultiselect multi-cell-select (selectedCells)="getSelectedCells($event)"  id="monthlydetail">
+    <table id="projectmonthlydetail" class="table table-condensed" appMultiselect multi-cell-select (selectedCells)="getSelectedCells($event)"
+      id="monthlydetail">
       <thead [ngClass]="{
           'header-row-forecast':selectedView==='Forecast',
           'header-row-actual':selectedView==='Actuals'}">
@@ -48,9 +48,11 @@
           <th class="month-col">Total</th>
           <th class="month-col" *ngFor="let month of project.months.slice([fcol],[lcol]); let m = index" (click)="editPhase(month, m)">
             <div *ngIf="!month.editMode"> {{month.phaseName}}</div>
-            <select class="form-control" *ngIf="month.editMode" (change)="updatePhase($event, month)">
-              <option *ngFor="let phase of phaseList" [value]="phase.phaseId" [selected]="phase.phaseId == month.phaseId">{{phase.phaseName}}</option>
-            </select>
+            <div class="select" *ngIf="month.editMode">
+              <select class="form-control"  (change)="updatePhase($event, month)">
+                <option *ngFor="let phase of phaseList" [value]="phase.phaseId" [selected]="phase.phaseId == month.phaseId">{{phase.phaseName}}</option>
+              </select>
+            </div>
           </th>
         </tr>
 
@@ -73,9 +75,11 @@
         </td>
         <td class="fixed-col" (click)="editResource(resource, i)" title="Click to edit">
           <div class="fixed-col" *ngIf="!resource.editMode"> {{resource.roleName}}</div>
-          <select *ngIf="resource.editMode" class="form-control" (change)="updateResource($event, 'role', resource)">
-            <option *ngFor="let role of roleList" [value]="role.roleId" [selected]="role.roleId == resource.roleId">{{role.roleName}}</option>
-          </select>
+          <div class="select fixed-col" *ngIf="resource.editMode" >
+            <select class="form-control" (change)="updateResource($event, 'role', resource)">
+              <option *ngFor="let role of roleList" [value]="role.roleId" [selected]="role.roleId == resource.roleId">{{role.roleName}}</option>
+            </select>
+          </div>
         </td>
         <td class="fixed-col" (click)="editResource(resource, i)" title="Click to edit">
           <div class="fixed-col" *ngIf="!resource.editMode"> {{resource.resourceName}}</div>
@@ -85,9 +89,11 @@
 
         <td class="fixed-col" (click)="editResource(resource, i)" title="Click to edit">
           <div class="fixed-col" *ngIf="!resource.editMode"> {{resource.resourceTypeName}}</div>
-          <select *ngIf="resource.editMode" class="form-control" (change)="updateResource($event, 'type', resource)">
-            <option *ngFor="let type of resourceTypeList" [value]="type.resourceTypeId" [selected]="type.resourceTypeId == resource.resourceTypeId">{{type.resourceTypeName}} </option>
-          </select>
+          <div class="select fixed-col" *ngIf="resource.editMode" >
+            <select class="form-control" (change)="updateResource($event, 'type', resource)">
+              <option *ngFor="let type of resourceTypeList" [value]="type.resourceTypeId" [selected]="type.resourceTypeId == resource.resourceTypeId">{{type.resourceTypeName}} </option>
+            </select>
+          </div>
         </td>
         <td class="fixed-col" (click)="editResource(resource, i)" title="Click to edit">
           <div class="fixed-col" *ngIf="!resource.editMode"> {{resource.vendor}}</div>
@@ -135,7 +141,7 @@
             }">
               <div *ngIf="!resource.editMode"> {{month.actualEffort}}</div>
               <input (blur)="updateResource($event, 'actualmonth', resource, month, m)" *ngIf="resource.editMode" name="resourceMonth"
-                class="form-control" type="text" size="5"  [value]="month.actualEffort">
+                class="form-control" type="text" size="5" [value]="month.actualEffort">
             </div>
           </ng-container>
 
@@ -179,9 +185,11 @@
         </td>
         <td class="fixed-col" (click)="editFixedPrice(fixedPrice, f)">
           <div class="fixed-col" *ngIf="!fixedPrice.editMode"> {{fixedPrice.fixedPriceTypeName}}</div>
-          <select *ngIf="fixedPrice.editMode" class="form-control" (change)="updateFixedPrice($event, 'role', fixedPrice)">
-            <option *ngFor="let type of fixedPriceTypeList" [value]="type.fixedPriceTypeId" [selected]="type.fixedPriceTypeId == fixedPrice.fixedPriceTypeId">{{type.fixedPriceTypeName}} </option>
-          </select>
+          <div class="select fixed-col" *ngIf="fixedPrice.editMode">
+            <select  class="form-control" (change)="updateFixedPrice($event, 'role', fixedPrice)">
+              <option *ngFor="let type of fixedPriceTypeList" [value]="type.fixedPriceTypeId" [selected]="type.fixedPriceTypeId == fixedPrice.fixedPriceTypeId">{{type.fixedPriceTypeName}} </option>
+            </select>
+          </div>
         </td>
         <td class="fixed-col" (click)="editFixedPrice(fixedPrice, f)">
           <div class="fixed-col" *ngIf="!fixedPrice.editMode"> {{fixedPrice.fixedPriceName}}</div>
@@ -191,9 +199,11 @@
 
         <td class="fixed-col" (click)="editFixedPrice(fixedPrice, f)">
           <div class="fixed-col" *ngIf="!fixedPrice.editMode"> {{fixedPrice.resourceTypeName}}</div>
-          <select *ngIf="fixedPrice.editMode" class="form-control" (change)="updateFixedPrice($event, 'type', fixedPrice)">
-            <option *ngFor="let type of resourceTypeList" [value]="type.resourceTypeId" [selected]="type.resourceTypeId == fixedPrice.resourceTypeId">{{type.resourceTypeName}} </option>
-          </select>
+          <div class="select fixed-col" *ngIf="fixedPrice.editMode" >
+            <select class="form-control" (change)="updateFixedPrice($event, 'type', fixedPrice)">
+              <option *ngFor="let type of resourceTypeList" [value]="type.resourceTypeId" [selected]="type.resourceTypeId == fixedPrice.resourceTypeId">{{type.resourceTypeName}} </option>
+            </select>
+          </div>
         </td>
 
         <td class="fixed-col" (click)="editFixedPrice(fixedPrice, f)" colspan="2">

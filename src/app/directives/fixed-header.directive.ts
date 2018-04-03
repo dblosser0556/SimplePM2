@@ -26,7 +26,7 @@ export class FixedHeaderDirective implements OnInit, AfterViewInit {
             this.renderer.setStyle(elem, 'display', '');
         }
         let i = 0;
-        const thElems = this.table.querySelectorAll('tr:first-child th')
+        const thElems = this.table.querySelectorAll('tr:first-child th');
 
         for (const thElem of thElems) {
             const tdElems = this.table.querySelector('tbody tr:first-child td:nth-child(' + (i + 1) + ')');

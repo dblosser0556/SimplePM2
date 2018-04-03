@@ -16,7 +16,7 @@ export * from './project';
 export * from './projectlist.interface';
 export * from './group';
 export * from './group-budget';
-
+export * from './milestone';
 export * from './resource';
 export * from './month';
 export * from './resource-month';
@@ -25,3 +25,6 @@ export * from './fixed-price-type';
 export * from './fixed-price';
 export * from './fixed-price-month';
 
+export * from './vendor';
+export * from './vendorInvoice';
+export * from './vendorPeriod';

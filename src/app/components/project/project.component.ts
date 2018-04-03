@@ -124,19 +124,25 @@ export class ProjectComponent implements OnInit {
 
   }
 
+  // used to determine which tab is diplayed and
+  // for monthly details which view is displayed.
   setCurrentTab(tab: string) {
     switch (tab) {
       case 'Details':
         this.detailsActive = true;
+        this.currentTab = 'Details';
         break;
       case 'Forecast':
         this.forecastActive = true;
+        this.currentTab = 'Forecast';
         break;
       case 'Actuals':
         this.actualsActive = true;
+        this.currentTab = 'Actuals';
         break;
       case 'Vendors':
         this.vendorsActive = true;
+        this.currentTab = 'Vendors';
         break;
 
     }

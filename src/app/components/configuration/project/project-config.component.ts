@@ -144,7 +144,7 @@ export class ProjectConfigComponent implements OnInit {
 
   showDetails(id: number) {
     if (this.isTemplate) {
-      this.router.navigate(['/configuration/project-templates/details'], { queryParams: { projectId: id } });
+      this.router.navigate(['/configuration/templates/details'], { queryParams: { projectId: id } });
     } else {
       this.router.navigate(['/configuration/projects/details'], { queryParams: { projectId: id } });
     }
