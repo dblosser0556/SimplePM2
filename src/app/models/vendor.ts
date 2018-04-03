@@ -29,9 +29,9 @@ export class Vendor {
 
         for (const key of keys) {
             if (key === 'periodEstimates') {
-                this.periodEstimates = instanceData[key].map(data => new VendorPeriod(data));
+                this.periodEstimates = (instanceData[key] != null) ? instanceData[key].map(d => new VendorPeriod(d)) : [];
             } else if (key === 'invoices') {
-                this.invoices = instanceData[key].map(data => new VendorInvoice(data));
+                this.invoices = (instanceData[key] != null) ? instanceData[key].map(d => new VendorInvoice(d)) : [];
             } else {
                 this[key] = instanceData[key];
             }

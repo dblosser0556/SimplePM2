@@ -1,4 +1,4 @@
-<table class="table table-condensed" appFixedHeader [height]="400">
+<table class="table table-condensed" appFixedHeader [height]="300">
   <thead>
     <tr>
       <th>Date</th>
@@ -11,7 +11,7 @@
   <tbody>
     <tr *ngFor="let row of forecasts; let i = index">
       <td>
-        <button class="btn btn-sm btn-link" (click)="showDetails(i)">{{row.date}}</button>
+        <button class="btn btn-sm btn-link" (click)="showDetails(i)">{{row.periodDate | date:'MM/yy'}}</button>
       </td>
       <td>{{row.forecast}}</td>
       <td>{{row.invoiceEstimate}}</td>

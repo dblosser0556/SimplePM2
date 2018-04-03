@@ -1,8 +1,9 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
 import { Vendor } from '../../../../models';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { VendorService } from '../../../../services';
 import { ToastrService } from 'ngx-toastr';
+
 
 @Component({
   selector: 'app-vendor-contract-details',
@@ -12,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 export class VendorContractDetailsComponent implements OnInit, OnChanges {
 
   @Input() vendor: Vendor;
+  @Output() cancelAddVendor = new EventEmitter();
 
   vendorForm: FormGroup;
   error: any;
@@ -41,7 +43,7 @@ export class VendorContractDetailsComponent implements OnInit, OnChanges {
   get vendorName() {
     return this.vendorForm.get('vendorName');
   }
-
+  
   onSubmit() {
     this.vendorForm.updateValueAndValidity();
     if (this.vendorForm.invalid) {
@@ -49,7 +51,8 @@ export class VendorContractDetailsComponent implements OnInit, OnChanges {
     }
 
     const vendor: Vendor = this.getVendorFromFormValue(this.vendorForm.value);
-    if (vendor.vendorId !== null) {
+    if (vendor.vendorId > 0) {
+      // vendor exists do update.
       this.vendorService.update(vendor.vendorId, vendor).subscribe(data => {
         this.toast.success('vendor has been updated');
       },
@@ -58,7 +61,8 @@ export class VendorContractDetailsComponent implements OnInit, OnChanges {
           console.log(error);
         });
     } else {
-
+      // this is a new item.  It get passed with a negative number.
+      // passing 0 works with the api post.
       vendor.vendorId = 0;
       this.vendorService.create(JSON.stringify(vendor)).subscribe(data => {
         this.vendor = data;
@@ -108,5 +112,7 @@ export class VendorContractDetailsComponent implements OnInit, OnChanges {
 
   revert() { this.ngOnChanges(); }
 
-  cancel() { }
+  cancel() {
+      this.cancelAddVendor.emit(this.vendor.vendorId.toString());
+   }
 }

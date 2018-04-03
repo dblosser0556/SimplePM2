@@ -1,6 +1,7 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { Vendor, VendorInvoice, Project } from '../../../../models';
 import { VendorForecastComponent } from '../vendor-forecast/vendor-forecast.component';
+
 
 @Component({
   selector: 'app-vendor-card',
@@ -10,6 +11,8 @@ import { VendorForecastComponent } from '../vendor-forecast/vendor-forecast.comp
 export class VendorCardComponent implements OnInit {
   @Input() vendor: Vendor;
   @Input() project: Project;
+  @Output() vendorCancel = new EventEmitter();
+
   @ViewChild(VendorForecastComponent) forecast: VendorForecastComponent;
   showView = 'forecast';
 
@@ -25,5 +28,13 @@ export class VendorCardComponent implements OnInit {
 
   addInvoice() {
     this.forecast.addInvoice();
+  }
+
+  // recieve cancel from detials
+  addCancelled(event: any) {
+
+    // pass cancel to vendor component
+    this.vendorCancel.emit(event);
+
   }
 }

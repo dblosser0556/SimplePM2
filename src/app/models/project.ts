@@ -2,8 +2,8 @@ import { Budget } from './budget';
 import { Resource } from './resource';
 import { Month } from './month';
 import { FixedPrice } from './fixed-price';
-import { ResourceLoader } from '@angular/compiler';
 import { Vendor } from './vendor';
+import { Milestone } from './milestone';
 
 export class Project {
     budgets: Budget[] = [];
@@ -11,6 +11,7 @@ export class Project {
     resources: Resource[] = [];
     fixedPriceCosts: FixedPrice[] = [];
     vendors: Vendor[] = [];
+    milestones: Milestone[] = [];
     isTemplate: boolean = null;
     projectId: number = null;
     projectName: string = null;
@@ -113,6 +114,9 @@ export class Project {
                         break;
                     case 'vendors':
                         this.vendors = (data != null) ? data.map(d => new Vendor(d)) : [];
+                        break;
+                    case 'milestones':
+                        this.milestones = (data != null) ? data.map(d => new Milestone(d)) : [];
                         break;
                     default:
                         this[key] = data;

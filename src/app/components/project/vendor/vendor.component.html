@@ -1,12 +1,11 @@
-<div class="container">
-  <div style="height: 40px; margin-top: 10px">
-    <div style="float:right">
-      <div class="btn-group btn-primary">
-        <button class="btn" (click)="addVendor()">Add Tracked Vendor</button>
-      </div>
-    </div>
+<div style="height: 40px; margin-top: 10px">
+  <div class="row" style="float:right">
+    <button *ngFor="let vendor of vendors; let i = index" class="btn btn-outline" (click)="addVendor(i)">Add Tracking for {{vendor}}</button>
+    <button class="btn btn-outline" (click)="addVendor(-1)">Add New Tracked Vendor</button>
   </div>
-  <div *ngFor="let vendor of project.vendors">
-    <app-vendor-card [vendor]="vendor"></app-vendor-card>
+</div>
+<div class="row">
+  <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12" *ngFor="let vendor of project.vendors">
+    <app-vendor-card [vendor]="vendor" [project]="project" (vendorCancel)="deleteVendor($event)"></app-vendor-card>
   </div>
 </div>

@@ -33,6 +33,8 @@ export class ProjectCardComponent implements OnInit, AfterViewInit {
     this.projectService.getOne(this.projectSummary.projectId).subscribe(
       res => {
         this.project = res;
+      }, error => {
+        console.log(error);
       }
     );
   }

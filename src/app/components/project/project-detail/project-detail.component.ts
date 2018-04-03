@@ -64,7 +64,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     const plannedStartDate = moment(this.project.plannedStartDate).format('YYYY-MM-DD');
     let actualStartDate = null;
     if (this.project.actualStartDate !== null) {
-      actualStartDate = moment(this.project.plannedStartDate).format('YYYY-MM-DD');
+      actualStartDate = moment(this.project.actualStartDate).format('YYYY-MM-DD');
     }
     this.projectForm.reset({
       projectID: this.project.projectId,

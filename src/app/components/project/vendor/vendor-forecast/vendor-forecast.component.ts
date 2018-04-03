@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Vendor, VendorInvoice, Project } from '../../../../models';
-
+import * as moment from 'moment';
 export interface Forecast {
   periodDate: Date;
   forecast: number;
@@ -107,11 +107,16 @@ export class VendorForecastComponent implements OnInit {
     // forecast and invoice estimates by period
     const forecasts =  new Array<Forecast>();
     const monthlyDetails = new Array<MonthDetail>();
-
+    
+    // check to make this project has months
+    if (this.project.months === undefined) {
+      this.monthlyDetails = monthlyDetails;
+      return forecasts;
+    }
     for (let i = 0; i < this.project.months.length; i++) {
       let forecastTotal = 0;
       let estimateTotal = 0;
-      const periodDate = this.project.startDate();
+      const periodDate = moment(this.project.startDate()).add(this.project.months[i].monthNo, 'M');
 
       const monthlyResDetails = new Array<MonthResourceDetail>();
       for (const resource of this.project.resources) {
@@ -181,6 +186,12 @@ export class VendorForecastComponent implements OnInit {
     // display array
     const invoices = new Array<Forecast>();
     let invoiceTotal = 0;
+
+    if (this.vendor.invoices === undefined) {
+      this.invoiceTotal = invoiceTotal;
+      return invoices;
+    }
+
     for (const inv of this.vendor.invoices) {
       const invoice = {
         periodDate: inv.invoiceDate,
