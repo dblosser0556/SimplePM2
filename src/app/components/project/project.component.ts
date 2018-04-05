@@ -29,6 +29,7 @@ export class ProjectComponent implements OnInit {
   forecastActive = false;
   actualsActive = false;
   vendorsActive = false;
+  milestoneActive = false;
 
   isLoading = false;
   currentTab = 'Details';
@@ -43,6 +44,7 @@ export class ProjectComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.isLoading = true;
     this.getPMList();
     this.getGroupList();
     this.getStatusList();
@@ -148,6 +150,10 @@ export class ProjectComponent implements OnInit {
       case 'Vendors':
         this.vendorsActive = true;
         this.currentTab = 'Vendors';
+        break;
+      case 'Milestone':
+        this.milestoneActive = true;
+        this.currentTab = 'Milestones';
         break;
 
     }

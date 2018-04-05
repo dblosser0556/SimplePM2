@@ -6,66 +6,66 @@
     <table class="table table-condensed">
       <thead>
         <tr>
-          <th></th>
-          <th *ngFor="let phase of phases">{{phaseName}}</th>
-          <th>Total</th>
+          <th class="border-right"></th>
+          <th *ngFor="let phase of phases">{{phase.phaseName}}</th>
+          <th class="border-right">Total</th>
           <th>Budget Comparison</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <th>Milestone Date</th>
+          <th class="border-right">Milestone Date</th>
           <td *ngFor="let date of milestoneDates">{{date}}</td>
-          <td></td>
-          <td></td>
+          <td class="border-right"></td>
+          <td>{{milestoneFinishDate}}</td>
         </tr>
         <tr>
-          <th>Current Plan</th>
-          <td *ngFor="let plan of planDates">{{plan}}</td>
-          <td></td>
-          <td></td>
+          <th class="border-right">Current Plan</th>
+          <td class="border-bottom" *ngFor="let plan of planDates">{{plan}}</td>
+          <td class="border-bottom border-right"></td>
+          <td [ngClass]="{'warning':isLate}" class="border-bottom">{{planFinishDate}}</td>
         </tr>
         <tr>
-          <th>Capital Budget</th>
-          <td *ngFor="let phase of phases"></td>
-          <td></td>
-          <th>{{totalCapBudget | currency}}</th>
+          <th class="border-right">Capital Budget</th>
+          <th *ngFor="let phase of phases"></th>
+          <th class="border-right"></th>
+          <th >{{totalCapBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</th>
 
         </tr>
         <tr>
-          <th>Capital Milestone</th>
-          <td *ngFor="let capital of capitalMilestones">{{capital | currency}}</td>
-          <td>{{totalCapMilestone | currency}}</td>
-          <td>{{capMilestoneToBudget | currency}}</td>
+          <th class="border-right">Capital Milestone</th>
+          <td *ngFor="let capital of capitalMilestones">{{capital}}</td>
+          <td class="border-right">{{totalCapMilestone | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+          <td [ngClass]="{'warning':capEACToBudget < 0}">{{capMilestoneToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
         </tr>
         <tr>
-          <th>Capital EAC</th>
-          <td *ngFor="let eac of capitalEAC">{{eac | currency}}</td>
-          <td>{{totalCapEAC | currency}}</td>
-          <td>{{capEACToBudget | currency}}</td>
+          <th class="border-right">Capital EAC</th>
+          <td class="border-bottom" *ngFor="let eac of capitalEAC">{{eac}}</td>
+          <td class="border-bottom border-right">{{totalCapEAC | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+          <td [ngClass]="{'warning':capEACToBudget < 0}" class="border-bottom">{{capEACToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
         </tr>
         <tr>
-          <th>Expense Budget</th>
-          <th *ngFor="let phase of phases"></th>
-          <th></th>
-          <th>{{totalExpBudget | currency}}</th>
+          <th class="border-right">Expense Budget</th>
+          <th  *ngFor="let phase of phases"></th>
+          <th class="border-right"></th>
+          <td >{{totalExpBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
         </tr>
         <tr>
-          <th>Expense Milestone</th>
-          <td *ngFor="let expense of expenseMilestones">{{expense | currency}}</td>
-          <td>{{totalExpMilestone | currency}}</td>
-          <td>{{expMilestoneToBudget | currency}}</td>
+          <th class="border-right">Expense Milestone</th>
+          <td *ngFor="let expense of expenseMilestones">{{expense }}</td>
+          <td class="border-right">{{totalExpMilestone | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+          <td [ngClass]="{'warning':expMilestoneToBudget < 0}" >{{expMilestoneToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
         </tr>
         <tr>
-          <th>Expense EAC</th>
-          <td *ngFor="let eeac of expenseEAC">{{eeac | currency}}</td>
-          <td>{{totalExpEAC | currency}}</td>
-          <td>{{expEACToBudget | currency}}</td>
+          <th class="no-border-bottom border-right">Expense EAC</th>
+          <td *ngFor="let eeac of expenseEAC">{{eeac}}</td>
+          <td class="border-right">{{totalExpEAC | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+          <td [ngClass]="{'warning':expEACToBudget < 0}">{{expEACToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
         </tr>
       </tbody>
     </table>
   </div>
   <div class="card-footer">
-    <a (click)="onSubmit()" class="card-link">Update Milestones</a>
+    <button [disabled]="noSave" (click)="onSubmit()" class="btn btn-info-outline btn-sm">Update Milestones</button>
   </div>
 </div>

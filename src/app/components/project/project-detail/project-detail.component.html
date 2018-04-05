@@ -1,5 +1,7 @@
+
 <div class="card">
-  <div class="card-block">
+  <div  *ngIf="isLoading" class="card-block">Is Loading...</div>
+  <div  *ngIf="!isLoading" class="card-block">
     <form (ngSubmit)="onSubmit()" name="projectForm" class="project-form" [formGroup]="projectForm" novalidate>
       <div class="row">
         <div class="column">

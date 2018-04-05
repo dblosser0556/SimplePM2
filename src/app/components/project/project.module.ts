@@ -14,7 +14,7 @@ import { ProjectCardComponent } from './project-card/project-card.component';
 import { ProjectCardSummaryComponent } from './project-card-summary/project-card-summary.component';
 import { ProjectChartComponent } from './project-chart/project-chart.component';
 
-import { ProjectService, VendorService, VendorInvoiceService} from '../../services';
+import { ProjectService, VendorService, VendorInvoiceService, MilestoneService} from '../../services';
 
 import { ProjectCardMonthlySummaryComponent } from './project-card-monthly-summary/project-card-monthly-summary.component';
 import { VendorComponent } from './vendor/vendor.component';
@@ -23,7 +23,7 @@ import { VendorContractDetailsComponent } from './vendor/vendor-contract-details
 import { VendorForecastComponent } from './vendor/vendor-forecast/vendor-forecast.component';
 import { ProjectMilestonesComponent } from './project-milestones/project-milestones.component';
 
-
+import { CurrencyPipe } from '@angular/common';
 
 
 
@@ -54,6 +54,6 @@ import { ProjectMilestonesComponent } from './project-milestones/project-milesto
     ProjectCardSummaryComponent,
     ProjectChartComponent
   ],
-      providers:    [ProjectService, VendorService, VendorInvoiceService]
+      providers:    [ProjectService, VendorService, VendorInvoiceService, MilestoneService, CurrencyPipe]
 })
 export class ProjectModule { }

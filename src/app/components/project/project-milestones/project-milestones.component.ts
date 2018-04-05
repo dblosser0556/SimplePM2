@@ -4,6 +4,7 @@ import { MilestoneService } from '../../../services';
 import { PhaseService } from '../../configuration/phase/phase.service';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
+import { CurrencyPipe } from '@angular/common';
 
 export interface PhaseMilestone {
   phaseId: number;
@@ -21,11 +22,16 @@ export class ProjectMilestonesComponent implements OnInit {
   @Input() project: Project;
   constructor(private milestoneService: MilestoneService,
     private phaseService: PhaseService,
-    private toast: ToastrService) { }
+    private toast: ToastrService,
+    private cp: CurrencyPipe) { }
 
   phases: Phase[];
   milestoneDates = [];
   planDates = [];
+  planFinishDate: string;
+  milestoneFinishDate: string;
+  isLate = false;
+  noSave = false;
 
   totalCapBudget: number;
 
@@ -34,6 +40,7 @@ export class ProjectMilestonesComponent implements OnInit {
   capMilestoneToBudget: number;
 
   capitalEAC = [];
+  capitalEACValue = [];
   totalCapEAC: number;
   capEACToBudget: number;
 
@@ -44,6 +51,7 @@ export class ProjectMilestonesComponent implements OnInit {
   expMilestoneToBudget: number;
 
   expenseEAC = [];
+  expenseEACValue = [];
   totalExpEAC: number;
   expEACToBudget: number;
 
@@ -80,7 +88,7 @@ export class ProjectMilestonesComponent implements OnInit {
     this.totalExpBudget = 0;
 
     for (const budget of this.project.budgets) {
-      if (budget.budgetType = BudgetType.Capital) {
+      if (budget.budgetType === BudgetType.Capital) {
         this.totalCapBudget += budget.amount;
       } else {
         this.totalExpBudget += budget.amount;
@@ -97,17 +105,31 @@ export class ProjectMilestonesComponent implements OnInit {
     this.totalCapMilestone = 0;
     this.totalExpMilestone = 0;
 
+
     // go through the active milestones
     // assume only one milestone per phase.
     for (const phase of this.phases) {
+      // ensure a milestone is set for each phase.
+      let milestoneFound = false;
+
+      // go through the active milestones and add them to the array.
       for (const milestone of this.project.milestones.filter(m => m.active)) {
         if (phase.phaseId === milestone.phaseId) {
           this.milestoneDates.push(moment(milestone.phaseCompleteDate).format('YYYY-MM'));
-          this.capitalMilestones.push(milestone.phaseCapitalEstimate);
+          this.capitalMilestones.push(this.cp.transform(milestone.phaseCapitalEstimate, 'USD', 'symbol-narrow', '1.0-0'));
           this.totalCapMilestone += milestone.phaseCapitalEstimate;
-          this.expenseMilestones.push(milestone.phaseExpenseEstimate);
+          this.expenseMilestones.push(this.cp.transform(milestone.phaseExpenseEstimate, 'USD', 'symbol-narrow', '1.0-0'));
           this.totalExpMilestone += milestone.phaseExpenseEstimate;
+          milestoneFound = true;
+          this.milestoneFinishDate = (moment(milestone.phaseCompleteDate).format('YYYY-MM'));
         }
+      }
+      // if no milestone found then add a place holder
+      if (!milestoneFound) {
+        this.milestoneDates.push('None');
+        this.capitalMilestones.push('None');
+        this.expenseMilestones.push('None');
+        this.milestoneFinishDate = ('Not Found');
       }
     }
   }
@@ -115,8 +137,10 @@ export class ProjectMilestonesComponent implements OnInit {
   getPlanDates() {
     this.planDates = Array();
     this.capitalEAC = new Array();
+    this.capitalEACValue = new Array();
     this.totalCapEAC = 0;
     this.expenseEAC = new Array();
+    this.expenseEACValue = new Array();
     this.totalExpEAC = 0;
 
     let count = 0;
@@ -132,10 +156,10 @@ export class ProjectMilestonesComponent implements OnInit {
       count++;
     }
     const lastActualMonth = (countActualExpMonths >= countActualCapMonths) ? countActualExpMonths : countActualCapMonths;
-
-
+    const defaultDate =  moment([1800]);
+    let phaseDate = moment([1800]);
     for (const phase of this.phases) {
-      let phaseDate = moment('01/01/1800');
+      phaseDate = moment([1800]);
       let phaseCap = 0;
       let phaseExp = 0;
 
@@ -154,11 +178,32 @@ export class ProjectMilestonesComponent implements OnInit {
           }
         }
       }
-      this.capitalEAC.push(phaseCap);
-      this.totalCapEAC += phaseCap;
-      this.expenseEAC.push(phaseExp);
-      this.totalExpEAC += phaseExp;
-      this.planDates.push(phaseDate.format('YYYY-MM'));
+      // ensure a phase was found  if not then
+      // set up some defaults
+      if (phaseDate.isSame(defaultDate, 'day')) {
+        this.capitalEAC.push('Not Found');
+        this.expenseEAC.push('Not Found');
+        this.planDates.push('Not Found');
+        this.noSave = true;
+      } else {
+        this.capitalEAC.push(this.cp.transform(phaseCap, 'USD', 'symbol-narrow', '1.0-0'));
+        this.capitalEACValue.push(phaseCap);
+        this.totalCapEAC += phaseCap;
+        this.expenseEAC.push(this.cp.transform(phaseExp, 'USD', 'symbol-narrow', '1.0-0'));
+        this.expenseEACValue.push(phaseExp);
+        this.totalExpEAC += phaseExp;
+        this.planDates.push(phaseDate.format('YYYY-MM'));
+      }
+    }
+    // the finish date is the last phase date.  
+    if (phaseDate.isSame(defaultDate, 'day')) {
+      this.planFinishDate = 'Not Found';
+      this.isLate = true;
+    } else {
+      this.planFinishDate = phaseDate.format('YYYY-MM');
+      if (this.planFinishDate > this.milestoneFinishDate ) {
+        this.isLate = true;
+      }
     }
   }
 
@@ -172,15 +217,15 @@ export class ProjectMilestonesComponent implements OnInit {
     }
 
     let index = 0;
-    for ( const phase of this.phases) {
+    for (const phase of this.phases) {
       const milestone = new Milestone();
       milestone.milestoneId = 0;
       milestone.phaseId = phase.phaseId;
       milestone.projectId = this.project.projectId;
       milestone.active = true;
       milestone.phaseCompleteDate = this.planDates[index];
-      milestone.phaseCapitalEstimate = this.capitalMilestones[index];
-      milestone.phaseExpenseEstimate = this.expenseMilestones[index];
+      milestone.phaseCapitalEstimate = this.capitalEACValue[index];
+      milestone.phaseExpenseEstimate = this.expenseEACValue[index];
       milestone.setDateTime = moment().toDate();
       index++;
       milestones.push(milestone);
@@ -194,6 +239,9 @@ export class ProjectMilestonesComponent implements OnInit {
             let newMilestone = new Milestone();
             newMilestone = JSON.parse(results._body);
             this.project.milestones.push(newMilestone);
+          },
+          error => {
+           this.toast.error(error, 'Oops'); 
           }
         );
       } else {
@@ -209,10 +257,9 @@ export class ProjectMilestonesComponent implements OnInit {
           }
         );
       }
-      
+
     }
-    this.setMilestoneTable();
-    this.toast.success('Milestones have been updated');
+    
   }
 }
 

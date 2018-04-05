@@ -1,5 +1,5 @@
 
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter, QueryList } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter, QueryList, AfterContentInit } from '@angular/core';
 import { ProjectService, } from '../../../services';
 import { Project, Status, Group, Role, LoggedInUser, BudgetType, Budget, ProjectList, FixedPrice, FixedPriceMonth } from '../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl, FormArray } from '@angular/forms';
@@ -40,6 +40,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   showDeleteBudget = false;
   showDeleteMonths = false;
+  isLoading = false;
 
   selectedBudget: any;
 
@@ -52,11 +53,12 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     private fb: FormBuilder,
     private toast: ToastrService,
     private router: Router) {
-
+    this.isLoading = true;
     this.createForm();
   }
 
   ngOnInit() {
+    this.isLoading = false;
   }
 
   ngOnChanges() {
