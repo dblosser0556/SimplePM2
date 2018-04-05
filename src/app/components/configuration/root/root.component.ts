@@ -1,6 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, } from '@angular/core';
 import { ConfigService } from '../../../services';
-import { Subscription } from 'rxjs/Subscription';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import '../../../rxjs-extensions';
 
@@ -9,11 +8,9 @@ import '../../../rxjs-extensions';
   templateUrl: './root.component.html',
   styleUrls: ['./root.component.scss']
 })
-export class RootComponent implements OnInit, OnDestroy {
+export class RootComponent implements OnInit {
   pageTitle: string;
-  active = false;
-  subSideBarActiveStatus: Subscription;
-  subErrors: Subscription;
+ 
   errorMsg: string;
   isOpen = false;
 
@@ -24,11 +21,6 @@ export class RootComponent implements OnInit, OnDestroy {
        }
 
   ngOnInit() {
-
-
-    this.subSideBarActiveStatus = this.config.sidebarActiveStatus$.subscribe(
-      active => this.active = active);
-
       this.router.events
       .filter((event) => event instanceof NavigationEnd)
       .map(() => this.activatedRoute)
@@ -40,15 +32,4 @@ export class RootComponent implements OnInit, OnDestroy {
       .mergeMap((route) => route.data)
       .subscribe((event) => this.pageTitle = event['title']);
   }
-
-  isActive() {
-    return this.active;
-  }
-
-  ngOnDestroy() {
-    this.subSideBarActiveStatus.unsubscribe();
-  }
-
-
-
 }

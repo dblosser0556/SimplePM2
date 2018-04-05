@@ -14,13 +14,14 @@ import { ProjectCardComponent } from './project-card/project-card.component';
 import { ProjectCardSummaryComponent } from './project-card-summary/project-card-summary.component';
 import { ProjectChartComponent } from './project-chart/project-chart.component';
 
-import { ProjectService, VendorService} from '../../services';
+import { ProjectService, VendorService, VendorInvoiceService} from '../../services';
 
 import { ProjectCardMonthlySummaryComponent } from './project-card-monthly-summary/project-card-monthly-summary.component';
 import { VendorComponent } from './vendor/vendor.component';
 import { VendorCardComponent } from './vendor/vendor-card/vendor-card.component';
 import { VendorContractDetailsComponent } from './vendor/vendor-contract-details/vendor-contract-details.component';
 import { VendorForecastComponent } from './vendor/vendor-forecast/vendor-forecast.component';
+import { ProjectMilestonesComponent } from './project-milestones/project-milestones.component';
 
 
 
@@ -42,6 +43,7 @@ import { VendorForecastComponent } from './vendor/vendor-forecast/vendor-forecas
     VendorCardComponent,
     VendorContractDetailsComponent,
     VendorForecastComponent,
+    ProjectMilestonesComponent,
     ],
    
   exports:      [
@@ -52,6 +54,6 @@ import { VendorForecastComponent } from './vendor/vendor-forecast/vendor-forecas
     ProjectCardSummaryComponent,
     ProjectChartComponent
   ],
-      providers:    [ProjectService, VendorService]
+      providers:    [ProjectService, VendorService, VendorInvoiceService]
 })
 export class ProjectModule { }

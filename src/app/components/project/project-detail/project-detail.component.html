@@ -52,7 +52,7 @@
               </clr-tooltip>
             </div>
             <div class="form-group">
-              <label for="projectStatus">Project Status:</label>
+              <label class="required" for="projectStatus">Project Status:</label>
               <div class="select">
                 <select id="projectStatus" formControlName="statusId">
                   <option *ngFor="let status of statusList" [value]="status.statusId">{{status.statusName}}</option>
@@ -81,7 +81,7 @@
             <div class="form-group">
               <label class="required">Planned Start:</label>
               <label for="plannedStartDate" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="plannedStartDate.invalid && (plannedStartDate.dirty || plannedStartDate.touched)">
-                <input id="plannedStartDate" type="date" size="15" formControlName="projectName" placeholder="Project Name" required>
+                <input id="plannedStartDate" clrDate type="date" size="15" formControlName="plannedStartDate" required>
                 <span class="tooltip-content">
                   Planned Start Date is required!
                 </span>
@@ -90,7 +90,7 @@
             </div>
             <div class="form-group">
               <label class="center-block">Actual Start:</label>
-              <input type="date" formControlName="actualStartDate">
+              <input type="date" clrDate formControlName="actualStartDate">
             </div>
 
           </section>

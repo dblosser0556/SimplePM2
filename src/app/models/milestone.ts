@@ -4,7 +4,8 @@ export class Milestone {
     setDateTime: Date;
     phaseId: number;
     phaseCompleteDate: Date;
-    phaseCompleteEstimate: number;
+    phaseCapitalEstimate: number;
+    phaseExpenseEstimate: number;
 
     projectId: number;
 

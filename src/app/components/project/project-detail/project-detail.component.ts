@@ -61,10 +61,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   ngOnChanges() {
 
-    const plannedStartDate = moment(this.project.plannedStartDate).format('YYYY-MM-DD');
+    const plannedStartDate = moment(this.project.plannedStartDate).format('MM/DD/YYYY');
     let actualStartDate = null;
     if (this.project.actualStartDate !== null) {
-      actualStartDate = moment(this.project.actualStartDate).format('YYYY-MM-DD');
+      actualStartDate = moment(this.project.actualStartDate).format('MM/DD/YYYY');
     }
     this.projectForm.reset({
       projectID: this.project.projectId,

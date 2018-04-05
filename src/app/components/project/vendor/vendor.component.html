@@ -6,6 +6,7 @@
 </div>
 <div class="row">
   <div class="col-lg-6 col-md-12 col-sm-12 col-xs-12" *ngFor="let vendor of project.vendors">
-    <app-vendor-card [vendor]="vendor" [project]="project" (vendorCancel)="deleteVendor($event)"></app-vendor-card>
+    <app-vendor-card [vendor]="vendor" [project]="project" (vendorUpdated)="vendorUpdated($event)"
+        (vendorCancel)="deleteVendor($event)"></app-vendor-card>
   </div>
 </div>

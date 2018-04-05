@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { Vendor, Project } from '../../../models';
 
 @Component({
@@ -8,6 +8,7 @@ import { Vendor, Project } from '../../../models';
 })
 export class VendorComponent implements OnInit, OnDestroy {
   @Input() project: Project;
+
   vendors = [];
   newVendorCounter = 0;
   constructor() { }
@@ -45,7 +46,7 @@ export class VendorComponent implements OnInit, OnDestroy {
     for (let i = 0; i > this.newVendorCounter; i--) {
       const index = this.project.vendors.findIndex(v => v.vendorId === i);
       // if found
-      if (index > 0) {
+      if (index >= 0) {
         this.project.vendors.slice(index, 1);
       }
     }
@@ -71,6 +72,9 @@ export class VendorComponent implements OnInit, OnDestroy {
 
     // by pushing will add card to view.
     this.project.vendors.push(vendor);
+
+    // update the list.
+    this.ngOnInit();
   }
 
   deleteVendor(vendorId: any) {

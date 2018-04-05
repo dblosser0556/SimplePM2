@@ -8,7 +8,7 @@
         <h4 style="margin-top:0px">{{pageTitle}}</h4>
       </div>
     </div>
-    <router-outlet></router-outlet>
+    <router-outlet (setTitle)="setTitle($event)"></router-outlet>
   </main>
 
   <clr-vertical-nav [clrVerticalNavCollapsible]="true">

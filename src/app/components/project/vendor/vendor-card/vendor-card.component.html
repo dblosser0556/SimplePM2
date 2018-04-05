@@ -4,7 +4,8 @@
   </div>
   <div class="card-block">
     <app-vendor-forecast [vendor]="vendor" [project]="project" *ngIf="showView=='forecast'"></app-vendor-forecast>
-    <app-vendor-contract-details [vendor]="vendor" *ngIf="showView=='contract'" (cancelAddVendor)="addCancelled($event)"></app-vendor-contract-details>
+    <app-vendor-contract-details [vendor]="vendor" [project]="project" *ngIf="showView=='contract'" 
+      (cancelAddVendor)="addCancelled($event)"></app-vendor-contract-details>
   </div>
   <div class="card-footer">
     <a (click)="showView='forecast'" *ngIf="showView!='forecast'" class="card-link">Forecast</a>

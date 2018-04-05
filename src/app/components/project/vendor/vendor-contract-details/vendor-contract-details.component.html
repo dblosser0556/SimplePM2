@@ -1,5 +1,5 @@
 <div>
-  <form (ngSubmit)="onSubmit()" name="vendorForm" [formGroup]="vendorForm" novalidate>
+  <form class="condensed" (ngSubmit)="onSubmit()" name="vendorForm" [formGroup]="vendorForm" novalidate>
     <input readonly hidden formControlName="vendorId">
     <section>
       <label>Edit Vendor</label>
@@ -19,36 +19,57 @@
       </div>
       <div class="form-group">
         <label for="contactPhone">Phone:</label>
-        <input id="contactPhone" type="tel" size="15" formControlName="contactPhone" placeholder="Phone">
+        <input id="contactPhone" type="tel" size="25" formControlName="contactPhone" placeholder="Phone">
       </div>
-  <div class="form-group">
+      <div class="form-group">
         <label for="contactEmail">Email:</label>
-        <input id="contactEmail" type="email" size="20" formControlName="contactEmail" placeholder="Email">
+        <input id="contactEmail" type="email" size="25" formControlName="contactEmail" placeholder="Email">
       </div>
       <div class="form-group">
         <label for="contractIdentifier">Contract No</label>
-        <input id="contractIdentifier" type="text" size="20" formControlName="contractIdentifier" placeholder="Contract Identifier">
+        <input id="contractIdentifier" type="text" size="25" formControlName="contractIdentifier" placeholder="Contract Identifier">
       </div>
       <div class="form-group">
         <label for="contractTerms">Comments</label>
         <textarea id="contractTerms" formControlName="contractTerms" placeholder="Terms/Notes"></textarea>
       </div>
       <div class="form-group">
-        <label for="contractAmount">Amount</label>
-        <input id="contractAmount" type="number" size="15" formControlName="contractAmount" placeholder="Amount">
+        <label class="required">Amount</label>
+        <label for="contractAmount" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" 
+        [class.invalid]="contractAmount.invalid && (contractAmount.dirty || contractAmount.touched)">
+          <input id="contractAmount" type="number" size="15" formControlName="contractAmount" placeholder="Amount" required>
+          <span class="tooltip-content">Amount is required!</span>
+        </label>
       </div>
       <div class="form-group">
-        <label for="contractEndDate">End Date</label>
-        <input id="contractEndDate" type="date" size="15" formControlName="contractEndDate" placeholder="End Date">
+        <label class="required">End Date</label>
+        <label for="contractEndDate" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" 
+        [class.invalid]="contractEndDate.invalid && (contractEndDate.dirty || contractEndDate.touched)">
+        <input id="contractEndDate" clrDate type="date" size="15" formControlName="contractEndDate" required>
+        <span class="tooltip-content">End Date is required!</span>
+      </label>
       </div>
     </section>
     <div class="form-group-row">
-      <button class="btn btn-primary" type="submit" [disabled]="!vendorForm.valid">
+      <button class="btn btn-primary btn-sm" type="submit" [disabled]="!vendorForm.valid">
         <clr-icon shape="floppy" class="is-solid"></clr-icon>Save</button>
-      <button type="button" class="btn btn-warning-outline" (click)="revert()">
+      <button type="button" class="btn btn-warning-outline btn-sm" (click)="revert()">
         <clr-icon shape="redo"></clr-icon>Reset</button>
-      <button type="button" class="btn btn-warning-outline" (click)="cancel()">
+      <button  *ngIf="vendor.vendorId <= 0" type="button" class="btn btn-warning-outline btn-sm" (click)="cancel()">
         <clr-icon shape="ban"></clr-icon>Cancel</button>
+        <button *ngIf="vendor.vendorId > 0" type="button" class="btn btn-warning-outline btn-sm" (click)="confirmDelete()">
+            <clr-icon shape="trash"></clr-icon>Delete</button>
     </div>
   </form>
 </div>
+<clr-modal [(clrModalOpen)]="showDeleteConf">
+    <h3 class="modal-title">Confirm Deletion</h3>
+    <div class="modal-body">
+        <p>Are you sure you want to delete?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>  
+        <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+  
+    </div>
+</clr-modal>

@@ -1,8 +1,13 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { Vendor, VendorInvoice, Project } from '../../../../models';
 import * as moment from 'moment';
+import { VendorInvoiceService } from '../../../../services';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ToastrService } from 'ngx-toastr';
+
+
 export interface Forecast {
-  periodDate: Date;
+  periodDate: string;
   forecast: number;
   invoiceEstimate: number;
   invoiceAmount: number;
@@ -12,7 +17,7 @@ export interface Forecast {
 }
 
 export interface MonthDetail {
-  periodDate: Date;
+  periodDate: string;
   resourceDetails: MonthResourceDetail[];
   fixedDetails: MonthFixedDetail[];
 }
@@ -37,14 +42,18 @@ export interface MonthFixedDetail {
   templateUrl: './vendor-forecast.component.html',
   styleUrls: ['./vendor-forecast.component.scss']
 })
-export class VendorForecastComponent implements OnInit {
+export class VendorForecastComponent implements OnInit, OnChanges {
   @Input() vendor: Vendor;
   @Input() project: Project;
-  selectedInvoice: VendorInvoice;
+
+  // handle the invoice popup to edit or add
+  // invoices
+  selectedInvoice: VendorInvoice = null;
   displayInvoice = false;
+  invoiceForm: FormGroup;
 
   monthlyDetails: MonthDetail[];
-  selectedMontlyDetail: MonthDetail;
+  selectedMonthlyDetail: MonthDetail;
   displayMonthDetails = false;
 
   // initiate the diplayed values
@@ -57,9 +66,24 @@ export class VendorForecastComponent implements OnInit {
   estimatedRemaining = 0;
   invoiceRemaining = 0;
 
-  constructor() { }
+  constructor(private invoiceService: VendorInvoiceService,
+    private fb: FormBuilder,
+    private toast: ToastrService) {
+    this.createForm();
+  }
 
   ngOnInit() {
+
+    // reset the totals for every refresh
+    this.forecasts = [];
+    this.forecastTotal = 0;
+    this.estimateTotal = 0;
+    this.invoiceTotal = 0;
+    this.outstanding = 0;
+    this.forecastRemaining = 0;
+    this.estimatedRemaining = 0;
+    this.invoiceRemaining = 0;
+
     let forecasts = new Array<Forecast>();
     let invoices = new Array<Forecast>();
 
@@ -82,10 +106,12 @@ export class VendorForecastComponent implements OnInit {
   showDetails(index: number) {
     const selectedRow = this.forecasts[index];
     if (selectedRow.type === 'invoice') {
-      this.selectedInvoice = this.vendor.invoices[selectedRow.index];
+      const record = this.vendor.invoices.findIndex(i => i.vendorInvoiceId === selectedRow.index);
+      this.selectedInvoice = this.vendor.invoices[record];
+      this.ngOnChanges();
       this.displayInvoice = true;
     } else {
-      this.selectedMontlyDetail = this.monthlyDetails[index];
+      this.selectedMonthlyDetail = this.monthlyDetails[index];
       this.displayMonthDetails = true;
     }
   }
@@ -94,35 +120,37 @@ export class VendorForecastComponent implements OnInit {
   addInvoice() {
     this.selectedInvoice = new VendorInvoice();
     this.selectedInvoice.vendorId = this.vendor.vendorId;
+    this.selectedInvoice.invoiceDate = new Date();
     this.displayInvoice = true;
+    this.ngOnChanges();
   }
 
-  onSubmit() {
 
-  }
 
   calculateForecast() {
     // go though all of the resource rows
     // find the input vendor and calculate
     // forecast and invoice estimates by period
-    const forecasts =  new Array<Forecast>();
+    const forecasts = new Array<Forecast>();
     const monthlyDetails = new Array<MonthDetail>();
-    
+
     // check to make this project has months
     if (this.project.months === undefined) {
       this.monthlyDetails = monthlyDetails;
       return forecasts;
     }
+
+
     for (let i = 0; i < this.project.months.length; i++) {
       let forecastTotal = 0;
       let estimateTotal = 0;
-      const periodDate = moment(this.project.startDate()).add(this.project.months[i].monthNo, 'M');
+      const periodDate = moment(this.project.startDate()).add(this.project.months[i].monthNo, 'M').format('YY-MM');
 
       const monthlyResDetails = new Array<MonthResourceDetail>();
       for (const resource of this.project.resources) {
         if (resource.vendor === this.vendor.vendorName) {
-          forecastTotal = resource.resourceMonths[i].plannedEffort * resource.rate;
-          estimateTotal = resource.resourceMonths[i].actualEffort * resource.rate;
+          forecastTotal += resource.resourceMonths[i].plannedEffort * resource.rate;
+          estimateTotal += resource.resourceMonths[i].actualEffort * resource.rate;
 
           // add the monthlyDetails
           const monthlyResDetail = {
@@ -141,8 +169,8 @@ export class VendorForecastComponent implements OnInit {
       const monthlyFixDetails = new Array<MonthFixedDetail>();
       for (const fixed of this.project.fixedPriceCosts) {
         if (fixed.vendor === this.vendor.vendorName) {
-          forecastTotal = fixed.fixedPriceMonths[i].plannedCost;
-          estimateTotal = fixed.fixedPriceMonths[i].actualCost;
+          forecastTotal += fixed.fixedPriceMonths[i].plannedCost;
+          estimateTotal += fixed.fixedPriceMonths[i].actualCost;
 
           // add the monthly details for the detail popup.
           const monthFixedDetail = {
@@ -154,7 +182,7 @@ export class VendorForecastComponent implements OnInit {
         }
       }
 
-      
+
       const forecast = {
         periodDate: periodDate,
         forecast: forecastTotal,
@@ -194,7 +222,7 @@ export class VendorForecastComponent implements OnInit {
 
     for (const inv of this.vendor.invoices) {
       const invoice = {
-        periodDate: inv.invoiceDate,
+        periodDate: moment(inv.invoiceDate).format('YY-MM'),
         forecast: null,
         invoiceEstimate: null,
         invoiceAmount: inv.amount,
@@ -207,5 +235,136 @@ export class VendorForecastComponent implements OnInit {
     }
     this.invoiceTotal = invoiceTotal;
     return invoices;
+  }
+
+
+  ngOnChanges() {
+    // ensure the selected invoice has been created before
+    // running reset
+    if (this.selectedInvoice !== null) {
+      this.invoiceForm.reset({
+        vendorInvoiceId: this.selectedInvoice.vendorInvoiceId,
+        vendorId: this.selectedInvoice.vendorId,
+        amount: this.selectedInvoice.amount,
+        comments: this.selectedInvoice.comments,
+        invoiceDate: moment(this.selectedInvoice.invoiceDate).format('MM/DD/YY')
+      });
+    }
+  }
+
+  onSubmit() {
+    this.invoiceForm.updateValueAndValidity();
+    if (this.invoiceForm.invalid) {
+      return;
+    }
+
+    const invoice: VendorInvoice = this.getPhaseFromFormValue(this.invoiceForm.value);
+    if (invoice.vendorInvoiceId > 0) {
+      this.invoiceService.update(invoice.vendorInvoiceId, invoice).subscribe(data => {
+        this.toast.success('Selected Invoice has been updated');
+        // reset the view to add invoice
+        this.updateInvoices(data);
+        this.ngOnInit();
+        this.displayInvoice = false;
+        this.selectedInvoice = null;
+      }, error => {
+        this.toast.error(error, 'Oops - Something went wrong');
+        console.log(error);
+      });
+    } else {
+      // set the invoice id to zero to make pass validation in the api
+      invoice.vendorInvoiceId = 0;
+
+      this.invoiceService.create(JSON.stringify(invoice)).subscribe(data => {
+
+        this.toast.success('Invoice has been Added');
+        // reset the view to add invoice
+        this.updateInvoices(data);
+        this.ngOnInit();
+        this.selectedInvoice = null;
+        this.displayInvoice = false;
+      },
+        error => {
+          this.toast.error(error, 'Oops - Something went wrong');
+          console.log(error);
+        });
+    }
+  }
+
+  updateInvoices(data: any) {
+    const invoice = JSON.parse(data._body);
+    const index = this.project.vendors.findIndex(v => v.vendorId === invoice.vendorId);
+
+    const index2 = this.project.vendors[index].invoices.findIndex(i => i.vendorInvoiceId === invoice.vendorInvoiceId);
+    // if found => update else add
+    if (index2 >= 0) {
+      this.project.vendors[index].invoices[index2] = Object.assign({}, invoice);
+    } else {
+      this.project.vendors[index].invoices.push(invoice);
+    }
+  }
+
+  delete() {
+    this.invoiceService.delete(this.selectedInvoice.vendorInvoiceId).subscribe(
+      data => {
+        // remove the invoice from the data structures.
+        const index = this.project.vendors.findIndex(v => v.vendorId === this.selectedInvoice.vendorId);
+
+        if (index >= 0) {
+          const index2 = this.project.vendors[index].invoices.findIndex(i =>
+            i.vendorInvoiceId === this.selectedInvoice.vendorInvoiceId);
+
+          if (index2 >= 0) {
+            this.project.vendors[index].invoices.splice(index2, 1);
+          }
+        }
+        this.toast.success('Invoice deleted');
+        // refresh the list
+        this.ngOnInit();
+        this.selectedInvoice = null;
+        this.displayInvoice = false;
+      }, error => {
+        this.toast.error(error, 'Oops');
+        console.log(error);
+      }
+    );
+  }
+  getPhaseFromFormValue(formValue: any): VendorInvoice {
+
+    const selectedInvoice = new VendorInvoice();
+
+    selectedInvoice.vendorInvoiceId = formValue.vendorInvoiceId;
+    selectedInvoice.vendorId = formValue.vendorId;
+    selectedInvoice.amount = formValue.amount;
+    selectedInvoice.comments = formValue.comments;
+    selectedInvoice.invoiceDate = formValue.invoiceDate;
+    return selectedInvoice;
+
+  }
+
+  createForm() {
+    this.invoiceForm = this.fb.group({
+      vendorInvoiceId: '',
+      vendorId: ['', Validators.required],
+      amount: ['', Validators.required],
+      comments: '',
+      invoiceDate: ['', Validators.required]
+    });
+  }
+
+  get invoiceDate() {
+    return this.invoiceForm.get('invoiceDate');
+  }
+  get amount() {
+    return this.invoiceForm.get('amount');
+  }
+
+  revert() { this.ngOnChanges(); }
+
+  cancel() {
+  this.displayMonthDetails = false;
+    this.displayInvoice = false;
+    this.selectedInvoice = null;
+    this.selectedMonthlyDetail = null;
   }
 }

@@ -13,6 +13,7 @@ export class VendorCardComponent implements OnInit {
   @Input() project: Project;
   @Output() vendorCancel = new EventEmitter();
 
+
   @ViewChild(VendorForecastComponent) forecast: VendorForecastComponent;
   showView = 'forecast';
 

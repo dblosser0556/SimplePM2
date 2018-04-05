@@ -1,4 +1,4 @@
-<table class="table table-condensed" appFixedHeader [height]="300">
+<table style="margin-top:0px" class="table table-compact" appFixedHeader [height]="300">
   <thead>
     <tr>
       <th>Date</th>
@@ -11,53 +11,124 @@
   <tbody>
     <tr *ngFor="let row of forecasts; let i = index">
       <td>
-        <button class="btn btn-sm btn-link" (click)="showDetails(i)">{{row.periodDate | date:'MM/yy'}}</button>
+        <button class="btn btn-sm btn-link" (click)="showDetails(i)">{{row.periodDate}}</button>
       </td>
-      <td>{{row.forecast}}</td>
-      <td>{{row.invoiceEstimate}}</td>
-      <td>{{row.invoiceAmount}}</td>
+      <td>{{row.forecast | currency}}</td>
+      <td>{{row.invoiceEstimate | currency}}</td>
+      <td>{{row.invoiceAmount | currency}}</td>
       <td>{{row.comments}}</td>
     </tr>
   </tbody>
   <tfoot>
     <tr>
       <th>Total</th>
-      <th>{{forecastTotal}}</th>
-      <th>{{estimateTotal}}</th>
-      <th>{{invoiceTotal}}</th>
+      <th>{{forecastTotal | currency}}</th>
+      <th>{{estimateTotal | currency}}</th>
+      <th>{{invoiceTotal | currency}}</th>
       <th></th>
     </tr>
 
     <tr>
       <th>Contract</th>
-      <th>{{vendor.contractAmount}}</th>
+      <th>{{vendor.contractAmount | currency}}</th>
       <th>YTB Invoiced</th>
-      <th>{{outstanding}}</th>
+      <th>{{outstanding | currency}}</th>
     </tr>
     <tr>
       <th>Remaining</th>
-      <th>{{forecastRemaining}}</th>
-      <th>{{estimatedRemaining}}</th>
-      <th>{{invoiceRemaining}}</th>
+      <th>{{forecastRemaining | currency}}</th>
+      <th>{{estimatedRemaining | currency}}</th>
+      <th>{{invoiceRemaining | currency}}</th>
     </tr>
   </tfoot>
 </table>
+<div *ngIf="selectedInvoice">
 <clr-modal [(clrModalOpen)]="displayInvoice">
   <h3 class="modal-title">Edit Invoice</h3>
   <div class="modal-body">
-    <p>Are you sure you want to delete?</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline" (click)="displayInvoice = false">Close</button>
-  </div>
-</clr-modal>
-<clr-modal [(clrModalOpen)]="displayMonthDetails">
-  <h3 class="modal-title">Month Deltails</h3>
-  <div class="modal-body">
-    <p>Are you sure you want to delete?</p>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline" (click)="displayMonthDetails = false">Close</button>
+    <form class="compact" (ngSubmit)="onSubmit()" name="invoiceForm"  [formGroup]="invoiceForm" novalidate>
+      <div class="form-group">
+        <label class="required">Invoice Date</label>
+          <input id="invoiceDate" clrDate type="date" size="15" formControlName="invoiceDate" required>
+      </div>
+      <div class="form-group">
+        <label class="required">Amount</label>
+        <label for="amount" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="amount.invalid && (amount.dirty || amount.touched)">
+          <input id="amount" type="number" size="15" formControlName="amount" required>
 
+          <span class="tooltip-content">
+            Amount is required!
+          </span>
+        </label>
+      </div>
+      <div class="form-group">
+        <label for="comments">Comments</label>
+        <input id="comments" type="text" size="30" formControlName="comments">
+      </div>
+      <div class="form-group-row">
+        <button class="btn btn-primary btn-sm" type="submit" [disabled]="!invoiceForm.valid">
+          <clr-icon shape="floppy" class="is-solid"></clr-icon>Save</button>
+        <button type="button" class="btn btn-warning-outline btn-sm" [disabled]="!invoiceForm.dirty" (click)="revert()">
+          <clr-icon shape="redo"></clr-icon>Reset</button>
+        <button type="button" class="btn btn-warning-outline btn-sm" (click)="cancel()">
+          <clr-icon shape="ban"></clr-icon>Cancel</button>
+          <button *ngIf="selectedInvoice.vendorInvoiceId > 0" type="button" class="btn btn-warning-outline btn-sm" (click)="delete()">
+              <clr-icon shape="trash"></clr-icon>Delete</button>
+      </div>
+
+    </form>
   </div>
 </clr-modal>
+</div>
+<div *ngIf="selectedMonthlyDetail">
+  <clr-modal [(clrModalOpen)]="displayMonthDetails">
+    <h3 class="modal-title">Month Deltails</h3>
+    <h4 class="modal-title">{{selectedMonthlyDetail.periodDate}}</h4>
+    <div class="modal-body">
+      <h5>Resources</h5>
+      <table appFixedHeader [height]="150" class="table table-condensed">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Rate</th>
+            <th>Planned Effort</th>
+            <th>Planned Amount</th>
+            <th>Actual Effort</th>
+            <th>Actual Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let detail of selectedMonthlyDetail.resourceDetails">
+            <td>{{detail.name}}</td>
+            <td>{{detail.rate}}</td>
+            <td>{{detail.plannedEffort}}</td>
+            <td>{{detail.plannedAmount}}</td>
+            <td>{{detail.actualEffort}}</td>
+            <td>{{detail.actualAmount}}</td>
+          </tr>
+        </tbody>
+      </table>
+      <h5>Fixed Costs</h5>
+      <table appFixedHeader [height]="150" class="table table-condensed">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Planned Cost</th>
+            <th>Actual Cost</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let detail of selectedMonthlyDetail.fixedDetails">
+            <td>{{detail.name}}</td>
+            <td>{{detail.plannedCost}}</td>
+            <td>{{detail.actualCost}}</td>
+          </tr>
+        </tbody>
+      </table>
+      
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline btn-sm" (click)="cancel()">Close</button>
+    </div>
+  </clr-modal>
+</div>

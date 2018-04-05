@@ -4,6 +4,8 @@ export * from './project.service';
 export * from './budget.service';
 export * from './group-budget.service';
 export * from './vendor.service';
+export * from './vendor-invoice.service';
+export * from './milestone.service';
 
 
 

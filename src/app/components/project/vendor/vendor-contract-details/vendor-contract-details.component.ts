@@ -1,9 +1,9 @@
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core';
-import { Vendor } from '../../../../models';
+import { Vendor, Project } from '../../../../models';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { VendorService } from '../../../../services';
 import { ToastrService } from 'ngx-toastr';
-
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-vendor-contract-details',
@@ -13,11 +13,13 @@ import { ToastrService } from 'ngx-toastr';
 export class VendorContractDetailsComponent implements OnInit, OnChanges {
 
   @Input() vendor: Vendor;
+  @Input() project: Project;
   @Output() cancelAddVendor = new EventEmitter();
 
-  vendorForm: FormGroup;
-  error: any;
 
+  vendorForm: FormGroup;
+  showDeleteConf = false;
+  
   constructor(private vendorService: VendorService,
     private fb: FormBuilder,
     private toast: ToastrService) {
@@ -36,14 +38,11 @@ export class VendorContractDetailsComponent implements OnInit, OnChanges {
       contractIdentifier: this.vendor.contractIdentifier,
       contractTerms: this.vendor.contractTerms,
       contractAmount: this.vendor.contractAmount,
-      contractEndDate: this.vendor.contractEndDate
+      contractEndDate: moment(this.vendor.contractEndDate).format('MM/DD/YYYY')
     });
   }
 
-  get vendorName() {
-    return this.vendorForm.get('vendorName');
-  }
-  
+ 
   onSubmit() {
     this.vendorForm.updateValueAndValidity();
     if (this.vendorForm.invalid) {
@@ -55,6 +54,9 @@ export class VendorContractDetailsComponent implements OnInit, OnChanges {
       // vendor exists do update.
       this.vendorService.update(vendor.vendorId, vendor).subscribe(data => {
         this.toast.success('vendor has been updated');
+       
+        this.vendor = JSON.parse(data._body);
+        this.updateVendor();
       },
         error => {
           this.toast.error(error, 'Oops');
@@ -65,8 +67,21 @@ export class VendorContractDetailsComponent implements OnInit, OnChanges {
       // passing 0 works with the api post.
       vendor.vendorId = 0;
       this.vendorService.create(JSON.stringify(vendor)).subscribe(data => {
-        this.vendor = data;
+        
+        // store the place holder from the array
+        const tempVendorId = this.vendor.vendorId;
+        
+        
+        // add this new vendor to the vendor array
+        this.vendor = JSON.parse(data._body);
+        this.updateVendor();
+
+        // update the form with the changes
         this.ngOnChanges();
+
+        // remove the place holder.
+        this.cancelAddVendor.emit(tempVendorId);
+
         this.toast.success('Vendor has been Added');
       },
         error => {
@@ -74,6 +89,16 @@ export class VendorContractDetailsComponent implements OnInit, OnChanges {
           console.log(error);
         });
     }
+  }
+
+  updateVendor() {
+    const index = this.project.vendors.findIndex(v => v.vendorId === this.vendor.vendorId);
+    if (index >= 0) {
+      this.project.vendors[index] = Object.assign({}, this.vendor);
+    } else {
+      this.project.vendors.push(this.vendor);
+    }
+
   }
 
   getVendorFromFormValue(formValue: any): Vendor {
@@ -103,16 +128,47 @@ export class VendorContractDetailsComponent implements OnInit, OnChanges {
       contactEmail: '',
       contractIdentifier: '',
       contractTerms: '',
-      contractAmount: '',
-      contractEndDate: ''
+      contractAmount: ['', Validators.required],
+      contractEndDate: ['', Validators.required]
     }
     );
   }
 
+  // set up some validation shortcut helpers
+  get vendorName() {
+    return this.vendorForm.get('vendorName');
+  }
+  
+  get contractAmount() {
+    return this.vendorForm.get('contractAmount');
+  }
+
+  get contractEndDate() {
+    return this.vendorForm.get('contractEndDate');
+  }
 
   revert() { this.ngOnChanges(); }
 
   cancel() {
       this.cancelAddVendor.emit(this.vendor.vendorId.toString());
    }
+
+  confirmDelete() {
+    this.showDeleteConf = true;
+  }
+
+  onDelete() {
+    
+    this.vendorService.delete(this.vendor.vendorId)
+      .subscribe(x => {
+        this.toast.success('Vendor has been deleted', 'Success');
+        this.cancelAddVendor.emit(this.vendor.vendorId.toString());
+        this.showDeleteConf = false;
+      },
+        error => {
+          this.toast.error(error);
+          console.log(error);
+          this.showDeleteConf = false;
+        });
+  }
 }

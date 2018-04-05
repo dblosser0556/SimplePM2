@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { ProjectService } from '../../services';
 import { Project, Group, Status, LoggedInUser, ProjectList } from '../../models';
 import { StatusService } from '../configuration/status/status.service';
@@ -9,12 +9,14 @@ import { ActivatedRoute } from '@angular/router';
 import 'rxjs/add/operator/filter';
 import { ToastrService } from 'ngx-toastr';
 
+
 @Component({
   selector: 'app-project',
   templateUrl: './project.component.html',
   styleUrls: ['./project.component.scss']
 })
 export class ProjectComponent implements OnInit {
+
 
   currentProject: Project;
   groups: Group[];
@@ -47,6 +49,8 @@ export class ProjectComponent implements OnInit {
     this.getTemplateList();
     this.getProject();
   }
+
+
 
   getStatusList() {
     this.statusService.getOptionList().subscribe(
@@ -102,6 +106,7 @@ export class ProjectComponent implements OnInit {
               for (const month of this.currentProject.months) {
                 month.phaseName = this.util.findPhaseName(month.phaseId);
               }
+
             },
             error => {
               this.toast.error(error);

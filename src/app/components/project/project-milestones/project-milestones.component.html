@@ -1,0 +1,71 @@
+<div class="card">
+  <div class="card-header">
+    <H4>Milestones</H4>
+  </div>
+  <div class="card-block">
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th></th>
+          <th *ngFor="let phase of phases">{{phaseName}}</th>
+          <th>Total</th>
+          <th>Budget Comparison</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <th>Milestone Date</th>
+          <td *ngFor="let date of milestoneDates">{{date}}</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>Current Plan</th>
+          <td *ngFor="let plan of planDates">{{plan}}</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <th>Capital Budget</th>
+          <td *ngFor="let phase of phases"></td>
+          <td></td>
+          <th>{{totalCapBudget | currency}}</th>
+
+        </tr>
+        <tr>
+          <th>Capital Milestone</th>
+          <td *ngFor="let capital of capitalMilestones">{{capital | currency}}</td>
+          <td>{{totalCapMilestone | currency}}</td>
+          <td>{{capMilestoneToBudget | currency}}</td>
+        </tr>
+        <tr>
+          <th>Capital EAC</th>
+          <td *ngFor="let eac of capitalEAC">{{eac | currency}}</td>
+          <td>{{totalCapEAC | currency}}</td>
+          <td>{{capEACToBudget | currency}}</td>
+        </tr>
+        <tr>
+          <th>Expense Budget</th>
+          <th *ngFor="let phase of phases"></th>
+          <th></th>
+          <th>{{totalExpBudget | currency}}</th>
+        </tr>
+        <tr>
+          <th>Expense Milestone</th>
+          <td *ngFor="let expense of expenseMilestones">{{expense | currency}}</td>
+          <td>{{totalExpMilestone | currency}}</td>
+          <td>{{expMilestoneToBudget | currency}}</td>
+        </tr>
+        <tr>
+          <th>Expense EAC</th>
+          <td *ngFor="let eeac of expenseEAC">{{eeac | currency}}</td>
+          <td>{{totalExpEAC | currency}}</td>
+          <td>{{expEACToBudget | currency}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card-footer">
+    <a (click)="onSubmit()" class="card-link">Update Milestones</a>
+  </div>
+</div>
