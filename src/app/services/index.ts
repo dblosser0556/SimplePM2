@@ -6,6 +6,7 @@ export * from './group-budget.service';
 export * from './vendor.service';
 export * from './vendor-invoice.service';
 export * from './milestone.service';
+export * from './chart-helper.service';
 
 
 

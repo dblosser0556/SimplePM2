@@ -3,6 +3,7 @@ import { DivisionsComponent } from './divisions/divisions.component';
 import { ProgramsComponent  } from './programs/programs.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { RootComponent } from './root/root.component';
+import { TreeNodeComponent } from './divisions/treenode.component';
 
 
 
@@ -13,6 +14,7 @@ export {
     ProgramsComponent,
     ProjectsComponent,
     RootComponent,
+    TreeNodeComponent
 };
 
 export default [
@@ -21,4 +23,5 @@ export default [
     ProgramsComponent,
     ProjectsComponent,
     RootComponent,
+    TreeNodeComponent
 ];

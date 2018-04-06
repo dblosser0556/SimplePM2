@@ -11,6 +11,7 @@ import { AuthGuard } from '../../guard/auth.guard';
 
 import {HomeComponent,
   DivisionsComponent,
+  TreeNodeComponent,
   ProgramsComponent,
   ProjectsComponent,
   RootComponent
@@ -30,6 +31,7 @@ import {HomeComponent,
   ],
   declarations: [ HomeComponent,
     DivisionsComponent,
+    TreeNodeComponent,
     ProgramsComponent,
     ProjectsComponent,
     RootComponent,

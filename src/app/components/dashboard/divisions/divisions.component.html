@@ -1,5 +1,22 @@
-<div class="container-fluid">
-<p>
-  div works
-</p>
+<div class="row">
+  <div style="width:30%">
+    <span>
+      <h4>Group</h4>
+    </span>
+    <clr-tree-node *ngFor="let group of rootGroups" [(clrSelected)]="group.selected">
+      {{group.groupName}}
+      <ng-template *ngIf="group.hasChildren" clrIfExpanded>
+        <app-tree-node [parentId]="group.groupId" [groups]="group.groups"></app-tree-node>
+      </ng-template>
+    </clr-tree-node>
+    <button class="btn btn-sm" title="Apply Filter" (click)="applyFilter()">Apply</button>
+  </div>
+  <div style="width:30%">
+    <span>
+      <h4>Status</h4>
+    </span>
+    <div class="btn-group btn-primary">
+      <button *ngFor="let stat of status" class="btn">{{stat.statusName}}</button>
+    </div>
+  </div>
 </div>

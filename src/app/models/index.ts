@@ -28,3 +28,6 @@ export * from './fixed-price-month';
 export * from './vendor';
 export * from './vendorInvoice';
 export * from './vendorPeriod';
+
+export * from './chart-data-interface';
+export * from './group-treeview-interface';
