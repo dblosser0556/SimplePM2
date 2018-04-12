@@ -11,14 +11,9 @@ import '../../../rxjs-extensions';
 export class RootComponent implements OnInit {
   pageTitle: string;
  
-  errorMsg: string;
-  isOpen = false;
-
   constructor(private config: ConfigService,
       private router: Router,
-      private activatedRoute: ActivatedRoute) {
-        this.isOpen = false;
-       }
+      private activatedRoute: ActivatedRoute) { }
 
   ngOnInit() {
       this.router.events

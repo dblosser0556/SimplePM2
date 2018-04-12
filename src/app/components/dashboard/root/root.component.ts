@@ -11,7 +11,6 @@ import '../../../rxjs-extensions';
 })
 export class RootComponent implements OnInit, OnDestroy {
   pageTitle: string;
-  active = false;
   subSideBarActiveStatus: Subscription;
   subRouter: Subscription;
   errorMsg: string;
@@ -24,8 +23,6 @@ export class RootComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subSideBarActiveStatus = this.config.sidebarActiveStatus$.subscribe(
-      active => this.active = active);
 
     this.subRouter = this.router.events
       .filter((event) => event instanceof NavigationEnd)
@@ -40,9 +37,7 @@ export class RootComponent implements OnInit, OnDestroy {
       .subscribe((event) => this.pageTitle = event['title']);
   }
 
-  isActive() {
-    return this.active;
-  }
+ 
 
   ngOnDestroy() {
     if (this.subSideBarActiveStatus) {

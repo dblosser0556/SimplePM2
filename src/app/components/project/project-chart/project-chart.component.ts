@@ -71,9 +71,9 @@ export class ProjectChartComponent implements OnInit {
   }
 
   convertData() {
-    this.data = this.chartHelper.convertData(this.project.months, 
-      this.project.budgets, this.viewCapValues, this.viewExpValues, 
-      this.projectStartDate);
+    this.data = this.chartHelper.convertData(this.project.months,
+       this.viewCapValues, this.viewExpValues,
+      this.projectStartDate, this.project.budgets);
   }
 
  

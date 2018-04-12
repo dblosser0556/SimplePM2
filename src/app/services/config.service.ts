@@ -20,33 +20,17 @@ export class ConfigService {
   DARKGREY = '#34495e';
 
 
-  _sidebarActive: boolean;
 
   capWeightConfig: CapWeightPercent[];
 
-  // Observable navItem source
-  private _authSideBarActiveStatus = new BehaviorSubject<boolean>(false);
-  // Observable navItem stream
-  sidebarActiveStatus$ = this._authSideBarActiveStatus.asObservable();
 
   constructor() {
-    this._sidebarActive = false;
     this.capWeightConfig = this.addCapWeightConfig();
-  }
-
-  isSideBarActive() {
-    return this._sidebarActive;
-  }
-
-  setSideBarActiveState(state: boolean) {
-    this._sidebarActive = state;
-    this._authSideBarActiveStatus.next(state);
   }
 
   addCapWeightConfig(): CapWeightPercent[] {
     let _capWeight: CapWeightPercent[];
 
-    
     _capWeight = [{
       order: 1,
       title: '100%',

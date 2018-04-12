@@ -7,6 +7,7 @@ export * from './vendor.service';
 export * from './vendor-invoice.service';
 export * from './milestone.service';
 export * from './chart-helper.service';
+export * from './project-monthly-projection.service';
 
 
 

@@ -7,7 +7,8 @@ import { ProjectModule } from '../project/project.module';
 import { BreadcrumbsModule } from '../breadcrumbs/breadcrumbs.module';
 import { dashboardRouting } from './dashboard.routing';
 import { AuthGuard } from '../../guard/auth.guard';
-
+import { ProjectMonthlyProjectionService, ChartHelperService } from '../../services';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import {HomeComponent,
   DivisionsComponent,
@@ -27,7 +28,9 @@ import {HomeComponent,
     ProjectModule,
     ReactiveFormsModule,
     ClarityModule,
-    BreadcrumbsModule
+    BreadcrumbsModule,
+    NgxChartsModule
+
   ],
   declarations: [ HomeComponent,
     DivisionsComponent,
@@ -36,6 +39,6 @@ import {HomeComponent,
     ProjectsComponent,
     RootComponent,
     ],
-  providers: [AuthGuard ]
+  providers: [AuthGuard, ProjectMonthlyProjectionService, ChartHelperService ]
 })
 export class DashboardModule { }

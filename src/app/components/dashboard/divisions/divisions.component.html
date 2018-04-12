@@ -1,4 +1,67 @@
+<div *ngIf="isLoading">
+  <span class="spinner spinner-inline">
+    Loading...
+  </span>
+  <span>
+    Loading...
+  </span>
+</div>
 <div class="row">
+  <div class="column">
+    <nav class="sidenav">
+      <section class="sidenav-content">
+        <label>
+          <h5>Filters</h5>
+        </label>
+        <section class="form-block">
+          <label>Organization</label>
+          <clr-tree-node *ngFor="let group of rootGroups" (change)="applyFilter(group)" [(clrSelected)]="group.selected">
+            {{group.groupName}}
+            <ng-template *ngIf="group.hasChildren" clrIfExpanded>
+              <app-tree-node [parentId]="group.groupId" [groups]="group.groups"></app-tree-node>
+            </ng-template>
+          </clr-tree-node>
+        </section>
+        <section class="form-block">
+          <label>Year</label>
+          <clr-tree-node *ngFor="let year of years" (change)="applyYearFilter(year)" 
+            [clrIndeterminate]="year.disabled" [(clrSelected)]="year.selected">
+              {{year.value}}
+            </clr-tree-node>
+        </section>
+        <section class="form-block">
+          <label>Status</label>
+          <clr-tree-node *ngFor="let stat of status" (change)="applyStatusFilter(stat)" 
+            [clrIndeterminate]="stat.disabled" [(clrSelected)]="stat.selected">
+            {{stat.statusName}}
+          </clr-tree-node>
+        </section>
+        <section>
+          <label>Select Budget</label>
+          <clr-tree-node [(clrSelected)]="viewCapValues" (change)="showCapChart()" title="Show Capital Projections">
+            Capital
+          </clr-tree-node>
+
+          <clr-tree-node [(clrSelected)]="viewExpValues" (change)="showExpChart()" title="Show Expense Projections">
+            Expense
+          </clr-tree-node>
+
+        </section>
+
+        <button class="btn btn-sm" title="Reset Filter" (click)="resetFilter()">Reset</button>
+      </section>
+    </nav>
+  </div>
+  <div class="column">
+    <ngx-charts-line-chart [view]="view" [scheme]="colorScheme" [results]="data" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis"
+      [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel" [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel"
+      [autoScale]="autoScale">
+    </ngx-charts-line-chart>
+    <div></div>
+  </div>
+</div>
+
+<!-- <div class="row" *ngIf="!isLoading">
   <div style="width:30%">
     <span>
       <h4>Group</h4>
@@ -19,4 +82,19 @@
       <button *ngFor="let stat of status" class="btn">{{stat.statusName}}</button>
     </div>
   </div>
+</div> 
+<div class="row" *ngIf="!isLoading">
+  
 </div>
+<div class="row">
+  <clr-checkbox [clrChecked]="viewCapValues" [clrInline]="true" (change)="showCapChart()" title="Show Capital Projections">
+    Capital
+  </clr-checkbox>
+
+  <clr-checkbox [clrChecked]="viewExpValues" [clrInline]="true" (change)="showExpChart()" title="Show Expense Projections">
+    Expense
+  </clr-checkbox>
+
+
+  <button class="btn btn-info btn-sm" (click)="showEnlargedChart()">Enlarge</button>
+</div>-->

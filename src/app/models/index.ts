@@ -31,3 +31,4 @@ export * from './vendorPeriod';
 
 export * from './chart-data-interface';
 export * from './group-treeview-interface';
+export * from './project-monthly-projection';

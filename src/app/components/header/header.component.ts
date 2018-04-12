@@ -18,7 +18,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit( ) {
     this.subLoginStatus = this.user.authNavStatus$.subscribe(
       status => { this.status = status;
-        console.log('Status change fired');
         if (status) {
 
           this.currentUser = this.user.currentUser();
@@ -27,7 +26,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           console.log('currentUser ', this.currentUser.currentUser.lastName);
         }
       });
-    this.sideBarActive = false;
+    
   }
 
   logout() {
@@ -38,10 +37,5 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.subLoginStatus.unsubscribe();
   }
 
-  setSideBarActiveStatus() {
-    this.sideBarActive = !this.sideBarActive;
-    this.config.setSideBarActiveState(this.sideBarActive);
  
-  }
-
 }
