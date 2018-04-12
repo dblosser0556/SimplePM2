@@ -5,11 +5,15 @@ import { Status, Group, GroupTreeView, ProjectMonthlyProjection, ChartData, Mont
 import { ProjectMonthlyProjectionService } from '../../../services/project-monthly-projection.service';
 import { ChartHelperService } from '../../../services';
 import * as moment from 'moment';
+import { ToastrService } from 'ngx-toastr';
+import * as _ from 'lodash';
 
-export interface Year {
-  value: number;
+export interface Filter {
+  value: string;
   selected: boolean;
   disabled: boolean;
+  unfilteredCount: number;
+  filteredCount: number;
 }
 
 @Component({
@@ -20,21 +24,23 @@ export interface Year {
 
 export class DivisionsComponent implements OnInit, OnChanges {
   isLoading = false;
-  status: Status[];
+
   groups: Group[];
   monthlyProjections: ProjectMonthlyProjection[];
   filteredProjections: ProjectMonthlyProjection[];
 
   treeviewGroups: GroupTreeView[] = [];
   rootGroups: GroupTreeView[] = [];
-  
+
   months: Month[] = [];
 
 
   data: ChartData[] = [];
   budgets: GroupBudget[];
   chartStartDate: string;
-  years: Year[];
+
+  years: Filter[] = [];
+  status: Filter[] = [];
 
   viewCapValues = true;
   viewExpValues = true;
@@ -65,7 +71,8 @@ export class DivisionsComponent implements OnInit, OnChanges {
     private groupService: GroupService,
     private monthlyService: ProjectMonthlyProjectionService,
     private chartHelper: ChartHelperService,
-    private el: ElementRef) { }
+    private el: ElementRef,
+    private toast: ToastrService) { }
 
   @HostListener('window:resize', ['$event'])
   onResize(event) {
@@ -75,7 +82,6 @@ export class DivisionsComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.isLoading = true;
 
-    this.getStatus();
     this.getGroups();
     this.getChartView();
   }
@@ -97,9 +103,33 @@ export class DivisionsComponent implements OnInit, OnChanges {
 
   getStatus() {
     this.statusService.getAll().subscribe(results => {
-      this.status = results;
-    }
-    );
+      const status: Status[] = results;
+      const filterStatus = this.findStatus(this.monthlyProjections);
+
+      // status is the superlist so go through each 
+      // and compare to the ones in the list of projects.
+      status.forEach(s => {
+        const foundStatus = filterStatus.filter(f => f.value === s.statusName);
+        if (foundStatus.length > 0) {
+          this.status.push(foundStatus[0]);
+        } else {
+          const newStatus = {
+            value: s.statusName,
+            selected: false,
+            disabled: true,
+            filteredCount: 0,
+            unfilteredCount: 0
+          };
+          this.status.push(newStatus);
+        }
+      });
+      // set up the chartdata
+      this.convertData();
+      this.isLoading = false;
+    }, error => {
+      this.toast.error('error', 'Oops - Retrieving Status');
+      console.log('Retrieving - Status', error);
+    });
   }
 
   getProjects() {
@@ -117,12 +147,13 @@ export class DivisionsComponent implements OnInit, OnChanges {
       // get the years for the years filter
       this.years = this.findYears(this.monthlyProjections);
 
-      // update the status filter
-      this.updateStatusFilter(results);
+      // setup up the status filter
+      this.getStatus();
 
-      // set up the chartdata
-      this.convertData();
-      this.isLoading = false;
+
+    }, error => {
+      this.toast.error('error', 'Oops - Retrieving Project Info');
+      console.log('Retrieving - Monthly Projections', error);
     });
   }
 
@@ -229,12 +260,12 @@ export class DivisionsComponent implements OnInit, OnChanges {
   }
 
   showCapChart() {
-    this.viewCapValues = !this.viewCapValues;
+    // this.viewCapValues = !this.viewCapValues;
     this.convertData();
   }
 
   showExpChart() {
-    this.viewExpValues = !this.viewExpValues;
+    // this.viewExpValues = !this.viewExpValues;
     this.convertData();
   }
 
@@ -259,32 +290,53 @@ export class DivisionsComponent implements OnInit, OnChanges {
   }
 
   // figure out the available years
-  findYears(projections: ProjectMonthlyProjection[]): Year[] {
+  findYears(projections: ProjectMonthlyProjection[]): Filter[] {
+    let projectionsByDate = projections;
     // make sure sorted by date.
-    projections = this.sortProjections(projections);
+    projectionsByDate = _.chain(projections).sortBy('projectName')
+      .sortBy('month')
+      .value();
 
-    const years = new Array<Year>();
+    const years = new Array<Filter>();
 
-    let curYear = moment([1800]).year();
-
-    for (const projection of projections) {
+    let curYear = moment(projectionsByDate[0].month).year();
+    let curProjectName = projectionsByDate[0].projectName;
+    let projectCount = 1;
+    for (const projection of projectionsByDate) {
       const projYear = moment(projection.month).year();
       if (curYear < projYear) {
         const year = {
-          value: projYear,
+          value: curYear.toString(),
           selected: true,
-          disabled: false
+          disabled: false,
+          unfilteredCount: projectCount,
+          filteredCount: projectCount
         };
         years.push(year);
         curYear = projYear;
+        projectCount = 1;
+        curProjectName = projection.projectName;
+      }
+      if (curProjectName !== projection.projectName) {
+        projectCount++;
       }
     }
+    // handle the last year.
+    const lastYear = {
+      value: curYear.toString(),
+      selected: true,
+      disabled: false,
+      unfilteredCount: projectCount,
+      filteredCount: projectCount
+    };
+    years.push(lastYear);
+
 
     return years;
   }
 
   // update the selected values of this years filter
-  // other filters may have filtered out 
+  // other filters may have filtered out
   updateYearsFilter(projections: ProjectMonthlyProjection[]) {
     const filteredYears = this.findYears(projections);
 
@@ -301,27 +353,54 @@ export class DivisionsComponent implements OnInit, OnChanges {
   }
 
 
-  // 
+
 
   applyYearFilter(event?: any) {
     console.log('year fired');
   }
 
   // find what status are in the current list.
-  findStatus(projections: ProjectMonthlyProjection[]): string[] {
-    // sort by status.
-    const curProjections = this.sortProjectionsByKey('statusName', projections);
-    
-    const curStatus = new Array<string>();
-    let curStatusName  = '';
-
+  findStatus(projections: ProjectMonthlyProjection[]): Filter[] {
+    // sort by status. (Create clone so we don't sort the main list.)
+    let curProjections = projections;
+    curProjections = _.chain(curProjections).sortBy('projectName')
+      .sortBy('statusName')
+      .value();
+    // then sort by projectName
+    // curProjections = this.sortProjectionsByKey('projectName', curProjections);
+    const curStatus = new Array<Filter>();
+    let curStatusName = curProjections[0].statusName;
+    let curProjectname = curProjections[0].projectName;
+    let statusCount = 1;
     for (const projection of curProjections) {
       const projStatusName = projection.statusName;
       if (curStatusName !== projStatusName) {
-        curStatus.push(projStatusName);
+        const newStatus = {
+          value: curStatusName,
+          selected: true,
+          disabled: false,
+          unfilteredCount: statusCount,
+          filteredCount: statusCount
+        };
+        curStatus.push(newStatus);
+        statusCount = 1;
         curStatusName = projStatusName;
+        curProjectname = projection.projectName;
+      }
+      if (curProjectname !== projection.projectName) {
+        statusCount++;
+        curProjectname = projection.projectName;
       }
     }
+    // add last
+    const lastStatus = {
+      value: curStatusName,
+      selected: true,
+      disabled: false,
+      unfilteredCount: statusCount,
+      filteredCount: statusCount
+    };
+    curStatus.push(lastStatus);
     return curStatus;
   }
 
@@ -330,20 +409,20 @@ export class DivisionsComponent implements OnInit, OnChanges {
     const filteredStatus = this.findStatus(projections);
 
     for (const stat of this.status) {
-      const index = filteredStatus.findIndex(statusName => statusName === stat.statusName);
+      const index = filteredStatus.findIndex(f => f.value === stat.value);
 
       if (index < 0) {
         stat.selected = false;
-        stat.disabled = true;
+        stat.filteredCount = 0;
       } else {
         stat.selected = true;
-        stat.disabled = false;
+        stat.filteredCount = filteredStatus[index].filteredCount;
       }
 
     }
   }
 
-  applyStatusFilter(status?: string) {
+  applyStatusFilter(status?: Filter) {
     let projections = new Array<ProjectMonthlyProjection>();
     const filteredProjections = new Array<ProjectMonthlyProjection>();
 
@@ -353,6 +432,7 @@ export class DivisionsComponent implements OnInit, OnChanges {
       // partaily filter resutls
       projections = this.filteredProjections;
     } else {
+
       // start with me.  Start with the full list.
       projections = this.monthlyProjections;
     }
@@ -360,7 +440,7 @@ export class DivisionsComponent implements OnInit, OnChanges {
     // go through all of the projections to see if meet the filter.
     for (const projection of projections) {
       this.status.filter(s => s.selected).forEach(s => {
-        if (s.statusName === projection.statusName) {
+        if (s.value === projection.statusName) {
           filteredProjections.push(projection);
         }
       });
@@ -374,15 +454,18 @@ export class DivisionsComponent implements OnInit, OnChanges {
 
       // regroup the months and redraw the chart.
       this.months = this.chartHelper.groupMonths(this.filteredProjections);
+      this.updateStatusFilter(this.filteredProjections);
       this.convertData();
     } else {
       this.updateStatusFilter(this.filteredProjections);
     }
   }
 
+
+
   convertData() {
-    this.data = this.chartHelper.convertData(this.months, this.viewCapValues, this.viewExpValues, 
-        this.chartStartDate, undefined, this.budgets);
+    this.data = this.chartHelper.convertData(this.months, this.viewCapValues, this.viewExpValues,
+      this.chartStartDate, undefined, this.budgets);
   }
 
 }

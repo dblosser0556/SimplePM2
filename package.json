@@ -28,6 +28,7 @@
     "@webcomponents/custom-elements": "^1.0.0",
     "core-js": "^2.4.1",
     "d3": "^5.0.0",
+    "lodash": "^4.17.5",
     "moment": "^2.21.0",
     "ngx-toastr": "^8.3.0",
     "rxjs": "^5.5.7",

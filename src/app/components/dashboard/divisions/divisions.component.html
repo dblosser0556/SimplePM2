@@ -11,40 +11,47 @@
     <nav class="sidenav">
       <section class="sidenav-content">
         <label>
-          <h5>Filters</h5>
+          <h4>Filters</h4>
         </label>
         <section class="form-block">
-          <label>Organization</label>
+          <label><h5>Organization</h5></label>
           <clr-tree-node *ngFor="let group of rootGroups" (change)="applyFilter(group)" [(clrSelected)]="group.selected">
-            {{group.groupName}}
+              <label class="filter-label">{{group.groupName}}</label>
+              <span class="badge badge-orange">1</span>
+              <span class="badge">3</span>
+            
             <ng-template *ngIf="group.hasChildren" clrIfExpanded>
               <app-tree-node [parentId]="group.groupId" [groups]="group.groups"></app-tree-node>
             </ng-template>
           </clr-tree-node>
         </section>
         <section class="form-block">
-          <label>Year</label>
-          <clr-tree-node *ngFor="let year of years" (change)="applyYearFilter(year)" 
-            [clrIndeterminate]="year.disabled" [(clrSelected)]="year.selected">
-              {{year.value}}
-            </clr-tree-node>
+          <label><h5>Year</h5></label>
+          <clr-checkbox *ngFor="let year of years" (change)="applyYearFilter(year)" 
+            [clrDisabled]="year.disabled" [(clrChecked)]="year.selected">
+            <label class="filter-label">{{year.value}}</label>
+            <span class="badge badge-orange filter-badge">{{year.filteredCount}}</span>
+            <span class="badge filter-badge">{{year.unfilteredCount}}</span>
+            </clr-checkbox>
         </section>
         <section class="form-block">
-          <label>Status</label>
-          <clr-tree-node *ngFor="let stat of status" (change)="applyStatusFilter(stat)" 
-            [clrIndeterminate]="stat.disabled" [(clrSelected)]="stat.selected">
-            {{stat.statusName}}
-          </clr-tree-node>
+          <label><h5>Status</h5></label>
+          <clr-checkbox  *ngFor="let stat of status" (change)="applyStatusFilter(stat)"  
+            [clrDisabled]="stat.disabled" [(clrChecked)]="stat.selected">
+            <label class="filter-label">{{stat.value}}</label>
+            <span class="badge badge-orange filter-badge">{{stat.filteredCount}}</span>
+            <span class="badge filter-badge">{{stat.unfilteredCount}}</span>
+          </clr-checkbox>
         </section>
         <section>
-          <label>Select Budget</label>
-          <clr-tree-node [(clrSelected)]="viewCapValues" (change)="showCapChart()" title="Show Capital Projections">
-            Capital
-          </clr-tree-node>
+          <label><h4>Select Budget</h4></label>
+          <clr-checkbox [(clrChecked)]="viewCapValues" (change)="showCapChart()" title="Show Capital Projections">
+            <label class="filter-label">Capital</label>
+          </clr-checkbox>
 
-          <clr-tree-node [(clrSelected)]="viewExpValues" (change)="showExpChart()" title="Show Expense Projections">
-            Expense
-          </clr-tree-node>
+          <clr-checkbox [(clrChecked)]="viewExpValues" (change)="showExpChart()" title="Show Expense Projections">
+            <label class="filter-label">Expense</label>
+          </clr-checkbox>
 
         </section>
 
