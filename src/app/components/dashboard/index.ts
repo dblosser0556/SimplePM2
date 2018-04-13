@@ -4,6 +4,7 @@ import { ProgramsComponent  } from './programs/programs.component';
 import { ProjectsComponent } from './projects/projects.component';
 import { RootComponent } from './root/root.component';
 import { TreeNodeComponent } from './divisions/treenode.component';
+import { GroupFilterComponent } from './divisions/groupfilter.component';
 
 
 
@@ -14,14 +15,7 @@ export {
     ProgramsComponent,
     ProjectsComponent,
     RootComponent,
-    TreeNodeComponent
+    TreeNodeComponent,
+    GroupFilterComponent
 };
 
-export default [
-    HomeComponent,
-    DivisionsComponent,
-    ProgramsComponent,
-    ProjectsComponent,
-    RootComponent,
-    TreeNodeComponent
-];

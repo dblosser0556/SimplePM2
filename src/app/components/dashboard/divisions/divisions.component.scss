@@ -6,6 +6,21 @@
     padding-left: .40rem;
 }
 
-.filter-badge {
-    margin-bottom: 13px;
+
+
+.filter-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.filter-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center
+}
+
+.checkbox label {
+    display: flex;
+    padding-left: .4rem
 }

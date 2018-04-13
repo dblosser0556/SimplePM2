@@ -30,7 +30,7 @@ export class DivisionsComponent implements OnInit, OnChanges {
   filteredProjections: ProjectMonthlyProjection[];
 
   treeviewGroups: GroupTreeView[] = [];
-  rootGroups: GroupTreeView[] = [];
+  rootGroups: Group[] = [];
 
   months: Month[] = [];
 
@@ -90,6 +90,7 @@ export class DivisionsComponent implements OnInit, OnChanges {
     console.log(this.treeviewGroups);
   }
 
+
   getChartView() {
     const height = window.innerHeight - this.el.nativeElement.offsetTop - 120;
     const width = this.el.nativeElement.parentElement.clientWidth;
@@ -99,37 +100,6 @@ export class DivisionsComponent implements OnInit, OnChanges {
 
     console.log('height: ', this.view[1], ' width: ', this.view[0]);
 
-  }
-
-  getStatus() {
-    this.statusService.getAll().subscribe(results => {
-      const status: Status[] = results;
-      const filterStatus = this.findStatus(this.monthlyProjections);
-
-      // status is the superlist so go through each 
-      // and compare to the ones in the list of projects.
-      status.forEach(s => {
-        const foundStatus = filterStatus.filter(f => f.value === s.statusName);
-        if (foundStatus.length > 0) {
-          this.status.push(foundStatus[0]);
-        } else {
-          const newStatus = {
-            value: s.statusName,
-            selected: false,
-            disabled: true,
-            filteredCount: 0,
-            unfilteredCount: 0
-          };
-          this.status.push(newStatus);
-        }
-      });
-      // set up the chartdata
-      this.convertData();
-      this.isLoading = false;
-    }, error => {
-      this.toast.error('error', 'Oops - Retrieving Status');
-      console.log('Retrieving - Status', error);
-    });
   }
 
   getProjects() {
@@ -163,23 +133,8 @@ export class DivisionsComponent implements OnInit, OnChanges {
     this.groupService.getAll().subscribe(results => {
       this.groups = results;
 
-      // build the group hierarcy from the returned group.
-      // start this all the groups that have no parent.
-      for (const group of this.groups.filter(g => g.parentId === 0)) {
-        const newGroupTreeView = {
-          groupName: group.groupName,
-          groupId: group.groupId,
-          parentId: 0,
-          hasChildren: this.hasChildren(group.groupId),
-          groups: this.getChildren(group.groupId),
-          selected: true
-        };
-        this.treeviewGroups.push(newGroupTreeView);
-      }
-      // for display the root groups are at the top of the treeView.
-      this.rootGroups = this.treeviewGroups.filter(t => t.parentId === 0);
-
       // set the preliminary budgets base on the root groups.
+      this.rootGroups = this.groups.filter(g => g.parentId === 0);
       this.budgets = this.groupBudgets(this.rootGroups);
 
       this.getProjects();
@@ -187,47 +142,52 @@ export class DivisionsComponent implements OnInit, OnChanges {
     });
   }
 
-  getChildren(groupId: number): GroupTreeView[] {
-    const treeviewGroups: GroupTreeView[] = [];
+  getStatus() {
+    this.statusService.getAll().subscribe(results => {
+      const status: Status[] = results;
+      const filterStatus = this.findStatus(this.monthlyProjections);
 
-    for (const group of this.groups.filter(g => g.parentId === groupId)) {
-      const newGroupTreeView = {
-        groupName: group.groupName,
-        groupId: group.groupId,
-        parentId: group.parentId,
-        hasChildren: this.hasChildren(group.groupId),
-        groups: this.getChildren(group.groupId),
-        selected: true
-      };
-      treeviewGroups.push(newGroupTreeView);
-    }
-    return treeviewGroups;
+      // status is the superlist so go through each 
+      // and compare to the ones in the list of projects.
+      status.forEach(s => {
+        const foundStatus = filterStatus.filter(f => f.value === s.statusName);
+        if (foundStatus.length > 0) {
+          this.status.push(foundStatus[0]);
+        } else {
+          const newStatus = {
+            value: s.statusName,
+            selected: false,
+            disabled: true,
+            filteredCount: 0,
+            unfilteredCount: 0
+          };
+          this.status.push(newStatus);
+        }
+      });
+      // set up the chartdata
+      this.convertData();
+      this.isLoading = false;
+    }, error => {
+      this.toast.error('error', 'Oops - Retrieving Status');
+      console.log('Retrieving - Status', error);
+    });
   }
 
-  hasChildren(groupId: number): boolean {
-    for (const group of this.groups) {
-      if (group.parentId === groupId) {
-        return true;
-      }
-    }
-    return false;
-  }
 
-  applyFilter() {
+  applyFilter(treeviewGroups: GroupTreeView[]) {
+    this.treeviewGroups = treeviewGroups;
     console.log('fired');
   }
 
 
-  groupBudgets(treeViewGroups: GroupTreeView[]): GroupBudget[] {
+  groupBudgets(groups: Group[]): GroupBudget[] {
     const budgets = new Array<GroupBudget>();
-    for (const group of treeViewGroups) {
+    for (const group of groups) {
       // the group budgets are by year and not in any particular order.
 
-      // go through each group budget by group
-      const index = this.groups.findIndex(g => g.groupId === group.groupId);
-      if (index > 0) {
-        if (this.groups[index].groupBudgets !== undefined) {
-          for (const groupBudget of this.groups[index].groupBudgets) {
+     
+        if (group.groupBudgets !== undefined) {
+          for (const groupBudget of group.groupBudgets) {
             // go through each of the budget years found so far 
             // add this groups budget to them or add a new group budget.
             let found = false;
@@ -254,7 +214,7 @@ export class DivisionsComponent implements OnInit, OnChanges {
           }
         }
       }
-    }
+    
     return budgets;
 
   }

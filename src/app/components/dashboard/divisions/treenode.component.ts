@@ -1,20 +1,32 @@
-import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { GroupTreeView } from '../../../models';
 
 
 @Component({
     selector: 'app-tree-node',
     template: `
-        <ng-container>
-            <clr-tree-node (change)="applyFilters()" *ngFor="let group of groups"  [(clrSelected)]="group.selected">
+    <ng-container *ngFor="let group of groups">
+        <div class="filter-row"
+            [ngStyle]="{'margin-left':getMargin(group.level)}">
+            <div *ngIf="group.hasChildren  && !group.displayChildren">
+                <clr-icon shape="angle" dir="right"size="16"(click)="group.displayChildren=!group.displayChildren"></clr-icon>
+            </div>
+            <div *ngIf="group.hasChildren && group.displayChildren">
+                <clr-icon shape="angle" dir="down"size="16"(click)="group.displayChildren=!group.displayChildren"></clr-icon>
+            </div>
+            <div *ngIf="!group.hasChildren" style="width: 16px;">
+            </div>
+            <clr-checkbox (change)="applyFilters(group)" [(clrChecked)]="group.selected">
                 <label class="filter-label">{{group.groupName}}</label>
-                <span class="badge badge-orange">1</span>
-                <span class="badge">3</span>
-                <ng-template *ngIf="group.hasChildren" clrIfExpanded>
-                    <app-tree-node [parentId]="group.groupId" [groups]="group.groups" (applyFilter)="applyFilters($event)"></app-tree-node>
-                </ng-template>
-            </clr-tree-node>
+            </clr-checkbox>
+            <span class="badge badge-orange">{{group.filteredProjects}}</span>
+            <span class="badge">{{group.unfilteredProjects}}</span>
+        </div>
+        <ng-container *ngIf="group.hasChildren && group.displayChildren">
+            <app-tree-node [parentId]="group.groupId" [groups]="group.groups"
+                (applyFilter)="applyFilters($event)"></app-tree-node>
         </ng-container>
+    </ng-container>
     `,
     styleUrls: ['./divisions.component.scss']
 })
@@ -26,10 +38,14 @@ export class TreeNodeComponent implements OnInit {
 
 
     ngOnInit() {
- 
     }
 
     applyFilters() {
         this.applyFilter.emit();
+    }
+
+    getMargin(level: number) {
+        const indent = (level - 1) * 16;
+        return indent.toString() + 'px';
     }
 }

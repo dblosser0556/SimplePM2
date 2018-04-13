@@ -14,37 +14,39 @@
           <h4>Filters</h4>
         </label>
         <section class="form-block">
-          <label><h5>Organization</h5></label>
-          <clr-tree-node *ngFor="let group of rootGroups" (change)="applyFilter(group)" [(clrSelected)]="group.selected">
-              <label class="filter-label">{{group.groupName}}</label>
-              <span class="badge badge-orange">1</span>
-              <span class="badge">3</span>
-            
-            <ng-template *ngIf="group.hasChildren" clrIfExpanded>
-              <app-tree-node [parentId]="group.groupId" [groups]="group.groups"></app-tree-node>
-            </ng-template>
-          </clr-tree-node>
+          <label>
+            <h5>Organization</h5>
+          </label>
+          <app-group-filter [monthlyProjections]="filteredProjections" (applyFilter)="applyFilters($event)"></app-group-filter>
         </section>
         <section class="form-block">
-          <label><h5>Year</h5></label>
-          <clr-checkbox *ngFor="let year of years" (change)="applyYearFilter(year)" 
-            [clrDisabled]="year.disabled" [(clrChecked)]="year.selected">
-            <label class="filter-label">{{year.value}}</label>
+          <label>
+            <h5>Year</h5>
+          </label>
+          <div class="filter-row" *ngFor="let year of years">
+            <clr-checkbox (change)="applyYearFilter(year)" [clrDisabled]="year.disabled" [(clrChecked)]="year.selected">
+              <label class="filter-label">{{year.value}}</label>
+            </clr-checkbox>
             <span class="badge badge-orange filter-badge">{{year.filteredCount}}</span>
             <span class="badge filter-badge">{{year.unfilteredCount}}</span>
-            </clr-checkbox>
+          </div>
         </section>
         <section class="form-block">
-          <label><h5>Status</h5></label>
-          <clr-checkbox  *ngFor="let stat of status" (change)="applyStatusFilter(stat)"  
-            [clrDisabled]="stat.disabled" [(clrChecked)]="stat.selected">
-            <label class="filter-label">{{stat.value}}</label>
+          <label>
+            <h5>Status</h5>
+          </label>
+          <div class="filter-row" *ngFor="let stat of status">
+            <clr-checkbox (change)="applyStatusFilter(stat)" [clrDisabled]="stat.disabled" [(clrChecked)]="stat.selected">
+              <label class="filter-label">{{stat.value}}</label>
+            </clr-checkbox>
             <span class="badge badge-orange filter-badge">{{stat.filteredCount}}</span>
             <span class="badge filter-badge">{{stat.unfilteredCount}}</span>
-          </clr-checkbox>
+          </div>
         </section>
         <section>
-          <label><h4>Select Budget</h4></label>
+          <label>
+            <h4>Select Budget</h4>
+          </label>
           <clr-checkbox [(clrChecked)]="viewCapValues" (change)="showCapChart()" title="Show Capital Projections">
             <label class="filter-label">Capital</label>
           </clr-checkbox>
