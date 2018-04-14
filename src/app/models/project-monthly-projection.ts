@@ -15,6 +15,7 @@ export class ProjectMonthlyProjection {
         public phaseName: string;
         public isTemplate: boolean;
         public month: Date;
+        public year: number;
         public userName: string;
         public groupMgr: string;
         public lft: number;

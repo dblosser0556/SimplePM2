@@ -17,31 +17,19 @@
           <label>
             <h5>Organization</h5>
           </label>
-          <app-group-filter [monthlyProjections]="filteredProjections" (applyGroupFilters)="applyGroupFilter($event)"></app-group-filter>
+          <app-group-filter [projectsByGroup]="projectsByGroup" (changeGroupFilter)="changeGroupFilter($event)"></app-group-filter>
         </section>
         <section class="form-block">
           <label>
             <h5>Year</h5>
           </label>
-          <div class="filter-row" *ngFor="let year of years">
-            <clr-checkbox (change)="applyYearFilter(year)" [clrDisabled]="year.disabled" [(clrChecked)]="year.selected">
-              <label class="filter-label">{{year.value}}</label>
-            </clr-checkbox>
-            <span class="badge badge-orange filter-badge">{{year.filteredCount}}</span>
-            <span class="badge filter-badge">{{year.unfilteredCount}}</span>
-          </div>
+            <app-year-filter  [projectsByYear]="projectsByYear" (changeYearFilter)="changeYearFilter($event)"></app-year-filter>
         </section>
         <section class="form-block">
           <label>
             <h5>Status</h5>
           </label>
-          <div class="filter-row" *ngFor="let stat of status">
-            <clr-checkbox (change)="applyStatusFilter(stat)" [clrDisabled]="stat.disabled" [(clrChecked)]="stat.selected">
-              <label class="filter-label">{{stat.value}}</label>
-            </clr-checkbox>
-            <span class="badge badge-orange filter-badge">{{stat.filteredCount}}</span>
-            <span class="badge filter-badge">{{stat.unfilteredCount}}</span>
-          </div>
+          <app-status-filter [projectsByStatus]="projectsByStatus" (changeStatusFilter)="changeStatusFilter($event)"></app-status-filter>
         </section>
         <section>
           <label>

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { GroupTreeView } from '../../../models';
+import { GroupTreeView } from '../../models';
 
 
 @Component({
@@ -24,11 +24,11 @@ import { GroupTreeView } from '../../../models';
         </div>
         <ng-container *ngIf="group.hasChildren && group.displayChildren">
             <app-tree-node [parentId]="group.groupId" [groups]="group.groups"
-                (applyFilter)="applyFilters($event)"></app-tree-node>
+                (applyFilter)="changeGroupFilter($event)"></app-tree-node>
         </ng-container>
     </ng-container>
     `,
-    styleUrls: ['./divisions.component.scss']
+    styleUrls: ['./filter.component.scss']
 })
 export class TreeNodeComponent implements OnInit {
     @Input() groups: GroupTreeView[];

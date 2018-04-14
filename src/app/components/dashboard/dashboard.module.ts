@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClarityModule } from '@clr/angular';
 import { SharedModule } from '../../modules/shared.module';
 import { ProjectModule } from '../project/project.module';
+import { FilterModule } from '../filter-components/filter.module';
 import { BreadcrumbsModule } from '../breadcrumbs/breadcrumbs.module';
 import { dashboardRouting } from './dashboard.routing';
 import { AuthGuard } from '../../guard/auth.guard';
@@ -12,8 +13,6 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 import {HomeComponent,
   DivisionsComponent,
-  TreeNodeComponent,
-  GroupFilterComponent, 
   ProgramsComponent,
   ProjectsComponent,
   RootComponent
@@ -27,6 +26,7 @@ import {HomeComponent,
     dashboardRouting,
     SharedModule,
     ProjectModule,
+    FilterModule,
     ReactiveFormsModule,
     ClarityModule,
     BreadcrumbsModule,
@@ -35,8 +35,6 @@ import {HomeComponent,
   ],
   declarations: [ HomeComponent,
     DivisionsComponent,
-    TreeNodeComponent,
-    GroupFilterComponent,
     ProgramsComponent,
     ProjectsComponent,
     RootComponent,

@@ -1,13 +1,10 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { GroupTreeView, ProjectMonthlyProjection, Group } from '../../../models';
-import { GroupService } from '../../configuration/group/group.service';
+import { GroupTreeView, Group, FilterByKey, ProjectsByFilterKey } from '../../models';
+import { GroupService } from '../configuration/group/group.service';
 import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-export interface ProjectGroups {
-    groupName: string;
-    projectName: string;
-}
+
 @Component({
     selector: 'app-group-filter',
     template: `
@@ -33,26 +30,24 @@ export interface ProjectGroups {
         </ng-container>
     </ng-container>
     `,
-    styleUrls: ['./divisions.component.scss']
+    styleUrls: ['./filter.component.scss']
 })
 export class GroupFilterComponent implements OnInit {
 
-    private _monthlyProjections = new BehaviorSubject<ProjectMonthlyProjection[]>([]);
-    @Input() set monthlyProjections(value: ProjectMonthlyProjection[]) {
-        this._monthlyProjections.next(value);
+    private _projectsByGroup = new BehaviorSubject<ProjectsByFilterKey[]>([]);
+    @Input() set projectsByGroup(value: ProjectsByFilterKey[]) {
+        this._projectsByGroup.next(value);
     }
 
-    get monthlyProjections() {
-        return this._monthlyProjections.getValue();
+    get projectsByGroup() {
+        return this._projectsByGroup.getValue();
     }
 
-    @Output() applyGroupFilters = new EventEmitter<GroupTreeView[]>();
+    @Output() changeGroupFilter = new EventEmitter<FilterByKey[]>();
 
     groups: Group[];
-    treeviewGroups: GroupTreeView[] = [];
-    rootGroups: GroupTreeView[];
-    allProjectGroups: ProjectGroups[] = [];
-    curProjectGroups: ProjectGroups[] = [];
+    rootGroups: GroupTreeView[] = [];
+    allProjectsByGroup: ProjectsByFilterKey[] = [];
     firstPass = true;
 
     constructor(
@@ -63,33 +58,32 @@ export class GroupFilterComponent implements OnInit {
         // The monthlyProjections data is provided asyncronously by
         // the parent component.  The data is not available on init.
         // So we need to subscribe to changes to the data
-        this._monthlyProjections.subscribe(x => {
-            // create the list of current projects in the 
-            // filtered list.
-            this.setGroupProjects();
+        this._projectsByGroup.subscribe(x => {
 
-            // if this is the first time through create the hierarchy, 
+
+            // if this is the first time through create the hierarchy,
             // else just make updates.
             if (this.firstPass) {
+                this.allProjectsByGroup = this.projectsByGroup;
                 this.getGroups();
-                if (this.curProjectGroups.length > 0) {
+                if (this.projectsByGroup.length > 0) {
                     this.firstPass = false;
                 }
             } else {
-                this.updateGroupProjectCount(this.treeviewGroups);
+                this.updateGroupProjectCount(this.rootGroups);
             }
         });
     }
 
     applyFilters(tvGroup: GroupTreeView) {
-        // make sure the check marks are consistent 
+        // make sure the check marks are consistent
         // between the parent and the children.
 
         // if selected then mark all the children selected.
         if (tvGroup.selected && tvGroup.hasChildren) {
             this.updateSelected(tvGroup.groups, true);
         }
-        // See if we can select the parent by making sure all of his 
+        // See if we can select the parent by making sure all of his
         // children are selected.
         if (tvGroup.selected && tvGroup.parentId !== 0) {
             this.checkParent(tvGroup.parentId);
@@ -104,7 +98,9 @@ export class GroupFilterComponent implements OnInit {
         if (!tvGroup.selected && tvGroup.parentId !== 0) {
             this.unselectParent(tvGroup.parentId);
         }
-        this.applyGroupFilters.emit(this.treeviewGroups);
+        const groupFilters = this.convertToFilterByKey(this.rootGroups);
+        console.log('group componentfilter fired');
+        this.changeGroupFilter.emit(groupFilters);
     }
 
     // This updates all of the pass group.
@@ -156,7 +152,7 @@ export class GroupFilterComponent implements OnInit {
     findTvGroup(groupId: number): GroupTreeView {
         let foundGroup;
         // Go through the parent groups and all of thier children until found.
-        for (const tvGroup of this.treeviewGroups) {
+        for (const tvGroup of this.rootGroups) {
             if (tvGroup.groupId === groupId) {
                 foundGroup = tvGroup;
                 return foundGroup;
@@ -190,7 +186,7 @@ export class GroupFilterComponent implements OnInit {
     // get all the groups and put them in a hierarchy.
     // the top groups have a parent of 0
     getGroups() {
-        this.treeviewGroups = [];
+        this.rootGroups = [];
 
         this.groupService.getAll().subscribe(results => {
             this.groups = results;
@@ -199,7 +195,7 @@ export class GroupFilterComponent implements OnInit {
             // start this all the groups that have no parent.
             for (const group of this.groups.filter(g => g.parentId === 0)) {
 
-                const projectCount = this.getProjectGroups(group, this.allProjectGroups);
+                const projectCount = this.getProjectGroups(group, this.allProjectsByGroup);
 
                 const newGroupTreeView = {
                     groupName: group.groupName,
@@ -214,11 +210,8 @@ export class GroupFilterComponent implements OnInit {
                     filteredProjects: projectCount,
                     unfilteredProjects: projectCount
                 };
-                this.treeviewGroups.push(newGroupTreeView);
+                this.rootGroups.push(newGroupTreeView);
             }
-            // for display the root groups are at the top of the treeView.
-            this.rootGroups = this.treeviewGroups.filter(t => t.parentId === 0);
-
         });
     }
 
@@ -229,7 +222,7 @@ export class GroupFilterComponent implements OnInit {
 
         for (const group of this.groups.filter(g => g.parentId === groupId)) {
 
-            const projectCount = this.getProjectGroups(group, this.allProjectGroups);
+            const projectCount = this.getProjectGroups(group, this.allProjectsByGroup);
 
             const newGroupTreeView = {
                 groupName: group.groupName,
@@ -258,37 +251,10 @@ export class GroupFilterComponent implements OnInit {
         return false;
     }
 
-    // create a list of projects with group name
-    // this list is used to count the number of projects for each 
-    // group.  This list is the filtered list from the parent component.
-    // the first time through there is no filter so we set the unfiltered 
-    // count on the first pass.
-    setGroupProjects() {
-        this.curProjectGroups = [];
-        let sortedMonthlyProjects = this.monthlyProjections;
-        sortedMonthlyProjects = _.chain(sortedMonthlyProjects).sortBy('projectName')
-            .sortBy('groupName').value();
 
-        let curProject = '';
-        for (const project of sortedMonthlyProjects) {
-            if (project.projectName !== curProject) {
-                const projectGroup = {
-                    groupName: project.groupName,
-                    projectName: project.projectName
-                };
-                this.curProjectGroups.push(projectGroup);
-                curProject = project.projectName;
-            }
-        }
-
-        // store off the project groups for counting after filtering.
-        if (this.firstPass) {
-            this.allProjectGroups = this.curProjectGroups;
-        }
-    }
 
     // This routine is call to calculate the number of projects for each group
-    getProjectGroups(group: Group, projectGroups: ProjectGroups[]): number {
+    getProjectGroups(group: Group, projectGroups: ProjectsByFilterKey[]): number {
         const filterGroups = this.groups.filter(g => g.lft >= group.lft && g.rgt <= group.rgt);
 
         // get the list of projects by group
@@ -296,7 +262,7 @@ export class GroupFilterComponent implements OnInit {
         let projectCount = 0;
         for (const filtergroup of filterGroups) {
             for (const projectGroup of projectGroups) {
-                if (projectGroup.groupName === filtergroup.groupName) {
+                if (projectGroup.keyValue === filtergroup.groupName) {
                     projectCount++;
                 }
             }
@@ -309,11 +275,38 @@ export class GroupFilterComponent implements OnInit {
     updateGroupProjectCount(tvgroups: GroupTreeView[]) {
         for (const tvgroup of tvgroups) {
             const index = this.groups.findIndex(g => g.groupName === tvgroup.groupName);
-            tvgroup.filteredProjects = this.getProjectGroups(this.groups[index], this.curProjectGroups);
+            tvgroup.filteredProjects = this.getProjectGroups(this.groups[index], this.projectsByGroup);
             if (tvgroup.hasChildren) {
                 this.updateGroupProjectCount(tvgroup.groups);
             }
         }
     }
+
+    // resurse through this routine to convert the hierach to
+    // simple filter array.
+    convertToFilterByKey(tvGroups: GroupTreeView[]): FilterByKey[] {
+        let filterByKeys: FilterByKey[] = [];
+
+        // go through each of the parents that aren't disabled
+        for (const tvGroup of tvGroups.filter(t => !t.disabled)) {
+            if (tvGroup.selected) {
+                const filterByKey: FilterByKey = {
+                    keyValue: tvGroup.groupName,
+                    selected: true,
+                    disabled: false,
+                    unfilteredCount: 0,
+                    filteredCount: 0,
+                };
+                filterByKeys.push(filterByKey);
+            }
+            if (tvGroup.hasChildren) {
+                const cfilterByKeys = this.convertToFilterByKey(tvGroup.groups);
+                filterByKeys = filterByKeys.concat(cfilterByKeys);
+            }
+        }
+        return filterByKeys;
+    }
+
+
 
 }
