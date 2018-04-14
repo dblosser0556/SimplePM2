@@ -17,7 +17,7 @@
           <label>
             <h5>Organization</h5>
           </label>
-          <app-group-filter [monthlyProjections]="filteredProjections" (applyFilter)="applyFilters($event)"></app-group-filter>
+          <app-group-filter [monthlyProjections]="filteredProjections" (applyGroupFilters)="applyGroupFilter($event)"></app-group-filter>
         </section>
         <section class="form-block">
           <label>

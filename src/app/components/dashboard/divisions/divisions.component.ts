@@ -174,8 +174,8 @@ export class DivisionsComponent implements OnInit, OnChanges {
   }
 
 
-  applyFilter(treeviewGroups: GroupTreeView[]) {
-    this.treeviewGroups = treeviewGroups;
+  applyGroupFilter(event: any) {
+    this.treeviewGroups = event;
     console.log('fired');
   }
 

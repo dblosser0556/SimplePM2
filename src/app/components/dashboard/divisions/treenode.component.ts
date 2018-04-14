@@ -16,7 +16,7 @@ import { GroupTreeView } from '../../../models';
             </div>
             <div *ngIf="!group.hasChildren" style="width: 16px;">
             </div>
-            <clr-checkbox (change)="applyFilters(group)" [(clrChecked)]="group.selected">
+            <clr-checkbox (change)="applyFilters(group)" [clrDisabled]="group.disabled"  [(clrChecked)]="group.selected">
                 <label class="filter-label">{{group.groupName}}</label>
             </clr-checkbox>
             <span class="badge badge-orange">{{group.filteredProjects}}</span>
@@ -33,15 +33,17 @@ import { GroupTreeView } from '../../../models';
 export class TreeNodeComponent implements OnInit {
     @Input() groups: GroupTreeView[];
     @Input() parentId: number;
-    @Output() applyFilter = new EventEmitter();
+    @Output() applyFilter = new EventEmitter<GroupTreeView>();
 
 
 
     ngOnInit() {
     }
 
-    applyFilters() {
-        this.applyFilter.emit();
+    applyFilters(event: any) {
+        console.log ('TreeNode apply filters fired', event);
+        this.applyFilter.emit(event);
+
     }
 
     getMargin(level: number) {
