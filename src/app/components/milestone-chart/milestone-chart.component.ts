@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import * as moment from 'moment';
 import { DomSanitizer, SafeStyle } from '@angular/platform-browser';
+import { DecimalPipe } from '@angular/common';
 
 export interface MilestoneChartMilestone {
   value: string;
@@ -69,7 +70,7 @@ export class MilestoneChartComponent implements OnInit {
   private viewWidth = 800;
   private viewHeight = 50;
 
-  constructor(private sanitizer: DomSanitizer) { }
+  constructor(private sanitizer: DomSanitizer, private dp: DecimalPipe) { }
 
   ngOnInit() {
 
@@ -209,19 +210,22 @@ export class MilestoneChartComponent implements OnInit {
 
       let width = 0;
       let i = 0;
-
+      let label = '';
       for (const barValue of this.barValues) {
         // determin the value
         const eventDate = moment(barValue.date).endOf('month');
         if (this.scaleTime) {
           width = eventDate.diff(startDate, 'days') / this.maxScaleValue * this.viewWidth;
+          label = barValue.label + ' - ' + eventDate.format('MM-YY');
         } else {
           width = Number(barValue.value) / this.maxScaleValue * this.viewWidth;
+          label = barValue.label + ' - ' + this.formatBarValue(barValue.value);
         }
+
 
         const curEvent: ChartBar = {
           date: eventDate.format('MM-YY'),
-          label: barValue.label,
+          label: label,
           width: width,
           fill: this.barColors[i % this.barColors.length],
           fillOpacity: 1,
@@ -263,5 +267,18 @@ export class MilestoneChartComponent implements OnInit {
     return chartEvents;
   }
 
+  formatBarValue(value: string): string {
+    const _value = Number(value);
+    if (_value > 1000000) {
+      return this.dp.transform(_value / 1000000, '1.2-2') + 'MM';
+    }
+    if (_value > 1000) {
+      return this.dp.transform(_value / 1000, '1.0-0') + 'M';
+    }
+    return this.dp.transform(_value, '1.0-0');
+
+  }
 }
+
+
 

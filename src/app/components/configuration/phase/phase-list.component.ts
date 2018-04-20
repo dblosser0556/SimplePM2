@@ -66,7 +66,7 @@ export class PhaseListComponent implements OnInit {
     }
 
     add() {
-        this.selectedPhase = { phaseName: '', phaseDesc: '', phaseId: null };
+        this.selectedPhase = { phaseName: '', phaseDesc: '', phaseId: null, order: 0 };
     }
 
     edit(phase: Phase) {

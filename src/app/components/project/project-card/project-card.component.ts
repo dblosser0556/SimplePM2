@@ -14,6 +14,7 @@ export class ProjectCardComponent implements OnInit {
   @Input() allowEdit: boolean;
   @Input() showMilestones = false;
 
+  isLoading = false;
 
 
   showCap = true;
@@ -30,17 +31,21 @@ export class ProjectCardComponent implements OnInit {
 
 
   ngOnInit() {
-
+    this.isLoading = true;
     this.projectService.getOne(this.projectSummary.projectId).subscribe(
       res => {
         this.project = res;
+        if (this.showMilestones) {
+          this.showView = 'chart';
+        }
+        this.isLoading = false;
       }, error => {
         console.log(error);
       }
     );
   }
- 
- 
+
+
   editDetails(id: number) {
     this.router.navigate(['./project'], { queryParams: { projectId: id },  relativeTo: this.route });
   }

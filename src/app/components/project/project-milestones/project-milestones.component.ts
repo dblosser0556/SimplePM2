@@ -40,6 +40,7 @@ export class ProjectMilestonesComponent implements OnInit {
   planFinishDate: string;
   milestoneFinishDate: string;
   isLate = false;
+  isReallyLate = false;
   noSave = false;
 
   totalCapBudget: number;

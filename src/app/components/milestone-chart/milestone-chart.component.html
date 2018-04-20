@@ -21,20 +21,19 @@
     <ng-container *ngIf="topMarkers">
       <ng-container *ngFor="let top of topMarkers; let odd = odd; let even = even;">
         <ng-container *ngIf="even">
-          <line [attr.x1]="top.x" y1="75" [attr.x2]="top.x" y2="100" style="stroke:grey;stroke-width:2" filter="url(#filter)" />
-          <text [attr.x]="top.x" y="60" fill="grey" filter="url(#filter)" text-anchor="middle" alignment-baseline="bottom">{{top.date}}</text>
-          <text [attr.x]="top.x" y="72" fill="grey" filter="url(#filter)" text-anchor="middle" alignment-baseline="bottom">{{top.value}}</text>
-          <line [attr.x1]="top.x" y1="75" [attr.x2]="top.x" y2="100" style="stroke:black;stroke-width:2" />
-          <text [attr.x]="top.x" y="60" fill="black" text-anchor="middle" alignment-baseline="bottom">{{top.date}}</text>
-          <text [attr.x]="top.x" y="72" fill="black" text-anchor="middle" alignment-baseline="bottom">{{top.label}}</text>
+          <line [attr.x1]="top.x" y1="80" [attr.x2]="top.x" y2="100" style="stroke:black;stroke-width:2" />
+          <text [attr.x]="top.x" y="75" alignment-baseline="bottom" text-anchor="middle" fill="black">
+            <tspan [attr.x]="top.x" font-size="20" dy="-1.0em">{{top.date}}</tspan>
+            <tspan [attr.x]="top.x" font-size="20" dy="1.0em">{{top.label}}</tspan>
+          </text>
         </ng-container>
         <ng-container *ngIf="odd">
-          <line [attr.x1]="top.x" y1="45" [attr.x2]="top.x" y2="100" style="stroke:grey;stroke-width:2" filter="url(#filter)" />
-          <text [attr.x]="top.x" y="33" fill="grey" filter="url(#filter)" text-anchor="middle" alignment-baseline="bottom">{{top.date}}</text>
-          <text [attr.x]="top.x" y="43" fill="grey" filter="url(#filter)" text-anchor="middle" alignment-baseline="bottom">{{top.value}}</text>
-          <line [attr.x1]="top.x" y1="45" [attr.x2]="top.x" y2="100" style="stroke:black;stroke-width:2" />
-          <text [attr.x]="top.x" y="33" fill="black" text-anchor="middle" alignment-baseline="bottom">{{top.date}}</text>
-          <text [attr.x]="top.x" y="43" fill="black" text-anchor="middle" alignment-baseline="bottom">{{top.label}}</text>
+          <line [attr.x1]="top.x" y1="40" [attr.x2]="top.x" y2="100" style="stroke:grey;stroke-width:2" filter="url(#filter)" />
+          <line [attr.x1]="top.x" y1="40" [attr.x2]="top.x" y2="100" style="stroke:black;stroke-width:2" />
+          <text [attr.x]="top.x" y="35" alignment-baseline="bottom" text-anchor="middle" fill="black">
+            <tspan [attr.x]="top.x" font-size="20" dy="-1.0em">{{top.date}}</tspan>
+            <tspan [attr.x]="top.x" font-size="20" dy="1.0em">{{top.label}}</tspan>
+          </text>
         </ng-container>
       </ng-container>
     </ng-container>
@@ -42,16 +41,12 @@
     <ng-container *ngIf="btmMarkers">
       <ng-container *ngFor="let btm of btmMarkers; let odd = odd; let even = even">
         <ng-container *ngIf="odd">
-          <line [attr.x1]="btm.x" y1="150" [attr.x2]="btm.x" y2="175" style="stroke:grey;stroke-width:2" filter="url(#filter)" />
-          <line [attr.x1]="btm.x" y1="150" [attr.x2]="btm.x" y2="175" style="stroke:black;stroke-width:2" />
-          <text [attr.x]="btm.x" y="190" fill="grey" filter="url(#filter)" text-anchor="middle" alignment-baseline="middle">{{btm.value}}</text>
-          <text [attr.x]="btm.x" y="190" fill="black" text-anchor="middle" alignment-baseline="middle">{{btm.label}}</text>
+          <line [attr.x1]="btm.x" y1="150" [attr.x2]="btm.x" y2="170" style="stroke:black;stroke-width:2" />
+          <text [attr.x]="btm.x" y="185" fill="black"  font-size="20" text-anchor="middle" alignment-baseline="middle">{{btm.label}}</text>
         </ng-container>
         <ng-container *ngIf="even">
-          <line [attr.x1]="btm.x" y1="150" [attr.x2]="btm.x" y2="200" style="stroke:grey;stroke-width:2" filter="url(#filter)" />
           <line [attr.x1]="btm.x" y1="150" [attr.x2]="btm.x" y2="200" style="stroke:black;stroke-width:2" />
-          <text [attr.x]="btm.x" y="210" fill="grey" filter="url(#filter)" text-anchor="middle" alignment-baseline="middle">{{btm.value}}</text>
-          <text [attr.x]="btm.x" y="210" fill="black" text-anchor="middle" alignment-baseline="middle">{{btm.label}}</text>
+          <text [attr.x]="btm.x" y="210" fill="black" font-size="20" text-anchor="middle" alignment-baseline="middle">{{btm.label}}</text>
         </ng-container>
       </ng-container>
     </ng-container>
@@ -63,8 +58,8 @@
         <stop [attr.offset]="gStop.offset" [attr.style]="gStop.style" />
       </ng-container>
     </linearGradient>
+
     <!-- Base rectangle for timeline -->
-    <rect rx="5" ry="5" id="baseBg" y="100" width="800" height="50" fill="grey" filter="url(#filter)" />
     <rect rx="5" ry="5" id="base" y="100" width="800" height="50" fill="url(#grad1)" stroke="black" />
 
 
@@ -74,12 +69,9 @@
         <!--the rect/text group-->
         <rect x="0" y="100" rx="5" ry="5" [attr.width]="event.width" height="50" stroke="black" [attr.fill]="event.fill" [attr.stroke-width]="event.strokeWidth"
           [attr.stroke-dasharray]="event.strokeDasharray" [attr.fill-opacity]="event.fillOpacity" />
-        <text [attr.x]="event.x" y="125" font-weight="bolder" alignment-baseline="middle" [attr.text-anchor]="event.textAnchor" fill="black">{{event.label}} - {{event.date}}</text>
+        <text [attr.x]="event.x" y="125" font-weight="bolder" alignment-baseline="middle" [attr.text-anchor]="event.textAnchor" fill="black">{{event.label}}</text>
       </ng-container>
     </ng-container>
-
-
-
 
     Sorry, your browser does not support inline SVG.
   </svg>
