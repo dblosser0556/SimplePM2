@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ProjectList, Project } from '../../../models';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../../../services';
@@ -8,10 +8,11 @@ import { ProjectService } from '../../../services';
   templateUrl: './project-card.component.html',
   styleUrls: ['./project-card.component.scss']
 })
-export class ProjectCardComponent implements OnInit, AfterViewInit {
+export class ProjectCardComponent implements OnInit {
 
   @Input() projectSummary: ProjectList;
   @Input() allowEdit: boolean;
+  @Input() showMilestones = false;
 
 
 
@@ -38,9 +39,7 @@ export class ProjectCardComponent implements OnInit, AfterViewInit {
       }
     );
   }
-  ngAfterViewInit() {
-    
-  }
+ 
  
   editDetails(id: number) {
     this.router.navigate(['./project'], { queryParams: { projectId: id },  relativeTo: this.route });

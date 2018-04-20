@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as moment from 'moment';
-import { Budget, Month, BudgetType, ChartData, SeriesData, ProjectMonthlyProjection, GroupBudget } from '../models';
+import { Budget, Month, BudgetType, ChartData, SeriesData, ProjectMilestone, GroupBudget, ProjectMonthlyProjection } from '../models';
 
 
 @Injectable()
@@ -186,7 +186,7 @@ export class ChartHelperService {
     }
 
     let chartData: ChartData;
-   
+
 
     if (viewCapValues) {
 
@@ -197,7 +197,7 @@ export class ChartHelperService {
         };
         data.push(chartData);
       }
-  
+
       if (hasGroupBudget) {
         chartData = {
           name: 'Yearly Cap Bug',

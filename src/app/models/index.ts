@@ -34,3 +34,4 @@ export * from './group-treeview-interface';
 export * from './project-monthly-projection';
 export * from './projects-by-filterkey-interface';
 export * from './filter-by-key-interface';
+export * from './project-milestone';

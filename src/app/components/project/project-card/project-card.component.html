@@ -4,6 +4,7 @@
 
     <div>{{projectSummary.projectDesc}}</div>
   </div>
+  <ng-container *ngIf="!showMilestones">
   <div class="card-block">
     <app-project-card-summary [projectSummary]="projectSummary" *ngIf="showView=='summary'"></app-project-card-summary>
     <app-project-chart [project]="project" [enableModal]="true" *ngIf="showView=='chart'"></app-project-chart>
@@ -15,4 +16,15 @@
     <a (click)="showView='month'" *ngIf="showView!='month'" class="card-link">Details</a>
     <a *ngIf="allowEdit" (click)="editDetails(project.projectId)" class="card-link">Edit</a>
   </div>
+</ng-container>
+<ng-container *ngIf="showMilestones">
+  <div class="card-block">
+      <app-project-milestones [project]="project" *ngIf="showView=='summary'"></app-project-milestones>
+      <app-project-milestone-chart [project]="project" *ngIf="showView=='chart'"></app-project-milestone-chart>
+  </div>
+  <div class="card-footer">
+    <a (click)="showView='summary'" *ngIf="showView!='summary'" class="card-link">Summary</a>
+    <a (click)="showView='chart'" *ngIf="showView!='chart'" class="card-link">Chart</a>
+  </div>
+</ng-container>
 </div>

@@ -1,7 +1,11 @@
 
-.table-sm {
+.table-compact {
     text-align: center;
     font-size: .7rem;
+}
+.table.table-compact th,  .table.table-compact td {
+    padding-left: .1rem;
+    padding-right: .1rem;
 }
 
 .summaryLabel {
@@ -19,4 +23,17 @@
 }
 div {
     font-size: .7rem;
+}
+
+.table-scroll {
+    width: auto;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+
+.warning {
+    background-color: #fbefef;
+    color: #6d2828;
+    font-weight: 600;
 }

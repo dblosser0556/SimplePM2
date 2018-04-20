@@ -1,10 +1,10 @@
-<div *ngIf="isLoading" >
-    <span class="spinner spinner-inline">
-        Loading...
-    </span>
-    <span>
-        Loading...
-    </span>
+<div *ngIf="isLoading">
+  <span class="spinner spinner-inline">
+    Loading...
+  </span>
+  <span>
+    Loading...
+  </span>
 </div>
 <div class="container-fluid" *ngIf="!isLoading">
   <clr-tabs>
@@ -48,7 +48,14 @@
       <button clrTabLink (select)="setCurrentTab('Milestone')">Milestones</button>
       <ng-template [(clrIfActive)]="milestoneActive">
         <clr-tab-content>
-          <app-project-milestones [(project)]="currentProject"></app-project-milestones>
+          <div class="card">
+            <div class="card-header">
+              <H4>Milestones</H4>
+            </div>
+            <div class="card-block">
+              <app-project-milestones [(project)]="currentProject"></app-project-milestones>
+            </div>
+          </div>
         </clr-tab-content>
       </ng-template>
     </clr-tab>

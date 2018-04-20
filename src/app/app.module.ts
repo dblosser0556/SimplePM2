@@ -11,11 +11,12 @@ import { DashboardModule } from './components/dashboard/dashboard.module';
 import { AppComponent, HomeComponent, HeaderComponent } from './components';
 import { routing } from './app.routing';
 
+
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    HeaderComponent
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,

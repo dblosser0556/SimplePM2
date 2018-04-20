@@ -1,0 +1,21 @@
+<div *ngIf="isLoading">
+    <span class="spinner spinner-inline">
+        Loading...
+    </span>
+    <span>
+        Loading...
+    </span>
+</div>
+<ng-container *ngIf="!isLoading">
+<div>
+  <h5>Dollars</h5>
+</div>
+<app-milestone-chart [milestones]="milestone.milestones" [scaleLabels]="milestone.labels" [barValues]="milestone.barValues"
+  [scaleValue]="true" [target]="milestone.target"></app-milestone-chart>
+<div>
+  <h5>Time</h5>
+</div>
+<app-milestone-chart [milestones]="milestone.milestones" [scaleLabels]="milestone.labels" [scaleTime]="true" [startDate]="milestone.startDate"
+  [barValues]="milestone.barValues" [target]="milestone.target">
+</app-milestone-chart>
+</ng-container>

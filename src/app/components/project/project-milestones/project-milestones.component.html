@@ -1,71 +1,67 @@
-<div class="card">
-  <div class="card-header">
-    <H4>Milestones</H4>
-  </div>
-  <div class="card-block">
-    <table class="table table-condensed">
-      <thead>
-        <tr>
-          <th class="border-right"></th>
-          <th *ngFor="let phase of phases">{{phase.phaseName}}</th>
-          <th class="border-right">Total</th>
-          <th>Budget Comparison</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th class="border-right">Milestone Date</th>
-          <td *ngFor="let date of milestoneDates">{{date}}</td>
-          <td class="border-right"></td>
-          <td>{{milestoneFinishDate}}</td>
-        </tr>
-        <tr>
-          <th class="border-right">Current Plan</th>
-          <td class="border-bottom" *ngFor="let plan of planDates">{{plan}}</td>
-          <td class="border-bottom border-right"></td>
-          <td [ngClass]="{'warning':isLate}" class="border-bottom">{{planFinishDate}}</td>
-        </tr>
-        <tr>
-          <th class="border-right">Capital Budget</th>
-          <th *ngFor="let phase of phases"></th>
-          <th class="border-right"></th>
-          <th >{{totalCapBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</th>
+<div class="table-scroll">
+<table class="table table-compact">
+  <thead>
+    <tr>
+      <th class="border-right"></th>
+      <th *ngFor="let phase of phases">{{phase.phaseName}}</th>
+      <th class="border-right">Total</th>
+      <th>Budget Comparison</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th class="border-right">Milestone Date</th>
+      <td *ngFor="let date of milestoneDates">{{date}}</td>
+      <td class="border-right"></td>
+      <td>{{milestoneFinishDate}}</td>
+    </tr>
+    <tr>
+      <th class="border-right">Current Plan</th>
+      <td class="border-bottom" *ngFor="let plan of planDates">{{plan}}</td>
+      <td class="border-bottom border-right"></td>
+      <td [ngClass]="{'warning':isLate}" class="border-bottom">{{planFinishDate}}</td>
+    </tr>
+    <tr>
+      <th class="border-right">Capital Budget</th>
+      <th *ngFor="let phase of phases"></th>
+      <th class="border-right"></th>
+      <th>{{totalCapBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</th>
 
-        </tr>
-        <tr>
-          <th class="border-right">Capital Milestone</th>
-          <td *ngFor="let capital of capitalMilestones">{{capital}}</td>
-          <td class="border-right">{{totalCapMilestone | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-          <td [ngClass]="{'warning':capEACToBudget < 0}">{{capMilestoneToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-        </tr>
-        <tr>
-          <th class="border-right">Capital EAC</th>
-          <td class="border-bottom" *ngFor="let eac of capitalEAC">{{eac}}</td>
-          <td class="border-bottom border-right">{{totalCapEAC | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-          <td [ngClass]="{'warning':capEACToBudget < 0}" class="border-bottom">{{capEACToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-        </tr>
-        <tr>
-          <th class="border-right">Expense Budget</th>
-          <th  *ngFor="let phase of phases"></th>
-          <th class="border-right"></th>
-          <td >{{totalExpBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-        </tr>
-        <tr>
-          <th class="border-right">Expense Milestone</th>
-          <td *ngFor="let expense of expenseMilestones">{{expense }}</td>
-          <td class="border-right">{{totalExpMilestone | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-          <td [ngClass]="{'warning':expMilestoneToBudget < 0}" >{{expMilestoneToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-        </tr>
-        <tr>
-          <th class="no-border-bottom border-right">Expense EAC</th>
-          <td *ngFor="let eeac of expenseEAC">{{eeac}}</td>
-          <td class="border-right">{{totalExpEAC | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-          <td [ngClass]="{'warning':expEACToBudget < 0}">{{expEACToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="card-footer">
-    <button [disabled]="noSave" (click)="onSubmit()" class="btn btn-info-outline btn-sm">Update Milestones</button>
-  </div>
+    </tr>
+    <tr>
+      <th class="border-right">Capital Milestone</th>
+      <td *ngFor="let capital of capitalMilestones">{{capital}}</td>
+      <td class="border-right">{{totalCapMilestone | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+      <td [ngClass]="{'warning':capEACToBudget < 0}">{{capMilestoneToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+    </tr>
+    <tr>
+      <th class="border-right">Capital EAC</th>
+      <td class="border-bottom" *ngFor="let eac of capitalEAC">{{eac}}</td>
+      <td class="border-bottom border-right">{{totalCapEAC | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+      <td [ngClass]="{'warning':capEACToBudget < 0}" class="border-bottom">{{capEACToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+    </tr>
+    <tr>
+      <th class="border-right">Expense Budget</th>
+      <th *ngFor="let phase of phases"></th>
+      <th class="border-right"></th>
+      <td>{{totalExpBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+    </tr>
+    <tr>
+      <th class="border-right">Expense Milestone</th>
+      <td *ngFor="let expense of expenseMilestones">{{expense }}</td>
+      <td class="border-right">{{totalExpMilestone | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+      <td [ngClass]="{'warning':expMilestoneToBudget < 0}">{{expMilestoneToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+    </tr>
+    <tr>
+      <th class="no-border-bottom border-right">Expense EAC</th>
+      <td *ngFor="let eeac of expenseEAC">{{eeac}}</td>
+      <td class="border-right">{{totalExpEAC | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+      <td [ngClass]="{'warning':expEACToBudget < 0}">{{expEACToBudget | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
+    </tr>
+  </tbody>
+
+</table>
+</div>
+<div class="card-footer">
+  <button [disabled]="noSave" (click)="onSubmit()" class="btn btn-info-outline btn-sm">Update Milestones</button>
 </div>

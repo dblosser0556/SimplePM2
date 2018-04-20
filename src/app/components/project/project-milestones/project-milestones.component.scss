@@ -21,3 +21,14 @@
     color: #6d2828;
     font-weight: 600;
 }
+
+.table.table-compact th,  .table.table-compact td {
+    padding-left: .1rem;
+    padding-right: .1rem;
+}
+
+.table-scroll {
+    width: auto;
+    overflow-x: auto;
+    white-space: nowrap;
+}

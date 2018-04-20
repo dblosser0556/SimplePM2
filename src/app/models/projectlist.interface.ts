@@ -5,7 +5,10 @@ export interface ProjectList {
     projectManager?: string;
     projectManagerName?: string;
     plannedStartDate: string;
+    plannedStartYear: string;
     actualStartDate?: string;
+    actualStartYear?: string;
+    filterYear: string;
     groupId: number;
     statusId: number;
     groupName: string;

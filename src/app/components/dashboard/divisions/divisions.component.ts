@@ -100,9 +100,6 @@ export class DivisionsComponent implements OnInit, OnChanges {
 
     const nav = this.el.nativeElement.parentElement.querySelector('.sidenav');
     this.view = [width - nav.parentElement.clientWidth - 120, height];
-
-    console.log('height: ', this.view[1], ' width: ', this.view[0]);
-
   }
 
   // get the list of projects by with thier cost data by month.

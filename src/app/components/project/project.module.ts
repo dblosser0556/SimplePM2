@@ -23,8 +23,9 @@ import { VendorContractDetailsComponent } from './vendor/vendor-contract-details
 import { VendorForecastComponent } from './vendor/vendor-forecast/vendor-forecast.component';
 import { ProjectMilestonesComponent } from './project-milestones/project-milestones.component';
 
-import { CurrencyPipe } from '@angular/common';
-
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { ProjectMilestoneChartComponent } from './project-milestone-chart/project-milestone-chart.component';
+import { MilestoneChartComponent } from '../milestone-chart/milestone-chart.component';
 
 
 @NgModule({
@@ -44,17 +45,20 @@ import { CurrencyPipe } from '@angular/common';
     VendorContractDetailsComponent,
     VendorForecastComponent,
     ProjectMilestonesComponent,
+    ProjectMilestoneChartComponent,
+    MilestoneChartComponent
     ],
-   
+
   exports:      [
     ProjectComponent,
     ProjectDetailComponent,
     ProjectMonthlyDetailComponent,
     ProjectCardComponent,
     ProjectCardSummaryComponent,
-    ProjectChartComponent
+    ProjectChartComponent,
+
   ],
-      providers:    [ProjectService, VendorService, VendorInvoiceService, 
-        MilestoneService, ChartHelperService, CurrencyPipe]
+      providers:    [ProjectService, VendorService, VendorInvoiceService,
+        MilestoneService, ChartHelperService, CurrencyPipe, DecimalPipe]
 })
 export class ProjectModule { }

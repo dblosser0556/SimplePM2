@@ -4,7 +4,8 @@ import { MilestoneService } from '../../../services';
 import { PhaseService } from '../../configuration/phase/phase.service';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
-import { CurrencyPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 export interface PhaseMilestone {
   phaseId: number;
@@ -19,11 +20,19 @@ export interface PhaseMilestone {
   styleUrls: ['./project-milestones.component.scss']
 })
 export class ProjectMilestonesComponent implements OnInit {
-  @Input() project: Project;
+  private _project = new BehaviorSubject<Project>(undefined);
+  @Input() set project(value: Project) {
+    this._project.next(value);
+  }
+
+  get project() {
+    return this._project.getValue();
+  }
+
   constructor(private milestoneService: MilestoneService,
     private phaseService: PhaseService,
     private toast: ToastrService,
-    private cp: CurrencyPipe) { }
+    private dp: DecimalPipe ) { }
 
   phases: Phase[];
   milestoneDates = [];
@@ -54,11 +63,17 @@ export class ProjectMilestonesComponent implements OnInit {
   expenseEACValue = [];
   totalExpEAC: number;
   expEACToBudget: number;
-
+  isLoading: boolean;
 
 
   ngOnInit() {
-    this.getPhases();
+    this.isLoading = true;
+    this._project.subscribe(project => {
+      if (project !== undefined) {
+        this.isLoading = true;
+        this.getPhases();
+      }
+    });
 
   }
 
@@ -69,6 +84,7 @@ export class ProjectMilestonesComponent implements OnInit {
         this.phases = results;
         this.getBudgetTotals();
         this.setMilestoneTable();
+        this.isLoading = false;
       });
   }
 
@@ -116,9 +132,9 @@ export class ProjectMilestonesComponent implements OnInit {
       for (const milestone of this.project.milestones.filter(m => m.active)) {
         if (phase.phaseId === milestone.phaseId) {
           this.milestoneDates.push(moment(milestone.phaseCompleteDate).format('YYYY-MM'));
-          this.capitalMilestones.push(this.cp.transform(milestone.phaseCapitalEstimate, 'USD', 'symbol-narrow', '1.0-0'));
+          this.capitalMilestones.push(this.dp.transform(milestone.phaseCapitalEstimate, '1.0-0'));
           this.totalCapMilestone += milestone.phaseCapitalEstimate;
-          this.expenseMilestones.push(this.cp.transform(milestone.phaseExpenseEstimate, 'USD', 'symbol-narrow', '1.0-0'));
+          this.expenseMilestones.push(this.dp.transform(milestone.phaseExpenseEstimate, '1.0-0'));
           this.totalExpMilestone += milestone.phaseExpenseEstimate;
           milestoneFound = true;
           this.milestoneFinishDate = (moment(milestone.phaseCompleteDate).format('YYYY-MM'));
@@ -186,16 +202,16 @@ export class ProjectMilestonesComponent implements OnInit {
         this.planDates.push('Not Found');
         this.noSave = true;
       } else {
-        this.capitalEAC.push(this.cp.transform(phaseCap, 'USD', 'symbol-narrow', '1.0-0'));
+        this.capitalEAC.push(this.dp.transform(phaseCap, '1.0-0'));
         this.capitalEACValue.push(phaseCap);
         this.totalCapEAC += phaseCap;
-        this.expenseEAC.push(this.cp.transform(phaseExp, 'USD', 'symbol-narrow', '1.0-0'));
+        this.expenseEAC.push(this.dp.transform(phaseExp, '1.0-0'));
         this.expenseEACValue.push(phaseExp);
         this.totalExpEAC += phaseExp;
         this.planDates.push(phaseDate.format('YYYY-MM'));
       }
     }
-    // the finish date is the last phase date.  
+    // the finish date is the last phase date.
     if (phaseDate.isSame(defaultDate, 'day')) {
       this.planFinishDate = 'Not Found';
       this.isLate = true;
@@ -241,7 +257,7 @@ export class ProjectMilestonesComponent implements OnInit {
             this.project.milestones.push(newMilestone);
           },
           error => {
-           this.toast.error(error, 'Oops'); 
+           this.toast.error(error, 'Oops');
           }
         );
       } else {
@@ -259,7 +275,7 @@ export class ProjectMilestonesComponent implements OnInit {
       }
 
     }
-    
+
   }
 }
 

@@ -11,9 +11,9 @@ import { AuthGuard } from '../../guard/auth.guard';
 import { ProjectMonthlyProjectionService, ChartHelperService } from '../../services';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
+
 import {HomeComponent,
   DivisionsComponent,
-  ProgramsComponent,
   ProjectsComponent,
   RootComponent
  } from '../dashboard';
@@ -35,7 +35,6 @@ import {HomeComponent,
   ],
   declarations: [ HomeComponent,
     DivisionsComponent,
-    ProgramsComponent,
     ProjectsComponent,
     RootComponent,
     ],

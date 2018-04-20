@@ -1,0 +1,12 @@
+.col-container {
+    display: flex;
+    width: 100%;
+}
+.col {
+    flex: 8;
+    padding: 8px;
+}
+.col-nav {
+    flex: 1;
+    padding: 8px;
+}
