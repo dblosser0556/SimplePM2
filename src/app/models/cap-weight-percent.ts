@@ -5,5 +5,6 @@ export class CapWeightPercent {
     capWeight: number;
     color: string;
     colorDesc: string;
+    bgColor: string;
     inUse: boolean;
   }

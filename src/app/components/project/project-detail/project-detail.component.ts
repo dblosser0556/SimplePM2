@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { of } from 'rxjs/observable/of';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 
 interface CreateProject {
@@ -28,7 +29,16 @@ interface CreateProject {
 })
 export class ProjectDetailComponent implements OnInit, OnChanges {
 
-  @Input() project: Project;
+  private _project = new BehaviorSubject<Project>(undefined);
+
+  @Input() set project(value: Project) {
+    this._project.next(value);
+  }
+
+  get project() {
+    return this._project.getValue();
+  }
+
   @Input() statusList: Status[];
   @Input() groupList: Group[];
   @Input() pmList: LoggedInUser[];
@@ -58,10 +68,26 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.isLoading = false;
+
+    this.isLoading = true;
+    // The Project data is provided asyncronously by
+    // the parent component.  The data is not available on init.
+    // So we need to subscribe to changes to the data to keep from
+    // logging many errors.
+    this._project.subscribe(x => {
+
+      // if this is the first time through create the hierarchy,
+      // else just make updates.
+      if (x !== undefined) {
+        this.isLoading = false;
+      }
+    });
   }
 
   ngOnChanges() {
+    if (this.project === undefined ) {
+      return;
+    }
 
     const plannedStartDate = moment(this.project.plannedStartDate).format('MM/DD/YYYY');
     let actualStartDate = null;
@@ -226,7 +252,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
       projectId: budget.projectId,
       budgetType: [budget.budgetType, Validators.required],
       approvedDateTime: [approvedDateTime, Validators.required],
-      amount: [budget.amount, Validators.required]
+      amount: [budget.amount, Validators.required],
+      accountingIdentifier: budget.accountingIdentifier,
+      comments: budget.comments
+
     });
   }
 
@@ -272,7 +301,7 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   revert() { this.ngOnChanges(); }
 
-  cancel() {  this.router.navigate(['/configuration/projects']); }
+  cancel() { this.router.navigate(['/configuration/projects']); }
 
 
   addBudget(type: BudgetType) {

@@ -1,9 +1,10 @@
 <form (ngSubmit)="onSubmit()" name="itemForm" class="item-form" [formGroup]="itemForm" novalidate>
   <input readonly hidden formControlName="itemID" class="required">
   <div class="form-group">
-    <label class="required">Name:</label>
-    <label for="itemName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="itemForm.get('itemName').invalid
-    && (itemForm.get('itemName').dirty || itemForm.get('itemName').touched)">
+    <label class="required">Name</label>
+    <label for="itemName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" 
+      [class.invalid]="itemName.invalid
+    && (itemName.dirty || itemName.touched)">
       <input id="itemName" type="text" size="15" formControlName="itemName" placeholder="Status Name" required>
 
       <span class="tooltip-content">
@@ -12,8 +13,24 @@
     </label>
   </div>
   <div class="form-group">
-    <label class="center-block">Description:</label>
+    <label class="center-block">Description</label>
     <input type="text" size="25" formControlName="itemDesc" placeholder="Description">
+  </div>
+  <div class="form-group">
+    <label class="required">Sort Order</label>
+    <label for="itemOrder" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="itemOrder.invalid
+      && (itemOrder.dirty || itemOrder.touched)">
+      <input id="itemOrder" type="number" size="15" formControlName="itemOrder" placeholder="Sort Order" required>
+
+      <span class="tooltip-content">
+        Sort Order is required!
+      </span>
+    </label>
+  </div>
+  <div class="form-group">
+      <clr-checkbox id="dashboard" formControlName="dashboard">
+          <label>Show these projects on Dashboard</label>
+        </clr-checkbox>
   </div>
 
 

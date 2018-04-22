@@ -6,6 +6,7 @@
         <tr>
           <th>Phase Name</th>
           <th>Phase Description</th>
+          <th>Sort Order</th>
           <th>Edit</th>
           <th>Delete</th>
         </tr>
@@ -16,6 +17,9 @@
           <td>
             {{phase.phaseDesc}}
           </td>
+          <td>
+              {{phase.order}}
+            </td>
           <td>
             <a (click)="edit(phase)">
               <clr-icon shape="pencil" class="is-solid" ></clr-icon>

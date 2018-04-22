@@ -24,7 +24,11 @@ import { routing } from './app.routing';
     ClarityModule,
     FormsModule,
     ReactiveFormsModule,
-    ToastrModule.forRoot(),
+    ToastrModule.forRoot({timeOut: 2000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+      closeButton: true
+    }),
     routing,
     LoginModule,
     ConfigurationModule,

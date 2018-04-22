@@ -262,9 +262,7 @@
           'footer-row-forecast':selectedView==='Forecast',
           'footer-row-actual':selectedView==='Actuals'}">
           <th class="action-col"></th>
-          <th class="fixed-col">Total Planned Capital</th>
-          <th class="fixed-col"></th>
-          <th class="fixed-col"></th>
+          <th colspan="3">Total Planned Capital</th>
           <th class="fixed-col"></th>
           <th class="total-col"></th>
           <th class="month-col"></th>
@@ -274,9 +272,7 @@
           'footer-row-forecast':selectedView==='Forecast',
           'footer-row-actual':selectedView==='Actuals'}">
           <th class="action-col"></th>
-          <th class="fixed-col">Total Planned Expense</th>
-          <th class="fixed-col"></th>
-          <th class="fixed-col"></th>
+          <th colspan="3">Total Planned Expense</th>
           <th class="fixed-col"></th>
           <th class="total-col"></th>
           <th class="month-col"></th>
@@ -288,9 +284,7 @@
               'footer-row-forecast':selectedView==='Forecast',
               'footer-row-actual':selectedView==='Actuals'}">
           <th class="action-col"></th>
-          <th class="fixed-col">Total Planned Capital</th>
-          <th class="fixed-col"></th>
-          <th class="fixed-col"></th>
+          <th colspan="3">Total Actuals Capital</th>
           <th class="fixed-col"></th>
           <th class="total-col"></th>
           <th class="month-col"></th>
@@ -300,10 +294,8 @@
   'footer-row-forecast':selectedView==='Forecast',
   'footer-row-actual':selectedView==='Actuals'}">
           <th class="action-col"></th>
-          <th class="fixed-col">Total Planned Expense</th>
-          <th class="fixed-col"></th>
-          <th class="fixed-col"></th>
-          <th class="fixed-col"></th>
+          <th colspan="3">Total Actuals Expense</th>
+          <th  class="fixed-col"></th>
           <th class="total-col"></th>
           <th class="month-col"></th>
           <th class="month-col" *ngFor="let month of project.months.slice([fcol],[lcol])">{{month.totalActualExpense | currency:'USD':'symbol-narrow':'0.0-0'}}</th>
@@ -322,7 +314,7 @@
               <a (click)="scrollLeft()">
                 <clr-icon shape="angle left"></clr-icon>
               </a>
-              <a style="font-size: .6rem">{{fcol + 1}}&nbsp;-{{lcol + 1}}&nbsp;of&nbsp;{{project.months.length + 1}}&nbsp;Months
+              <a style="font-size: .6rem">{{fcol + 1}}&nbsp;-&nbsp;{{lcol}}&nbsp;of&nbsp;{{project.months.length + 1}}&nbsp;Months
               </a>
               <a (click)="scrollRight()">
                 <clr-icon shape="angle right"></clr-icon>

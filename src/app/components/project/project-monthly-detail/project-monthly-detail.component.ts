@@ -60,13 +60,15 @@ export class ProjectMonthlyDetailComponent implements OnInit, AfterViewInit {
 
   autoSave = true;
 
+  lastKeyUp: string;
+
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     this.calcPageSize();
   }
 
   @HostListener('document:keyup', ['$event']) handleKeyUpEvent(event: KeyboardEvent) {
-
+    this.lastKeyUp = event.key;
     if (event.key === 'Escape') {
       switch (this.editingType) {
         case EditingType.none:
@@ -104,14 +106,14 @@ export class ProjectMonthlyDetailComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit() {
-   
-    
+
+
     this.menuItems = this.config.capWeightConfig;
   }
 
   ngAfterViewInit() {
     this.calcPageSize();
-  } 
+  }
 
 
   getSelectedCells(event) {
@@ -369,8 +371,6 @@ export class ProjectMonthlyDetailComponent implements OnInit, AfterViewInit {
   }
 
   updateResource(event, cell, resource, month?, mIndex?) {
-
-
     switch (cell) {
       case 'resourceName':
         resource.resourceName = event.target.value;
@@ -395,17 +395,20 @@ export class ProjectMonthlyDetailComponent implements OnInit, AfterViewInit {
         month.plannedEffort = Number(event.target.value);
         this.updateMonthlyResourceTotal(resource);
         this.updateMonthlyTotals(mIndex);
+        this.handleLastKey(mIndex);
         console.log('effort update: ', mIndex);
         break;
       case 'actualmonth':
         month.actualEffort = Number(event.target.value);
         this.updateMonthlyResourceTotal(resource);
         this.updateMonthlyTotals(mIndex);
+        this.handleLastKey(mIndex);
         break;
     }
 
 
   }
+
 
   // support fixed price entry rows
   // Manage in-line editing for the Project Resource
@@ -486,16 +489,33 @@ export class ProjectMonthlyDetailComponent implements OnInit, AfterViewInit {
         month.plannedCost = Number(event.target.value);
         this.updateMonthlyFixedCostTotal(fixedPrice);
         this.updateMonthlyTotals(mIndex);
+        this.handleLastKey(mIndex);
         break;
       case 'actualcost':
         month.actualCost = Number(event.target.value);
         this.updateMonthlyFixedCostTotal(fixedPrice);
         this.updateMonthlyTotals(mIndex);
+        this.handleLastKey(mIndex);
         break;
     }
   }
 
-  // save or cancel the current row of phase 
+
+  // handle the keyboard events along with the 
+  // blur events to allow the user to navigate through
+  // the cells like a spreadsheet.
+  handleLastKey(index: number) {
+    const lastCol = this.fcol + index;
+    switch (this.lastKeyUp) {
+      case 'Tab':
+        // attempt to scroll the month columns
+        if (index >= this.lcol - 1 ) {
+          this.scrollRight();
+        }
+        break;
+    }
+  }
+  // save or cancel the current row of phase
   saveOrCancelEdit(): any {
     switch (this.editingType) {
       case EditingType.fixedPrice:
@@ -655,7 +675,7 @@ export class ProjectMonthlyDetailComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < 7; i++) {
       staticColWidth += tableElem.rows[0].cells[i].clientWidth;
     }
-    
+
     const staticMonthWidth = 75;
     this.pageSize = Math.floor((width - staticColWidth) / staticMonthWidth);
 

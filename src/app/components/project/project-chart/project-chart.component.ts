@@ -13,6 +13,7 @@ import * as moment from 'moment';
 export class ProjectChartComponent implements OnInit {
   @Input() project: Project;
   @Input() enableModal: Boolean;
+  
   viewCapValues = true;
   viewExpValues = true;
   viewEnlargedChartModal = false;
@@ -45,6 +46,13 @@ export class ProjectChartComponent implements OnInit {
     private chartHelper: ChartHelperService) {
   }
 
+  @HostListener('window:resize') reSize() {
+    const height = this.el.nativeElement.parentElement.clientHeight;
+    const width = this.el.nativeElement.parentElement.clientWidth;
+    console.log('height: ', height, ' width: ', width);
+    this.view = [width - 30, height];
+  }
+
   showCapChart() {
     this.viewCapValues = !this.viewCapValues;
     this.convertData();
@@ -62,11 +70,8 @@ export class ProjectChartComponent implements OnInit {
   ngOnInit() {
     this.projectStartDate = moment(this.project.startDate()).format('MM/DD/YYYY');
     this.convertData();
-
-    const height = this.el.nativeElement.parentElement.clientHeight;
-    const width = this.el.nativeElement.parentElement.clientWidth;
-    console.log('height: ', height, ' width: ', width);
-    this.view = [width - 30, height];
+    this.reSize();
+   
     this.title = this.project.projectName;
   }
 

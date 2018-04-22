@@ -6,13 +6,17 @@ import { Directive, ElementRef, Renderer, OnInit, Input, AfterViewInit, HostList
 export class FixedHeaderDirective implements OnInit, AfterViewInit {
     @Input() height: number;
     table: any;
-
+    container: any;
+    containerWidth: number;
 
     constructor(private el: ElementRef, private renderer: Renderer2) {
         this.table = el.nativeElement;
+        this.container = el.nativeElement.parentElement;
     }
 
-
+    @HostListener('window:resize') onresize() {
+        this.transformTable();
+    }
     ngOnInit() {
 
     }
@@ -21,6 +25,8 @@ export class FixedHeaderDirective implements OnInit, AfterViewInit {
         this.transformTable();
     }
     transformTable() {
+        const containerWidth = this.container.clientWidth;
+        let tableWidth = 0;
         let elems = this.table.querySelectorAll('thead, tbody, tfoot');
         for (const elem of elems) {
             this.renderer.setStyle(elem, 'display', '');
@@ -31,7 +37,9 @@ export class FixedHeaderDirective implements OnInit, AfterViewInit {
         for (const thElem of thElems) {
             const tdElems = this.table.querySelector('tbody tr:first-child td:nth-child(' + (i + 1) + ')');
             const tfElems = this.table.querySelector('tfoot tr:first-child td:nth-child(' + (i + 1) + ')');
-            const columnWidth = tdElems ? tdElems.offsetWidth : thElem.offsetWidth;
+            const columnWidth = tdElems ? tdElems.clientWidth : thElem.clientWidth;
+            tableWidth += columnWidth;
+
             if (tdElems) {
                 tdElems.style.width = columnWidth + 'px';
             }
@@ -42,6 +50,7 @@ export class FixedHeaderDirective implements OnInit, AfterViewInit {
                 tfElems.style.width = columnWidth + 'px';
             }
             i++;
+
         }
 
         // set the css on the thead and tbody
@@ -72,6 +81,16 @@ export class FixedHeaderDirective implements OnInit, AfterViewInit {
             lastColumn.style.width = (lastColumn.offsetWidth - scrollBarWidth) + 'px';
 
         }
+
+
+        // check to see if the table will over flow its container.
+        if (containerWidth < tableWidth) {
+            this.renderer.setStyle(this.container, 'display', 'block');
+            this.renderer.setStyle(this.container, 'overflow-x', 'auto');
+        } else  {
+            this.renderer.setStyle(this.container, 'overflow-x', 'visible');
+        }
+
     }
 
 }

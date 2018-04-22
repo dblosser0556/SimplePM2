@@ -5,6 +5,7 @@ import { UtilityService } from './../../../../services/utility.service';
 import { Phase } from '../../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
+import { ToastrService } from 'ngx-toastr';
 
 
 interface CreatePhase {
@@ -28,9 +29,10 @@ export class PhaseDetailComponent implements OnInit, OnChanges {
   error: any;
 
   constructor(private phaseService: PhaseService,
-   
+
     private fb: FormBuilder,
-    private util: UtilityService) {
+    private util: UtilityService,
+    private toast: ToastrService) {
       this.createForm();
      }
 
@@ -40,7 +42,8 @@ export class PhaseDetailComponent implements OnInit, OnChanges {
     this.phaseForm.reset( {
       phaseId: this.phase.phaseId,
       phaseName: this.phase.phaseName,
-      phaseDesc: this.phase.phaseDesc} );
+      phaseDesc: this.phase.phaseDesc,
+      phaseOrder: this.phase.order} );
   }
 
   onSubmit() {
@@ -53,9 +56,11 @@ export class PhaseDetailComponent implements OnInit, OnChanges {
     if (phase.phaseId !== null) {
       this.phaseService.update(phase.phaseId, phase).subscribe(data => {
         this.util.phaseListIsDirty = true;
-          // this.snackBar.open('Phase has been updated', '', {duration: 2000});
+        this.toast.success('Phase has been updated', 'Success');
         this.phaseChange.emit(phase);
-      });
+      }, error => {
+        this.toast.error('Something went wrong in updating your Phase', 'Oops');
+        console.log(error); });
     } else {
       const newPhase: CreatePhase = {phaseName: phase.phaseName, phaseDesc: phase.phaseDesc};
 
@@ -63,10 +68,12 @@ export class PhaseDetailComponent implements OnInit, OnChanges {
         // this.resetForm();
         this.phase = data;
         this.util.phaseListIsDirty = true;
-        //  this.snackBar.open('Phase has been Added', '', {duration: 2000});
+        this.toast.success('Phase has been Added', 'Success');
         this.phaseChange.emit(phase);
       },
-      error => this.error = error);
+      error => {
+        this.toast.error('Something went wrong in adding your Phase', 'Oops');
+        console.log(error); });
     }
   }
 
@@ -78,6 +85,7 @@ export class PhaseDetailComponent implements OnInit, OnChanges {
     phase.phaseId = formValue.phaseId;
     phase.phaseName = formValue.phaseName;
     phase.phaseDesc = formValue.phaseDesc;
+    phase.order = formValue.phaseOrder;
     return phase;
 
   }
@@ -86,11 +94,19 @@ export class PhaseDetailComponent implements OnInit, OnChanges {
     this.phaseForm = this.fb.group({
       phaseId: '',
       phaseName: ['', Validators.required],
-      phaseDesc: ''
+      phaseDesc: '',
+      phaseOrder: ['', Validators.required]
     }
     );
   }
 
+  get phaseName() {
+    return this.phaseForm.get('phaseName');
+  }
+
+  get phaseOrder() {
+    return this.phaseForm.get('phaseOrder');
+  }
 
   revert() {this.ngOnChanges(); }
 

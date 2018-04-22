@@ -8,8 +8,9 @@ export class Budget {
     budgetType: BudgetType;
     approvedDateTime: string;
     amount: number;
+    comments: string;
+    accountingIdentifier: string;
     projectId: number;
-
 
 
     constructor(private instanceData?: Budget) {

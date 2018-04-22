@@ -6,6 +6,8 @@
         <tr>
           <th>Status Name</th>
           <th>Description</th>
+          <th>Sort Order</th>
+          <th>Show on Dashboard</th>
           <th>Edit</th>
           <th>Delete</th>
         </tr>
@@ -17,8 +19,15 @@
             {{item.statusDesc}}
           </td>
           <td>
+            {{item.order}}
+          </td>
+          <td>
+            <clr-checkbox id="dashboard" [clrChecked]="item.dashboard" [clrDisabled]="true">
+            </clr-checkbox>
+          </td>
+          <td>
             <a (click)="edit(item)">
-              <clr-icon shape="pencil" class="is-solid" ></clr-icon>
+              <clr-icon shape="pencil" class="is-solid"></clr-icon>
             </a>
           </td>
           <td>
@@ -37,19 +46,18 @@
   </div>
   <div class="card" *ngIf="selectedItem">
     <div class="card-block">
-      <app-status-detail [item]="selectedItem" (itemChange)="updateList($event)" ></app-status-detail>
+      <app-status-detail [item]="selectedItem" (itemChange)="updateList($event)"></app-status-detail>
     </div>
   </div>
 </div>
 <clr-modal [(clrModalOpen)]="showDeleteConf">
-    <h3 class="modal-title">Confirm Deletion</h3>
-    <div class="modal-body">
-        <p>Are you sure you want to delete?</p>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>  
-        <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
-  
-    </div>
-</clr-modal>
+  <h3 class="modal-title">Confirm Deletion</h3>
+  <div class="modal-body">
+    <p>Are you sure you want to delete?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>
+    <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
 
+  </div>
+</clr-modal>

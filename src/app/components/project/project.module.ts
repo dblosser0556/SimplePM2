@@ -30,7 +30,11 @@ import { MilestoneChartComponent } from '../milestone-chart/milestone-chart.comp
 
 @NgModule({
   imports:      [CommonModule, FormsModule, ReactiveFormsModule,
-    SharedModule, BrowserAnimationsModule, NgxChartsModule, ClarityModule, ToastrModule.forRoot()  ],
+    SharedModule, BrowserAnimationsModule, NgxChartsModule, ClarityModule, ToastrModule.forRoot({timeOut: 2000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+      closeButton: true
+    })  ],
   declarations: [
     ProjectComponent,
     ProjectDetailComponent,

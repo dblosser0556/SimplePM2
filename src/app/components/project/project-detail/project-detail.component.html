@@ -1,7 +1,6 @@
-
 <div class="card">
-  <div  *ngIf="isLoading" class="card-block">Is Loading...</div>
-  <div  *ngIf="!isLoading" class="card-block">
+  <div *ngIf="isLoading" class="card-block">Is Loading...</div>
+  <div *ngIf="!isLoading" class="card-block">
     <form (ngSubmit)="onSubmit()" name="projectForm" class="project-form" [formGroup]="projectForm" novalidate>
       <div class="row">
         <div class="column">
@@ -10,22 +9,22 @@
             <input readonly hidden formControlName="projectID" class="required">
 
             <div class="form-group">
-              <label class="required">Name:</label>
+              <label class="required">Name</label>
               <label for="projectName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="projectName.invalid && projectName.dirty || projectName.touched">
-                <input id="projectName" type="text" size="15" formControlName="projectName" placeholder="Project Name" required>
+                <input id="projectName" type="text" size="20" formControlName="projectName" placeholder="Project Name" required>
                 <span class="tooltip-content">
                   Project Name is required!
                 </span>
               </label>
             </div>
             <div class="form-group">
-              <label for="projectDesc">Description:</label>
-              <input type="text" id="projectDesc" formControlName="projectDesc">
+              <label for="projectDesc">Description</label>
+              <input type="text" id="projectDesc" size="20" formControlName="projectDesc">
             </div>
             <div class="form-group">
-              <label class="required">Project Group:</label>
+              <label class="required">Project Group</label>
               <div class="select">
-                <select formControlName="groupId" required>
+                <select formControlName="groupId"  required>
                   <option *ngFor="let group of groupList" [value]="group.groupId">{{group.groupName}}</option>
                 </select>
               </div>
@@ -40,7 +39,7 @@
 
 
             <div class="form-group">
-              <label for="projectManager" class="required">Project Manager:</label>
+              <label for="projectManager" class="required">Project Manager</label>
               <div class="select">
                 <select id="projectManager" formControlName="projectManager">
                   <option *ngFor="let pm of  pmList" [value]="pm.currentUser.userId">{{pm.currentUser.lastName}},&nbsp;{{pm.currentUser.firstName}}</option>
@@ -54,7 +53,7 @@
               </clr-tooltip>
             </div>
             <div class="form-group">
-              <label class="required" for="projectStatus">Project Status:</label>
+              <label class="required" for="projectStatus">Project Status</label>
               <div class="select">
                 <select id="projectStatus" formControlName="statusId">
                   <option *ngFor="let status of statusList" [value]="status.statusId">{{status.statusName}}</option>
@@ -74,16 +73,16 @@
             </div>
 
             <div class="form-group" *ngIf="project.months.length==0&&project.projectId!=null">
-              <label class="center-block">Project Template:</label>
+              <label class="center-block">Project Template</label>
               <select class="form-control" formControlName="templateId" (change)="selectTemplate($event.target.value)">
                 <option [value]=-1>--Select--</option>
                 <option *ngFor="let template of  templateList" [value]="template.projectId">{{template.projectName}}</option>
               </select>
             </div>
             <div class="form-group">
-              <label class="required">Planned Start:</label>
+              <label class="required">Planned Start</label>
               <label for="plannedStartDate" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="plannedStartDate.invalid && (plannedStartDate.dirty || plannedStartDate.touched)">
-                <input id="plannedStartDate" clrDate type="date" size="15" formControlName="plannedStartDate" required>
+                <input id="plannedStartDate"  clrDate type="date" size="15" formControlName="plannedStartDate" required>
                 <span class="tooltip-content">
                   Planned Start Date is required!
                 </span>
@@ -91,7 +90,7 @@
 
             </div>
             <div class="form-group">
-              <label class="center-block">Actual Start:</label>
+              <label class="center-block">Actual Start</label>
               <input type="date" clrDate formControlName="actualStartDate">
             </div>
 
@@ -106,6 +105,8 @@
                 <tr>
                   <th>Approved Date</th>
                   <th>Amount</th>
+                  <th>Code</th>
+                  <th>Comment</th>
                   <th>Delete</th>
                 </tr>
               </thead>
@@ -114,9 +115,14 @@
                   <td>
                     <input type="date" formControlName="approvedDateTime" size="10">
                   </td>
-
                   <td class="pull-right">
-                    <input type="text" formControlName="amount" size="10">
+                    <input type="number" formControlName="amount" size="10">
+                  </td>
+                  <td>
+                    <input type="text" formControlName="accountingIdentifier" size="15">
+                  </td>
+                  <td>
+                    <input type="text" formControlName="comments" size="15">
                   </td>
                   <td>
                     <a ref (click)="confirmDeleteBudget(0, i)" title="Delete Budget">
@@ -126,8 +132,6 @@
                 </tr>
               </tbody>
             </table>
-
-
             <div>
               <button type="button" class="btn btn-sm btn-link" (click)="addBudget(0)">
                 <clr-icon shape="plus"></clr-icon>Add Budget</button>
@@ -140,20 +144,27 @@
               <thead>
                 <tr>
                   <th>Approved Date</th>
-
                   <th>Amount</th>
+                  <th>Code</th>
+                  <th>Comment</th>
                   <th>Delete</th>
                 </tr>
               </thead>
               <tbody formArrayName="expBudgets">
                 <tr *ngFor="let budget of projectForm.get('expBudgets').controls; let j = index;" [formGroupName]="j">
                   <td>
-                    <input type="date" formControlName="approvedDateTime">
+                    <input type="date" formControlName="approvedDateTime" size="10">
                   </td>
 
                   <td class="pull-right">
-                    <input type="number" formControlName="amount">
+                    <input type="number" formControlName="amount" size="10">
                   </td>
+                  <td>
+                      <input type="text" formControlName="accountingIdentifier" size="15">
+                    </td>
+                    <td>
+                      <input type="text" formControlName="comments" size="15">
+                    </td>
                   <td>
                     <a ref (click)="confirmDeleteBudget(1, j)" title="Delete Budget">
                       <clr-icon shape="trash" class="is-solid"></clr-icon>

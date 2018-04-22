@@ -29,16 +29,18 @@
 }
 
 .fixed-col {
-  min-width: 120px;
+  min-width: 80px;
+  max-width: 100px;
   text-overflow: clip;
+  overflow: hidden;
   white-space: nowrap;
 } 
 
 th div .fixed-col {
   overflow: hidden;
   text-overflow: clip;
-  min-width: 120px;
-
+  min-width: 80px;
+  max-width: 100px;
 }
 
 .month-col {
@@ -158,7 +160,7 @@ th {
 } 
 
 [multi-cell-select] div {
-  padding: 2px;
+  padding: 1px;
 }
 
 [multi-cell-select] {
@@ -213,6 +215,7 @@ th {
   background: linear-gradient(#8deaed, #9fedf0);
   box-shadow: inset 0 0 0 1px #b9f2f5;
 }
+
 /* 
 [multi-cell-select] .fontcolor1 {
   // DARKGREY
@@ -318,9 +321,9 @@ th {
  */
  
 [multi-cell-select] .fontcolor1 {
-  // DARKGREY
-  background-color: #fff;
-  color: #34495e;
+  // Cool Grey
+  background-color: #F3F6FA;
+  color: #314351;
   font-weight: bolder;
 }
 
@@ -335,9 +338,9 @@ th {
 
 
 [multi-cell-select] .fontcolor2 {
-  // GREEN
-  background-color: #fff;
-  color: #229954;
+  // Red Orange
+  background-color: #FFE5DC;
+  color: #DE400F;
   font-weight: bolder;
 }
 [multi-cell-select] .fontcolor2:hover {
@@ -351,9 +354,9 @@ th {
 
 
 [multi-cell-select] .fontcolor3 {
-  // BLUE
-  background-color: #fff;
-  color: #2471a3;
+  // Yellow
+  background-color: #FFFCE8;
+  color: #D28F00;
   font-weight: bolder;
 }
 
@@ -367,9 +370,9 @@ th {
 
 
 [multi-cell-select] .fontcolor4 {
-  // PURPLE
-  background-color: #fff;
-  color: #8e44ad;
+  // Teal
+  background-color: #DEFFF9;
+  color: #007E7A;
   font-weight: bolder;
 }
 
@@ -383,9 +386,9 @@ th {
 
 
 [multi-cell-select] .fontcolor5 {
-  // BURNT-ORANGE
-  background-color: #fff;
-  color: #16a085;
+  // Blue
+  background-color: #EBF0FF;
+  color: #1A23A0;
   font-weight: bolder;
 }
 
@@ -399,9 +402,9 @@ th {
 
 
 [multi-cell-select] .fontcolor6 {
-  // RED
-  background-color: #fff;
-  color: #c03928;
+  // Purple
+  background-color: #F3E6FF;
+  color: #660092;
   font-weight: bolder;
 }
 [multi-cell-select] .fontcolor6:hover {
@@ -415,6 +418,7 @@ th {
 
 [multi-cell-select] .error {
   background-color: darkred;
+  color: #ffffff;
 }
 
 [multi-cell-select] .error:hover {

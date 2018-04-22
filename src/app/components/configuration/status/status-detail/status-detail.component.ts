@@ -3,6 +3,7 @@ import { StatusService } from './../status.service';
 import { Status } from '../../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
+import { ToastrService } from 'ngx-toastr';
 
 interface CreateStatus {
   statusName: string;
@@ -16,7 +17,7 @@ interface CreateStatus {
 })
 export class StatusDetailComponent implements OnInit, OnChanges {
 
- 
+
   @Input() item: Status;
   @Output() itemChange = new EventEmitter<Status>();
 
@@ -24,7 +25,8 @@ export class StatusDetailComponent implements OnInit, OnChanges {
   error: any;
 
   constructor(private itemService: StatusService,
-    private fb: FormBuilder) {
+    private fb: FormBuilder,
+    private toast: ToastrService) {
       this.createForm();
      }
 
@@ -34,7 +36,9 @@ export class StatusDetailComponent implements OnInit, OnChanges {
     this.itemForm.reset( {
       itemID: this.item.statusId,
       itemName: this.item.statusName,
-      itemDesc: this.item.statusDesc} );
+      itemDesc: this.item.statusDesc,
+      itemOrder: this.item.order,
+      dashboard: this.item.dashboard} );
   }
 
   onSubmit() {
@@ -46,7 +50,7 @@ export class StatusDetailComponent implements OnInit, OnChanges {
     const item: Status = this.getStatusFromFormValue(this.itemForm.value);
     if (item.statusId !== null) {
       this.itemService.update(item.statusId, item).subscribe(data => {
-        // this.snackBar.open('Project Status has been updated', '', {    duration: 2000 });
+        this.toast.success('Project Status has been updated', 'Success');
         this.itemChange.emit(item);
       },
       error => this.error = error);
@@ -58,7 +62,7 @@ export class StatusDetailComponent implements OnInit, OnChanges {
       this.itemService.create(JSON.stringify(newStatus)).subscribe(data => {
         // this.resetForm();
         this.item = data;
-        // this.snackBar.open('Project Status has been Added', '', {          duration: 2000        });
+        this.toast.success('Project Status has been added.', 'Success');
         this.itemChange.emit(item);
       },
       error => this.error = error);
@@ -73,6 +77,8 @@ export class StatusDetailComponent implements OnInit, OnChanges {
     item.statusId = formValue.itemID;
     item.statusName = formValue.itemName;
     item.statusDesc = formValue.itemDesc;
+    item.order = formValue.itemOrder;
+    item.dashboard = formValue.dashboard;
     return item;
 
   }
@@ -81,9 +87,20 @@ export class StatusDetailComponent implements OnInit, OnChanges {
     this.itemForm = this.fb.group({
       itemID: '',
       itemName: ['', Validators.required],
-      itemDesc: ''
+      itemDesc: '',
+      itemOrder: ['', Validators.required],
+      dashboard: ''
+
     }
     );
+  }
+
+  get itemName() {
+    return this.itemForm.get('itemName');
+  }
+
+  get itemOrder() {
+     return this.itemForm.get('itemOrder');
   }
 
 

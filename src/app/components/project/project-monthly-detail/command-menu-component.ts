@@ -23,9 +23,9 @@ export class CommandMenuComponent implements OnInit {
     ngOnInit() {
 
         this.renderer.setAttribute(this.el.nativeElement.childNodes[1], 'innerText', this.menuItem.title);
-        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'backgroundColor', this.menuItem.color);
+        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'backgroundColor', this.menuItem.bgColor);
         this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderColor', this.menuItem.color);
-        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'color', '#FFFFFF');
+        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'color', this.menuItem.color);
         this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'margin-right', '0px');
         this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderRadius', '0px');
         this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'padding', '0px');

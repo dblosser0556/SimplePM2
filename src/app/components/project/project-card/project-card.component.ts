@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ProjectList, Project } from '../../../models';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../../../services';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-project-card',
@@ -25,7 +26,8 @@ export class ProjectCardComponent implements OnInit {
 
   constructor(private router: Router,
     private route: ActivatedRoute,
-    private projectService: ProjectService) {
+    private projectService: ProjectService,
+    private toast: ToastrService) {
       this.showView = 'summary';
      }
 
