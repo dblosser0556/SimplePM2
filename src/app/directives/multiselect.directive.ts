@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostListener, EventEmitter, Output } from '@angular/core';
+import { Directive, ElementRef, HostListener, EventEmitter, Output, Renderer2 } from '@angular/core';
 
 @Directive({
   selector: '[appMultiselect]'
@@ -11,7 +11,7 @@ export class MultiselectDirective {
   cntrlPressed = false;
   multiCells = [];
 
-  constructor(private el: ElementRef) {
+  constructor(private el: ElementRef, private render: Renderer2) {
   }
 
   @Output() selectedCells = new EventEmitter<any[]>();
@@ -34,7 +34,7 @@ export class MultiselectDirective {
     this.setStartCell(el1);
     this.setRangeArea(this.startCell, el1);
 
-   }
+  }
 
   @HostListener('mouseup', ['$event.target']) onMouseUp(el) {
 
@@ -105,7 +105,7 @@ export class MultiselectDirective {
           element.classList.add('hover-area');
 
         });
-      } else if (el.classList.contains('hover-ara')) {
+      } else if (el.classList.contains('hover-area')) {
         this.cellsBetween(this.startCell, el).forEach(elem => {
           elem.classList.remove('hover-area');
         });
@@ -119,10 +119,27 @@ export class MultiselectDirective {
         el.classList.add('eng-selected-item');
         el.classList.remove('hover-area');
 
-        if (this.multiCells.indexOf(el.attributes['id'].nodeValue === -1)) {
+        if (this.multiCells.indexOf(el.cellIndex === -1)) {
           this.multiCells.push(el);
         }
       });
+      const tableDiv = this.el.nativeElement.parentElement;
+     // const selectBounds = this.render.createElement('div');
+     // this.render.setStyle(selectBounds, 'position', 'absolute');
+    //  this.render.setStyle(selectBounds, 'top', '0px');
+    //  this.render.setStyle(selectBounds, 'left', '0px');
+    //  this.render.appendChild(tableDiv, selectBounds);
+
+      const topSelect = this.render.createElement('div');
+      this.render.setStyle(topSelect, 'background-color', '#781DA0');
+      this.render.setStyle(topSelect, 'height', '2px');
+      this.render.setStyle(topSelect, 'width', '150px');
+      this.render.setStyle(topSelect, 'display', 'block');
+      this.render.setStyle(topSelect, 'position', 'absolute');
+      this.render.setStyle(topSelect, 'top', '400px');
+      this.render.setStyle(topSelect, 'left', '900px');
+      this.render.appendChild(tableDiv, topSelect);
+
     }
   }
 
@@ -139,6 +156,16 @@ export class MultiselectDirective {
       row: Math.max(coordsStart.row, coordsEnd.row)
     };
 
+
+
+
+
+    /* <div; class="wtBorder current" style="background-color: rgb(82, 146, 247); height: 2px; width: 50px; display: block; top: 72px; left: 249px;"></div>
+    <div class="wtBorder current" style="background-color: rgb(82, 146, 247); height: 23px; width: 2px; display: block; top: 72px; left: 249px;"></div>
+    <div class="wtBorder current" style="background-color: rgb(82, 146, 247); height: 2px; width: 50px; display: block; top: 94px; left: 249px;"></div>
+    <div class="wtBorder current" style="background-color: rgb(82, 146, 247); height: 24px; width: 2px; display: block; top: 72px; left: 298px;"></div>
+    <div class="wtBorder current corner" style="background-color: rgb(82, 146, 247); height: 5px; width: 5px; border: 2px solid rgb(255, 255, 255); display: block; top: 91px; left: 295px;"></div>
+  </div> */
     const tds = this.el.nativeElement.querySelectorAll('td');
     return Array.prototype.filter.call(tds, el => {
       const coords = this.getCoords(el);

@@ -36,7 +36,13 @@ export class BreadcrumbsComponent implements OnInit {
       label: label,
       url: nextUrl
     };
-    const newBreadcrumbs = [...breadcrumbs, breadcrumb];
+    // Parent routes are entered twice in the routing table.  The parent is configured 
+    // with a blank label and can be skipped.
+    let newBreadcrumbs = [...breadcrumbs];
+    if (label !== '') {
+      newBreadcrumbs = [...breadcrumbs, breadcrumb];
+    }
+
     if (route.firstChild) {
       // If we are not on our current path yet,
       // there will be more children to look after, to build our breadcumb

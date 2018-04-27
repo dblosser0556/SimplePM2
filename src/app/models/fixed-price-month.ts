@@ -12,8 +12,7 @@ export class FixedPriceMonth {
     actualCostInError = false;
     fixedPriceId: number = null;
 
-    
-    
+
     constructor(protected data?: FixedPriceMonth) {
         if (data) {
             this.deserialize(data);

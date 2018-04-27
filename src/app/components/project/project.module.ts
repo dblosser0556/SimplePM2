@@ -26,7 +26,8 @@ import { ProjectMilestonesComponent } from './project-milestones/project-milesto
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { ProjectMilestoneChartComponent } from './project-milestone-chart/project-milestone-chart.component';
 import { MilestoneChartComponent } from '../milestone-chart/milestone-chart.component';
-
+import { ProjectDetailByMonthComponent } from './project-detail-by-month/project-detail-by-month.component';
+import { CommandButtonComponent} from './project-detail-by-month/command-button.component';
 
 @NgModule({
   imports:      [CommonModule, FormsModule, ReactiveFormsModule,
@@ -50,7 +51,9 @@ import { MilestoneChartComponent } from '../milestone-chart/milestone-chart.comp
     VendorForecastComponent,
     ProjectMilestonesComponent,
     ProjectMilestoneChartComponent,
-    MilestoneChartComponent
+    MilestoneChartComponent,
+    ProjectDetailByMonthComponent,
+    CommandButtonComponent
     ],
 
   exports:      [
@@ -60,6 +63,7 @@ import { MilestoneChartComponent } from '../milestone-chart/milestone-chart.comp
     ProjectCardComponent,
     ProjectCardSummaryComponent,
     ProjectChartComponent,
+    ProjectDetailByMonthComponent
 
   ],
       providers:    [ProjectService, VendorService, VendorInvoiceService,

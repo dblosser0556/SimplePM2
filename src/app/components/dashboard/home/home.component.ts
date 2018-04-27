@@ -1,13 +1,12 @@
 import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
 import { ProjectMilestone, FilterByKey, ProjectsByFilterKey, GroupBudget,
-  Group, Month, ChartData, Milestone, ProjectList, Status } from '../../../models';
+  Group, Month, ChartData, Milestone, ProjectList, Status, QueryParams } from '../../../models';
 import { ToastrService } from 'ngx-toastr';
 import { ProjectService } from '../../../services';
 import { GroupService } from '../../configuration/group/group.service';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { MilestoneChartMilestone, MilestoneChartScaleLabel,  } from '../../milestone-chart/milestone-chart.component';
-import { QueryParams } from '../projects/projects.component';
 import { StatusService } from '../../configuration/status/status.service';
 
 

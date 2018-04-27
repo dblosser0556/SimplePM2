@@ -1,0 +1,40 @@
+<div class="col-container">
+  <div class="col-nav">
+    <nav class="sidenav">
+      <section class="sidenav-content">
+        <label>
+          <h4>Filters</h4>
+        </label>
+        <section class="form-block">
+          <label>
+            <h5>Organization</h5>
+          </label>
+          <app-group-filter [projectsByGroup]="projectsByGroup" (changeGroupFilter)="changeGroupFilter($event)"></app-group-filter>
+        </section>
+        <section class="form-block">
+          <label>
+            <h5>Year</h5>
+          </label>
+          <app-year-filter [projectsByYear]="projectsByYear" (changeYearFilter)="changeYearFilter($event)"></app-year-filter>
+        </section>
+        <section class="form-block">
+          <label>
+            <h5>Status</h5>
+          </label>
+          <app-status-filter [projectsByStatus]="projectsByStatus" (changeStatusFilter)="changeStatusFilter($event)"></app-status-filter>
+        </section>
+        
+
+        <button class="btn btn-sm" title="Reset Filter" (click)="resetFilter()">Reset</button>
+      </section>
+    </nav>
+  </div>
+  <div class="col">
+    <div class="row">
+        <div class="col-xl-4 col-lg-6 col-md-12 col-sm-12 col-xs-12" *ngFor="let curProject of filteredProjects">
+            <app-project-card [projectSummary]="curProject" [showMilestones]="showMilestones"></app-project-card>
+          </div>
+    </div>
+  </div>
+</div>
+

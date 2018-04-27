@@ -1,79 +1,95 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { ProjectService, UserService } from '../../../services';
-import { ProjectList, ProjectsByFilterKey, FilterByKey, Group, QueryParams } from '../../../models';
-import * as _ from 'lodash';
+import { ProjectList, FilterByKey, ProjectsByFilterKey, Group, QueryParams } from '../../../models';
 import { GroupService } from '../../configuration/group/group.service';
-
-
+import { ProjectService } from '../../../services';
+import { ToastrService } from 'ngx-toastr';
+import { StatusService } from '../../configuration/status/status.service';
+import * as _ from 'lodash';
 
 @Component({
-  selector: 'app-projects',
-  templateUrl: './projects.component.html',
-  styleUrls: ['./projects.component.scss']
+  selector: 'app-project-scorecard',
+  templateUrl: './project-scorecard.component.html',
+  styleUrls: ['./project-scorecard.component.scss']
 })
-export class ProjectsComponent implements OnInit {
+export class ProjectScorecardComponent implements OnInit {
 
+  groupFilters: FilterByKey[];
+  statusFilters: FilterByKey[];
+  yearFilters: FilterByKey[];
+
+  projectsByYear: ProjectsByFilterKey[];
+  projectsByStatus: ProjectsByFilterKey[];
+  projectsByGroup: ProjectsByFilterKey[];
+
+  groups: Group[] = [];
+  dashboardStatus: any;
+  isLoading: boolean;
+  filteredProjects: ProjectList[] = [];
   projectList: ProjectList[] = [];
-  allowEdit = false;
-  queryParams: any;
 
-  groups: Group[];
-  filteredProjects: ProjectList[];
-
-  groupFilters: FilterByKey[] = [];
-  yearFilters: FilterByKey[] = [];
-  statusFilters: FilterByKey[] = [];
-
-  projectsByGroup: ProjectsByFilterKey[] = [];
-  projectsByStatus: ProjectsByFilterKey[] = [];
-  projectsByYear: ProjectsByFilterKey[] = [];
-
-
-  constructor(private projectService: ProjectService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private userService: UserService,
-    private groupService: GroupService) {
-      if (router.url === '/dashboard/myprojects') {
-        this.allowEdit = true;
-      }
-
-    }
+  constructor(
+    private groupService: GroupService,
+    private projectService: ProjectService,
+    private statusService: StatusService,
+    private toast: ToastrService
+  ) { }
 
   ngOnInit() {
-    //  get the query paramaters from the route
-    this.getQueryParam();
+    this.isLoading = true;
 
+    this.getGroups();
 
   }
 
 
-  getQueryParam(): any {
-    this.route.queryParams.subscribe(
-      params => {
-        this.queryParams = {...params.keys, ...params};
-
-        if (this.allowEdit) {
-          const _param: QueryParams = {$filter: 'ProjectManager eq \'0f2e9bd6-5e33-4511-ac61-83b7c662a486\''};
-          this.queryParams = _param;
-        }
-        this.projectService.getList(this.queryParams).subscribe( res => {
-          this.projectList = res;
-          this.filteredProjects = this.projectList;
-          this.getGroups();
-        });
+  // get the list of projects by with thier cost data by month.
+  getProjects() {
+    // create the string that represents the list of status that are configured to
+    // be in this view.
+    let filterString = '';
+    for (const _status of this.dashboardStatus) {
+      if (filterString === '') {
+        filterString = 'StatusName eq \'' + _status.statusName + '\'';
+      } else {
+        filterString += ' or StatusName eq \'' + _status.statusName + '\'';
       }
-    );
+    }
+    const _param: QueryParams = {$filter: filterString};
+
+    this.projectService.getList(_param).subscribe( res => {
+      this.projectList = res;
+      this.filteredProjects = this.projectList;
+      this.updateChart(this.projectList);
+      this.isLoading = false;
+    }, error => {
+      this.toast.error('error', 'Oops - Retrieving Project Info');
+      console.log('Retrieving - Monthly projects', error);
+    });
   }
 
-   // get all the groups and put them in a hierarchy.
+  // get all the groups and put them in a hierarchy.
   // the tp[] groups have a parent of 0
   getGroups() {
+    this.isLoading = true;
     this.groupService.getAll().subscribe(results => {
       this.groups = results;
-      this.updateChart(this.projectList);
+      this.getStatus();
+
+    }, error => {
+      this.toast.error('error', 'Oops - Retrieving Groups Info');
+      console.log('Retrieving -  Retrieving Groups Info', error);
     });
+  }
+
+  getStatus() {
+    this.statusService.getAll().subscribe(results => {
+      this.dashboardStatus = results.filter(r => r.dashboard === true);
+      this.getProjects();
+    }, error => {
+      this.toast.error('error', 'Oops - Retrieving Status Info');
+      console.log('Retrieving -  Retrieving Status Info', error);
+    });
+
   }
 
 
@@ -86,19 +102,16 @@ export class ProjectsComponent implements OnInit {
   }
 
   changeYearFilter(event: FilterByKey[]) {
-    console.log('change year fired');
     this.yearFilters = event;
     this.updateFilteredData();
   }
 
   changeStatusFilter(event: FilterByKey[]) {
-    console.log('change filter fired');
     this.statusFilters = event;
     this.updateFilteredData();
   }
 
   changeGroupFilter(event: FilterByKey[]) {
-    console.log('change group fired');
     this.groupFilters = event;
     this.updateFilteredData();
   }
@@ -116,8 +129,6 @@ export class ProjectsComponent implements OnInit {
   resetFilter() {
     this.updateChart(this.projectList);
   }
-
-
 
 
 
@@ -145,10 +156,6 @@ export class ProjectsComponent implements OnInit {
     return projectsByKey;
   }
 
-  // sort the monthly projects
-
-
-
 
   // update the status filter
   filterByKey(key: string, filterKeys: FilterByKey[], projects: ProjectList[]):
@@ -172,6 +179,9 @@ export class ProjectsComponent implements OnInit {
     }
     return filteredProjects;
   }
+
+
+
 
 
 }

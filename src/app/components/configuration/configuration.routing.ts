@@ -31,26 +31,28 @@ import { ProjectComponent } from '../project/project.component';
 
             { path: 'role', component: RoleComponent, data: {'title': 'Project Roles', 'breadcrumb': 'Roles'},
               children: [
-                { path: '', component: RoleComponent, data: {'title': 'Configure Project Roles', 'breadcrumb': 'Users'}},
+                { path: '', component: RoleComponent, data: {'title': 'Configure Project Roles', 'breadcrumb': ''}},
                 { path: 'details', component: RoleDetailComponent, data: {'title': 'Edit or Create Role', 'breadcrumb': 'Role'}},
             ] },
             { path: 'phase', component: PhaseListComponent, data: {'title': 'Phases', 'breadcrumb': 'Phase'} },
             { path: 'fixedpricetype', data: {'title': 'Fixed Price Types'},
               children: [
-                { path: '', component: FixedPriceTypeComponent, data: {'title': 'Configure Resource Types', 'breadcrumb': 'ResourceTypes'}},
+                { path: '', component: FixedPriceTypeComponent, 
+                  data: {'title': 'Configure Fixed Price Accounting Codes', 'breadcrumb': 'AccountCodes'}},
                 { path: 'details', component: FixedPriceTypeDetailComponent,
                   data: {'title': 'Edit or Create Resource Type', 'breadcrumb': 'ResourceType'}},
               ]},
             { path: 'status', component: StatusComponent, data: {'title': 'Configure Project Status', 'breadcrumb': 'Status'} },
             { path: 'resourcetype', data: {'title': 'Configure Resource Types', 'breadcrumb': 'Types'},
               children: [
-                { path: '', component: ResourceTypeComponent, data: {'title': 'Configure Resource Types', 'breadcrumb': 'ResourceTypes'}},
+                { path: '', component: ResourceTypeComponent, 
+                  data: {'title': 'Configure Fixed Price Accounting Codes', 'breadcrumb': 'AccountCodes'}},
                 { path: 'details', component: ResourceTypeDetailComponent,
                     data: {'title': 'Edit or Create Resource Type', 'breadcrumb': 'ResourceType'}},
               ]},
             { path: 'accounts', data: {'title': 'Configure Users', 'breadcrumb': 'Users'},
                children: [
-                { path: '', component: AccountListComponent, data: {'title': 'Configure Users', 'breadcrumb': 'Users'}},
+                { path: '', component: AccountListComponent, data: {'title': 'Configure Users', 'breadcrumb': ''}},
                 { path: 'register', component: RegistrationFormComponent, data: {'title': 'Edit or Create User', 'breadcrumb': 'User'}},
                ]},
 

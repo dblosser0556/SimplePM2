@@ -17,6 +17,7 @@ import {HomeComponent,
   ProjectsComponent,
   RootComponent
  } from '../dashboard';
+import { ProjectScorecardComponent } from './project-scorecard/project-scorecard.component';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import {HomeComponent,
     DivisionsComponent,
     ProjectsComponent,
     RootComponent,
+    ProjectScorecardComponent,
     ],
   providers: [AuthGuard, ProjectMonthlyProjectionService, ChartHelperService ]
 })

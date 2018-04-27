@@ -35,3 +35,5 @@ export * from './project-monthly-projection';
 export * from './projects-by-filterkey-interface';
 export * from './filter-by-key-interface';
 export * from './project-milestone';
+export * from './query-params-interface';
+export * from './menu-item-interface';

@@ -17,15 +17,16 @@ export const dashboardRouting: ModuleWithProviders = RouterModule.forChild([
     children: [
       { path: '', component: HomeComponent, data: {'title': 'Home', 'breadcrumb': 'Home'} },
       { path: 'home', component: HomeComponent, data: {'title': 'Home', 'breadcrumb': 'Home'} },
-      { path: 'divisions', component: DivisionsComponent, data: {'title': 'Divisions', 'breadcrumb': 'Divisions'} },
+      { path: 'scorecard', component: HomeComponent, data: {'title': 'Scorecard', 'breadcrumb': 'Scorecard'} },
+      { path: 'forecast', component: DivisionsComponent, data: {'title': 'Forecast', 'breadcrumb': 'Forecast'} },
       { path: 'projects', data: {'title': 'Projects', 'breadcrumb': 'Projects'},
         children: [
-          { path: '', component: ProjectsComponent, data: {'title': 'Projects', 'breadcrumb': 'Projects'} },
+          { path: '', component: ProjectsComponent, data: {'title': 'Projects', 'breadcrumb': ''} },
           { path: 'project', component: ProjectComponent, data: {'title': 'Project', 'breadcrumb': 'Project'} }
         ] },
-      { path: 'myprojects', data: {'title': 'MyProjects', 'breadcrumb': 'MyProjects'},
+      { path: 'myprojects', data: {'title': '', 'breadcrumb': 'MyProjects'},
         children: [
-          { path: '', component: ProjectsComponent, data: {'title': 'MyProjects', 'breadcrumb': 'MyProjects'}},
+          { path: '', component: ProjectsComponent, data: {'title': 'MyProjects', 'breadcrumb': ''}},
           { path: 'project', component: ProjectComponent, data: {'title': 'Project', 'breadcrumb': 'Project'}}
         ] },
 

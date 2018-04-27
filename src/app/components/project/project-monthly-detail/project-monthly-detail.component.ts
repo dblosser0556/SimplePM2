@@ -501,7 +501,7 @@ export class ProjectMonthlyDetailComponent implements OnInit, AfterViewInit {
   }
 
 
-  // handle the keyboard events along with the 
+  // handle the keyboard events along with the
   // blur events to allow the user to navigate through
   // the cells like a spreadsheet.
   handleLastKey(index: number) {
