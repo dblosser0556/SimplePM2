@@ -1,16 +1,15 @@
 export class ResourceMonth {
-    
+
     resourceMonthId: number = null;
     monthNo: number = null;
     plannedEffort: number = null;
     plannedEffortCapPercent: number = null;
     plannedEffortStyle: number = null;
-    plannedEffortInError: boolean = false;
+    plannedEffortInError = false;
     actualEffort: number = null;
     actualEffortCapPercent: number = null;
     actualEffortStyle: number = null;
-    actualEffortInError: boolean = false;
-    
+    actualEffortInError = false;
 
     resourceId: number = null;
 

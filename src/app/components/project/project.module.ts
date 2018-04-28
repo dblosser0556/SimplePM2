@@ -6,6 +6,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClarityModule } from '@clr/angular';
 import { ToastrModule } from 'ngx-toastr';
 import { SharedModule } from '../../modules/shared.module';
+
+
 import { ProjectDetailComponent } from './project-detail/project-detail.component';
 import { ProjectMonthlyDetailComponent } from './project-monthly-detail/project-monthly-detail.component';
 import { CommandMenuComponent} from './project-monthly-detail/command-menu-component';
@@ -27,11 +29,13 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { ProjectMilestoneChartComponent } from './project-milestone-chart/project-milestone-chart.component';
 import { MilestoneChartComponent } from '../milestone-chart/milestone-chart.component';
 import { ProjectDetailByMonthComponent } from './project-detail-by-month/project-detail-by-month.component';
-import { CommandButtonComponent} from './project-detail-by-month/command-button.component';
+import { CommandButtonComponent } from './project-detail-by-month/command-button.component';
+
+import { ContextMenuModule } from 'ngx-contextmenu';
 
 @NgModule({
   imports:      [CommonModule, FormsModule, ReactiveFormsModule,
-    SharedModule, BrowserAnimationsModule, NgxChartsModule, ClarityModule, ToastrModule.forRoot({timeOut: 2000,
+    SharedModule, ContextMenuModule.forRoot(), BrowserAnimationsModule, NgxChartsModule, ClarityModule, ToastrModule.forRoot({timeOut: 2000,
       positionClass: 'toast-top-right',
       preventDuplicates: true,
       closeButton: true

@@ -123,7 +123,7 @@ export class MultiselectDirective {
           this.multiCells.push(el);
         }
       });
-      const tableDiv = this.el.nativeElement.parentElement;
+  /*     const tableDiv = this.el.nativeElement.parentElement;
      // const selectBounds = this.render.createElement('div');
      // this.render.setStyle(selectBounds, 'position', 'absolute');
     //  this.render.setStyle(selectBounds, 'top', '0px');
@@ -139,7 +139,7 @@ export class MultiselectDirective {
       this.render.setStyle(topSelect, 'top', '400px');
       this.render.setStyle(topSelect, 'left', '900px');
       this.render.appendChild(tableDiv, topSelect);
-
+ */
     }
   }
 
@@ -157,15 +157,6 @@ export class MultiselectDirective {
     };
 
 
-
-
-
-    /* <div; class="wtBorder current" style="background-color: rgb(82, 146, 247); height: 2px; width: 50px; display: block; top: 72px; left: 249px;"></div>
-    <div class="wtBorder current" style="background-color: rgb(82, 146, 247); height: 23px; width: 2px; display: block; top: 72px; left: 249px;"></div>
-    <div class="wtBorder current" style="background-color: rgb(82, 146, 247); height: 2px; width: 50px; display: block; top: 94px; left: 249px;"></div>
-    <div class="wtBorder current" style="background-color: rgb(82, 146, 247); height: 24px; width: 2px; display: block; top: 72px; left: 298px;"></div>
-    <div class="wtBorder current corner" style="background-color: rgb(82, 146, 247); height: 5px; width: 5px; border: 2px solid rgb(255, 255, 255); display: block; top: 91px; left: 295px;"></div>
-  </div> */
     const tds = this.el.nativeElement.querySelectorAll('td');
     return Array.prototype.filter.call(tds, el => {
       const coords = this.getCoords(el);

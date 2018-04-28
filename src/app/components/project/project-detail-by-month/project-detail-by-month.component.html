@@ -6,7 +6,7 @@
   </div>
   <div style="float:right">
     <div class="btn-group btn-primary">
-      <button class="btn" type="submit" [disabled]="editingIndex !== -1" (click)="saveProject()">Save</button>
+      <button class="btn" type="submit" [disabled]="!projectForm.valid" (click)="onSubmit()">Save</button>
     </div>
   </div>
 </div>
@@ -14,9 +14,7 @@
   <div id="cell-select" style="position: relative;">
     <table id="projectmonthlydetail" class="table table-condensed" appMultiselect multi-cell-select (selectedCells)="getSelectedCells($event)"
       id="monthlydetail">
-      <thead [ngClass]="{
-    'header-row-forecast':selectedView==='Forecast',
-    'header-row-actual':selectedView==='Actuals'}">
+      <thead>
         <tr>
           <th class="action-col">Labor</th>
           <th class="fixed-col">Role/Category</th>
@@ -33,11 +31,7 @@
 
         </tr>
         <tr>
-          <th class="action-col">
-            <a title="Add Resource" (click)="addResource()">
-              <clr-icon shape="plus-circle" class="is-solid"></clr-icon>
-            </a>
-          </th>
+          <th class="action-col"></th>
           <th class="fixed-col"></th>
           <th class="fixed-col"></th>
           <th class="fixed-col"></th>
@@ -61,11 +55,7 @@
         <!-- Begin resource rows -->
         <ng-container formArrayName="resourceRows">
           <tr *ngFor="let resource of projectForm.get('resourceRows').controls; let i = index" [formGroupName]="i">
-            <td class="action">
-
-              <clr-icon shape="trash" class="is-solid"></clr-icon>
-
-            </td>
+            <td class="action" [contextMenu]="resourceMenu" [contextMenuSubject]="i + ':0'"></td>
             <td class="fixed-col">
               <div class="select fixed-col">
                 <select class="form-control" formControlName="role">
@@ -103,7 +93,7 @@
             <ng-container formArrayName="months">
 
               <td class="ui-state-default month-col" *ngFor="let month of resource.get('months').controls.slice([fcol],[lcol]); let m = index"
-                [formGroupName]="m">
+                [formGroupName]="m" [id]="'res' + '-' + i + '-' + m">
                 <ng-container *ngIf="selectedView=='Forecast'">
 
 
@@ -143,9 +133,7 @@
         <tr>
 
           <th class="action-col border-top">
-            <a title="Add Fixed Cost" (click)="addProjectFixedPrice()">
-              <clr-icon shape="plus-circle" class="is-solid"></clr-icon>
-            </a>
+           Fixed Fee
           </th>
 
           <th class="fixed-col border-top">Type</th>
@@ -159,10 +147,7 @@
         </tr>
         <ng-container formArrayName="fixedRows">
           <tr *ngFor="let fixedPrice of projectForm.get('fixedRows').controls; let f = index" [formGroupName]="f">
-            <td class="action">
-              <a *ngIf="!fixedPrice.editMode" (click)="deleteFixedPrice(fixedPrice, f)">
-                <clr-icon shape="trash" class="is-solid"></clr-icon>
-              </a>
+            <td class="action" [contextMenu]="fixedFeeMenu" [contextMenuSubject]="f + ':0'">
             </td>
             <td class="fixed-col">
               <div class="select fixed-col">
@@ -197,7 +182,7 @@
             </td>
             <ng-container formArrayName="fixedPriceMonths">
               <td class="ui-state-default month-col" *ngFor="let month of fixedPrice.get('fixedPriceMonths').controls.slice([fcol],[lcol]); let fm = index"
-                [formGroupName]="fm">
+                [formGroupName]="fm" [id]="'fix'+ f + fm">
                 <ng-container *ngIf="selectedView=='Forecast'">
                   <input formControlName="plannedCost" class="form-control" type="number" [ngClass]="{
                     'fontcolor1':month.get('plannedCostStyle').value === 0 && selectedView == 'Forecast',
@@ -312,6 +297,42 @@
         </tr>
       </tfoot>
     </table>
-   
+
   </div>
 </form>
+<!--  Begin the context menus -->
+
+
+<context-menu #resourceMenu>
+  <ng-template contextMenuItem passive="true">Resource</ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="resourceAddRow()">
+    Add Row
+  </ng-template>
+  <ng-template contextMenuItem (execute)="resourceCopyRow($event.item)">
+    Copy Row
+  </ng-template>
+  <ng-template contextMenuItem [visible]="canPasteResourceRow" (execute)="resourcePasteRow($event.item)">
+    Paste Row
+  </ng-template>
+  <ng-template contextMenuItem (execute)="resourceDeleteRow($event.item)">
+    Delete Row
+  </ng-template>
+</context-menu>
+
+<context-menu #fixedMenu>
+  <ng-template contextMenuItem passive="true">Fixed Fee</ng-template>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem (execute)="fixedFeeAddRow()">
+    Add Row
+  </ng-template>
+  <ng-template contextMenuItem (execute)="fixedFeeCopyRow($event.item)">
+    Copy Row
+  </ng-template>
+  <ng-template contextMenuItem [visible]="canPasteFixedFeeRow" (execute)="fixedFeePasteRow($event.item)">
+    Paste Row
+  </ng-template>
+  <ng-template contextMenuItem (execute)="fixedFeeDeleteRow($event.item)">
+    Delete Row
+  </ng-template>
+</context-menu>

@@ -181,6 +181,7 @@ th div .fixed-col {
     box-shadow: inset 0 0 0 1px #b9f2f5;
   }
 
+  
 
   // css for the pagination block
   .pagination {
@@ -214,4 +215,66 @@ th div .fixed-col {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
   }
+
+  //css for the selection area
+  
+
+
+[multi-cell-select] {
+  cursor: pointer;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -user-select: none;
+}
+
+[multi-cell-select] .eng-selected-item {
+  background: #007AFF !important; 
+  color: white !important;
+  border-bottom-color: #007AFF;
+  border: #007AFF;
+} 
+
+[multi-cell-select] eng-selected-item:last-child {
+  background: rgb(255, 51, 0);
+} 
+
+[multi-cell-select] .hover-area {
+  background: #8deaed;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  background: -moz-linear-gradient(#8deaed, #9fedf0);
+  background: linear-gradient(#8deaed, #9fedf0);
+  box-shadow: inset 0 0 0 1px #b9f2f5;
+}
+
+.ui-state-default {
+  //border: 0px solid rgba(211, 211, 211, 0.54);
+  background: #C0C0C0;
+  //-moz-box-shadow: inset 0 0 0 1px #63ad0d;
+  //-webkit-box-shadow: inset 0 0 0 1px #63ad0d;
+  //-moz-border-radius: 0px;
+  background: #eee;
+  background: -moz-linear-gradient(#eee, #e2e2e2);
+  // box-shadow: inset 0 0 0 1px #aaa;
+  //color: #5A5757;
+  //text-align: center;
+}
+
+[multi-cell-select] td.eng-selected-item > input {
+  background: #007AFF !important; 
+  color: white !important;
+  border-bottom-color: #007AFF;
+  border: #007AFF;
+}
+
+[multi-cell-select] td.hover-area > input {
+  background: #8deaed;
+  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  background: -moz-linear-gradient(#8deaed, #9fedf0);
+  background: linear-gradient(#8deaed, #9fedf0);
+  box-shadow: inset 0 0 0 1px #b9f2f5;
+}
+
   

@@ -39,7 +39,7 @@
       <button clrTabLink (select)="setCurrentTab('Proto')">Proto</button>
       <ng-template [(clrIfActive)]="protoActive">
         <clr-tab-content>
-          <app-project-detail-by-month [(project)]="currentProject" [selectedView]="'Forecast'"></app-project-detail-by-month>
+            <app-project-detail-by-month [(project)]="currentProject" [selectedView]="'Forecast'"></app-project-detail-by-month>
         </clr-tab-content>
       </ng-template>
     </clr-tab>

@@ -123,6 +123,10 @@ export class ProjectMonthlyDetailComponent implements OnInit, AfterViewInit {
     this.selectedCells = event;
   }
 
+  updateSelectedCells() {
+    
+  }
+
   saveProject() {
     this.projectService.update(this.project.projectId, this.project).subscribe(
       results => {
