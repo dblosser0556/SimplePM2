@@ -67,4 +67,19 @@ export class ProjectService extends
             catchError(this.handleError)
             );
     }
+
+    create(newT: string) {
+        const body = newT;
+        const headerOptions = this.getHeader();
+        const requestOptions = new RequestOptions({
+            method: RequestMethod.Post,
+            headers: headerOptions
+        });
+        return this._http.put(this.actionUrl, body, requestOptions)
+            .map((data: Response) => data.json())
+            .map((data: Project) => new Project(data))
+            .pipe(
+            catchError(this.handleError)
+            );
+    }
 }

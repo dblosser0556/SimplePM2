@@ -8,6 +8,15 @@
   outline: none;
 }
 
+button.btn.tool-bar {
+  min-width: 1.5rem;
+}
+
+.btn-group {
+  margin-top: .25rem;
+  margin-left: 1rem;
+}
+
 .table td, .table th {
     padding: 0rem;
 }
@@ -25,12 +34,16 @@ input[type="number"]:focus {
 }
 
 .action-col {
-  width: 50px;
+  width: 20px;
+}
+
+.rate-col {
+  width: 40px;
 }
 
 .fixed-col {
-  min-width: 80px;
-  max-width: 100px;
+  min-width: 90px;
+  max-width: 110px;
   text-overflow: clip;
   overflow: hidden;
   white-space: nowrap;
@@ -39,19 +52,19 @@ input[type="number"]:focus {
 th div .fixed-col {
   overflow: hidden;
   text-overflow: clip;
-  min-width: 80px;
-  max-width: 100px;
+  min-width: 90px;
+  max-width: 110px;
 }
 
 .month-col {
-  min-width: 55px;
-  max-width: 80px;
+  min-width: 70px;
+  max-width: 90px;
   overflow: hidden;
   white-space: nowrap;
 }
 .total-col {
-  min-width: 70px;
-  max-width: 100px;
+  min-width: 80px;
+  max-width: 110px;
   overflow: hidden;
   white-space: nowrap;
 }

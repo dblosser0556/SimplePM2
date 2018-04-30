@@ -59,11 +59,12 @@ export class ProjectConfigComponent implements OnInit {
     this.projectService.delete(this.selectedProject.projectId)
       .subscribe(x => {
         this.toast.success('Project has been deleted', 'Success');
-
+        this.showDeleteConfirmation = false;
         this.getList();
       },
         error => {
           this.toast.error(error, 'Oop Something went wrong');
+          this.showDeleteConfirmation = false;
           console.log(error);
         });
 

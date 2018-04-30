@@ -85,11 +85,14 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if (this.project === undefined ) {
+    if (this.project === undefined) {
       return;
     }
-
-    const plannedStartDate = moment(this.project.plannedStartDate).format('MM/DD/YYYY');
+    
+    let plannedStartDate = moment().format('MM/DD/YYYY');
+    if (this.project.plannedStartDate !== null) {
+      plannedStartDate = moment(this.project.plannedStartDate).format('MM/DD/YYYY');
+    }
     let actualStartDate = null;
     if (this.project.actualStartDate !== null) {
       actualStartDate = moment(this.project.actualStartDate).format('MM/DD/YYYY');
@@ -124,10 +127,10 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     const project: Project = this.getProjectFromFormValue(this.projectForm.value);
     if (project.projectId !== null) {
       this.projectService.update(project.projectId, project).subscribe(data => {
-
+        this.project = data;
         this.toast.success('Project Details successfully updated.', 'Success');
-        this.projectChange.emit(project);
-
+        this.projectChange.emit(this.project);
+        this.ngOnChanges();
       },
         error => {
           this.toast.error(error, 'Oops! Something went wrong');
@@ -149,7 +152,8 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
         // this.resetForm();
         this.project = data;
         this.toast.success('Project successfully added.', 'Success');
-        this.projectChange.emit(project);
+        this.projectChange.emit(this.project);
+        this.ngOnChanges();
       },
         error => {
           this.toast.error(error, 'Oops! Something went wrong');
@@ -160,20 +164,24 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
 
   getProjectFromFormValue(formValue: any): Project {
-
-    this.project.projectId = formValue.projectID;
-    this.project.isTemplate = formValue.isTemplate;
-    this.project.projectName = formValue.projectName;
-    this.project.projectDesc = formValue.projectDesc;
-    this.project.projectManager = formValue.projectManager;
+    const project = new Project();
+    project.projectId = formValue.projectID;
+    project.isTemplate = formValue.isTemplate;
+    project.projectName = formValue.projectName;
+    project.projectDesc = formValue.projectDesc;
+    project.projectManager = formValue.projectManager;
 
     // the date picker return an instance of date so convert it back to string.
     const plannedStartDate = moment(formValue.plannedStartDate);
-    this.project.plannedStartDate = plannedStartDate.format('YYYY-MM-DD');
-    const actualStartDate = moment(formValue.actualStartDate);
-    this.project.actualStartDate = actualStartDate.format('YYYY-MM-DD');
-    this.project.groupId = formValue.groupId;
-    this.project.statusId = formValue.statusId;
+    project.plannedStartDate = plannedStartDate.format('YYYY-MM-DD');
+    if (formValue.actualStartDate) {
+      const actualStartDate = moment(formValue.actualStartDate);
+      project.actualStartDate = actualStartDate.format('YYYY-MM-DD');
+    } else {
+      project.actualStartDate = null;
+    }
+    project.groupId = formValue.groupId;
+    project.statusId = formValue.statusId;
 
     const capBudgets: Budget[] = formValue.capBudgets.map(
       (budget: Budget) => Object.assign({}, budget)
@@ -183,8 +191,28 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
       (budget: Budget) => Object.assign({}, budget)
     );
 
-    this.project.budgets = capBudgets.concat(expBudgets);
-    return this.project;
+    project.budgets = capBudgets.concat(expBudgets);
+
+    // add all the remaining pieces from the passed project.
+    if (this.project.milestones !== null) {
+      project.milestones = this.project.milestones;
+    }
+
+    if (this.project.vendors !== null) {
+      project.vendors = this.project.vendors;
+    }
+    if (this.project.months !== null) {
+      project.months = this.project.months;
+    }
+    if (this.project.resources !== null) {
+      project.resources = this.project.resources;
+    }
+
+    if (this.project.fixedPriceCosts !== null) {
+      project.fixedPriceCosts = this.project.fixedPriceCosts;
+    }
+
+    return project;
 
   }
 

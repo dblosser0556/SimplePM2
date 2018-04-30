@@ -24,7 +24,7 @@
           </clr-dg-row>
       
           <clr-dg-footer>
-              <clr-dg-pagination #pagination [clrDgPageSize]="10">
+              <clr-dg-pagination #pagination [clrDgPageSize]="10" [clrDgTotalItems]="users.length">
                   {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
                   of {{pagination.totalItems}} users
               </clr-dg-pagination>

@@ -6,7 +6,7 @@ import { MenuItem } from '../../../models';
 
 @Component({
     selector: 'app-command-button',
-    template: ` <button type="button" class="btn"
+    template: ` <button type="button" class="btn tool-bar"
         (click)="handleClickEvent([menuItem])"
         title={{menuItem.description}}>{{menuItem.title}}</button>`
 })
@@ -31,6 +31,7 @@ export class CommandButtonComponent implements OnInit {
         this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'margin-right', '0px');
         this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderRadius', '0px');
         this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'padding', '0px');
+        this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'min-width', '1.5rem');
 
         if (this.first) {
             this.renderer.setStyle(this.el.nativeElement.childNodes[1], 'borderBottomLeftRadius', '5px');

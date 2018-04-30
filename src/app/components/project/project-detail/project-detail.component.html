@@ -10,7 +10,7 @@
 
             <div class="form-group">
               <label class="required">Name</label>
-              <label for="projectName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="projectName.invalid && projectName.dirty || projectName.touched">
+              <label for="projectName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="projectName.invalid && (projectName.dirty || projectName.touched)">
                 <input id="projectName" type="text" size="20" formControlName="projectName" placeholder="Project Name" required>
                 <span class="tooltip-content">
                   Project Name is required!

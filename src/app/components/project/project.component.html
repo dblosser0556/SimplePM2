@@ -10,10 +10,10 @@
   <clr-tabs>
     <clr-tab>
       <button clrTabLink>Details</button>
-      <ng-template [(clrIfActive)]="DetailsActive">
+      <ng-template [(clrIfActive)]="detailsActive">
         <clr-tab-content>
           <app-project-detail [(project)]="currentProject" [createTemplate]="isTemplate" [groupList]="groups" [statusList]="status"
-            [pmList]="projectManagers" [selectedView]="currentTab" [templateList]="templateList"></app-project-detail>
+            [pmList]="projectManagers" [selectedView]="currentTab" [templateList]="templateList" (projectChange)="updateCurrentProject($event)"></app-project-detail>
         </clr-tab-content>
       </ng-template>
     </clr-tab>
@@ -28,7 +28,7 @@
     </clr-tab>
 
     <clr-tab>
-      <button clrTabLink (select)="setCurrentTab('Actuals')">Actuals</button>
+      <button clrTabLink>Actuals</button>
       <ng-template [(clrIfActive)]="actualsActive">
         <clr-tab-content>
           <app-project-monthly-detail [(project)]="currentProject" [selectedView]="'Actuals'"></app-project-monthly-detail>
@@ -39,10 +39,18 @@
       <button clrTabLink (select)="setCurrentTab('Proto')">Proto</button>
       <ng-template [(clrIfActive)]="protoActive">
         <clr-tab-content>
-            <app-project-detail-by-month [(project)]="currentProject" [selectedView]="'Forecast'"></app-project-detail-by-month>
+            <app-project-detail-by-month [(project)]="currentProject" [selectedView]="'Forecast'" (projectChange)="updateCurrentProject($event)" ></app-project-detail-by-month>
         </clr-tab-content>
       </ng-template>
     </clr-tab>
+    <clr-tab>
+        <button clrTabLink>Proto Actuals</button>
+        <ng-template [(clrIfActive)]="protoActualActive">
+          <clr-tab-content>
+              <app-project-detail-by-month [(project)]="currentProject" [selectedView]="'Actuals'" (projectChange)="updateCurrentProject($event)" ></app-project-detail-by-month>
+          </clr-tab-content>
+        </ng-template>
+      </clr-tab>
 
     <clr-tab>
       <button clrTabLink (select)="setCurrentTab('Vendors')">Vendors</button>

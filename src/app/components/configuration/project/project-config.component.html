@@ -36,8 +36,8 @@
           </clr-dg-row>
 
           <clr-dg-footer>
-            <clr-dg-pagination #pagination [clrDgPageSize]="10">
-              {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{pagination.totalItems}} users
+            <clr-dg-pagination #pagination [clrDgPageSize]="10" [clrDgTotalItems]="projects.length">
+              {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}} of {{pagination.totalItems}} projects
             </clr-dg-pagination>
 
           </clr-dg-footer>
@@ -52,14 +52,14 @@
     </div>
   </div>
 </div>
-<clr-modal [(clrModalOpen)]="showDeleteConf">
+<clr-modal [(clrModalOpen)]="showDeleteConfirmation">
   <h3 class="modal-title">Confirm Deletion</h3>
   <div class="modal-body">
     <p>Are you sure you want to delete?</p>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>
-    <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+    <button type="button" class="btn btn-outline" (click)="showDeleteConfirmation = false">Cancel</button>
 
   </div>
 </clr-modal>

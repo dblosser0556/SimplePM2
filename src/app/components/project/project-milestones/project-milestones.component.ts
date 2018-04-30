@@ -100,6 +100,7 @@ export class ProjectMilestonesComponent implements OnInit {
     this.expEACToBudget = this.totalExpBudget - this.totalExpEAC;
   }
 
+  // add the budgets by budget type.
   getBudgetTotals() {
     this.totalCapBudget = 0;
     this.totalExpBudget = 0;
@@ -151,6 +152,10 @@ export class ProjectMilestonesComponent implements OnInit {
     }
   }
 
+  // calculate the phase dates based on the current plan.
+  // by going through the set of months and finding the
+  // last month by phase and adding all of the costs
+  // for each month by phase.
   getPlanDates() {
     this.planDates = Array();
     this.capitalEAC = new Array();
@@ -233,6 +238,7 @@ export class ProjectMilestonesComponent implements OnInit {
       milestones.push(milestone);
     }
 
+    // add new milestone for each phase.
     let index = 0;
     for (const phase of this.phases) {
       const milestone = new Milestone();
@@ -248,11 +254,12 @@ export class ProjectMilestonesComponent implements OnInit {
       milestones.push(milestone);
     }
 
+    // go through the current and newly add milestones
     for (const milestone of milestones) {
       if (milestone.milestoneId === 0) {
         this.milestoneService.create(JSON.stringify(milestone)).subscribe(
           results => {
-            // add the new milestones
+            // add the new milestones to the current project.
             let newMilestone = new Milestone();
             newMilestone = JSON.parse(results._body);
             this.project.milestones.push(newMilestone);
@@ -262,11 +269,14 @@ export class ProjectMilestonesComponent implements OnInit {
           }
         );
       } else {
+        // this is a current milestone for update it to be inactive.
         this.milestoneService.update(milestone.milestoneId, milestone).subscribe(
           results => {
+            // get the results back.
             let newMilestone = new Milestone();
             newMilestone = JSON.parse(results._body);
 
+            // find the milestone in the current list for the project and mark it inactive here
             const index2 = this.project.milestones.findIndex(m => m.milestoneId === newMilestone.milestoneId);
             if (index2 >= 0) {
               this.project.milestones[index2].active = false;
