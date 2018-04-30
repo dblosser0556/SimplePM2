@@ -10,6 +10,7 @@ import { ProjectService, ConfigService } from '../../../services';
 import { UtilityService } from '../../../services/utility.service';
 import { Subject } from 'rxjs/Subject';
 import { ContextMenuComponent } from 'ngx-contextmenu';
+import { debounceTime } from 'rxjs/operators/debounceTime';
 
 @Component({
   selector: 'app-project-detail-by-month',
@@ -96,6 +97,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       // else just make updates.
       if (x !== undefined) {
         this.isLoading = false;
+        this.onChanges();
       }
     });
   }
@@ -125,10 +127,109 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       projectMonths: this.fb.array([]),
       resourceRows: this.fb.array([]),
       fixedRows: this.fb.array([])
-    }
-    );
+    });
+
   }
 
+  onChanges() {
+    // subscribe to changes to the fixed rows and update the totals.
+    this.projectForm.get('resourceRows').valueChanges.pipe(debounceTime(400)).subscribe(val => {
+      val.forEach((resource: Resource) => {
+        let totalPlannedEffort = 0;
+        let totalActualEffort = 0;
+
+        // add up the hours
+        resource.resourceMonths.forEach(month => {
+          totalPlannedEffort += month.plannedEffort;
+          totalActualEffort += month.actualEffort;
+        });
+
+        // update the fields.
+        const resourceFA = this.projectForm.get('resourceRows') as FormArray;
+        const resourceFG = resourceFA.controls.find(f => f.get('resourceId').value === resource.resourceId) as FormGroup;
+        resourceFG.get('totalPlannedEffort').setValue(totalPlannedEffort);
+        resourceFG.get('totalActualEffort').setValue(totalActualEffort);
+      });
+
+      this.updateMonthlyTotals();
+    });
+
+
+    // subscribe to changes to the fixed rows and update the totals.
+    this.projectForm.get('fixedRows').valueChanges.pipe(debounceTime(400)).subscribe(val => {
+      val.forEach((fixedPrice: FixedPrice) => {
+        let totalPlannedCost = 0;
+        let totalActualCost = 0;
+        fixedPrice.fixedPriceMonths.forEach(month => {
+          totalPlannedCost += month.plannedCost;
+          totalActualCost += month.actualCost;
+        });
+
+
+        const fixedPriceFA = this.projectForm.get('fixedRows') as FormArray;
+        const fixedPriceFG = fixedPriceFA.controls.find(f => f.get('fixedPriceId').value === fixedPrice.fixedPriceId) as FormGroup;
+        fixedPriceFG.get('totalPlannedCost').setValue(totalPlannedCost);
+        fixedPriceFG.get('totalActualCost').setValue(totalActualCost);
+      });
+      this.updateMonthlyTotals();
+    });
+
+  }
+
+  // when the monthly values change ensure the monthly totals are updated.
+  updateMonthlyTotals() {
+    // get a reference to the various arrays.
+    const monthsFA = this.projectForm.get('projectMonths') as FormArray;
+    const resourceFA = this.projectForm.get('resourceRows') as FormArray;
+    const fixedFeeFA = this.projectForm.get('fixedRows') as FormArray;
+
+    monthsFA.controls.forEach((month, index) => {
+      let totalActualCapital = 0;
+      let totalActualExpense = 0;
+      let totalPlannedCapital = 0;
+      let totalPlannedExpense = 0;
+
+      resourceFA.controls.forEach(resource => {
+        const resourceMonths = resource.get('resourceMonths') as FormArray;
+        if (this.selectedView === 'Forecast') {
+          totalPlannedCapital += resourceMonths.controls[index].get('plannedEffort').value * resource.get('rate').value
+            * resourceMonths.controls[index].get('plannedEffortCapPercent').value;
+          totalPlannedExpense += resourceMonths.controls[index].get('plannedEffort').value * resource.get('rate').value
+            * (1 - resourceMonths.controls[index].get('plannedEffortCapPercent').value);
+        } else {
+          totalActualCapital += resourceMonths.controls[index].get('actualEffort').value * resource.get('rate').value
+            * resourceMonths.controls[index].get('actualEffortCapPercent').value;
+          totalActualExpense += resourceMonths.controls[index].get('actualEffort').value * resource.get('rate').value
+            * (1 - resourceMonths.controls[index].get('actualEffortCapPercent').value);
+        }
+
+      });
+
+      fixedFeeFA.controls.forEach(fixedFee => {
+        const fixedPriceMonths = fixedFee.get('fixedPriceMonths') as FormArray;
+        if (this.selectedView === 'Forecast') {
+          totalPlannedCapital += fixedPriceMonths.controls[index].get('plannedCost').value
+            * fixedPriceMonths.controls[index].get('plannedCostCapPercent').value;
+          totalPlannedExpense += fixedPriceMonths.controls[index].get('plannedCost').value
+            * (1 - fixedPriceMonths.controls[index].get('plannedCostCapPercent').value);
+        } else {
+          totalActualCapital += fixedPriceMonths.controls[index].get('actualCost').value
+            * fixedPriceMonths.controls[index].get('actualCostCapPercent').value;
+          totalActualExpense += fixedPriceMonths.controls[index].get('actualCost').value
+            * (1 - fixedPriceMonths.controls[index].get('actualCostCapPercent').value);
+        }
+
+      });
+
+      if (this.selectedView === 'Forecast') {
+        month.get('totalPlannedCapital').setValue(totalPlannedCapital);
+        month.get('totalPlannedExpense').setValue(totalPlannedExpense);
+      } else {
+        month.get('totalActualCapital').setValue(totalActualCapital);
+        month.get('totalActualExpense').setValue(totalActualExpense);
+      }
+    });
+  }
   setMonthRows(months: Month[]) {
     const monthFGs = months.map(
       month => this.createMonth(month));
@@ -142,7 +243,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       monthId: month.monthId,
       monthNo: month.monthNo,
       phaseId: month.phaseId,
-      totalPlannedExpense: [{ value: month.totalActualExpense, disabled: true }],
+      totalPlannedExpense: [{ value: month.totalPlannedExpense, disabled: true }],
       totalPlannedCapital: [{ value: month.totalPlannedCapital, disabled: true }],
       totalActualExpense: [{ value: month.totalActualExpense, disabled: true }],
       totalActualCapital: [{ value: month.totalActualCapital, disabled: true }]
@@ -158,16 +259,18 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
   createResource(resource: Resource) {
     return this.fb.group({
+      projectId: resource.projectId,
       resourceId: resource.resourceId,
-      role: resource.roleId,
+
       resourceName: resource.resourceName,
-      type: resource.resourceTypeId,
       vendor: resource.vendor,
       rate: resource.rate,
+      roleId: resource.roleId,
+
+      resourceTypeId: resource.resourceTypeId,
       totalPlannedEffort: [{ value: resource.totalPlannedEffort, disabled: true }],
       totalActualEffort: [{ value: resource.totalActualEffort, disabled: true }],
-      months: this.createResourceMonths(resource.resourceMonths)
-
+      resourceMonths: this.createResourceMonths(resource.resourceMonths)
     });
   }
 
@@ -180,6 +283,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
   createResourceMonth(resourceMonth: ResourceMonth): FormGroup {
     return this.fb.group({
+      resourceId: resourceMonth.resourceId,
       resourceMonthId: resourceMonth.resourceMonthId,
       monthNo: resourceMonth.monthNo,
       plannedEffort: resourceMonth.plannedEffort,
@@ -200,7 +304,8 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
   createFixedRow(fixedRow: FixedPrice) {
     return this.fb.group({
-      fixedPricedId: fixedRow.fixedPriceId,
+      projectId: fixedRow.projectId,
+      fixedPriceId: fixedRow.fixedPriceId,
       fixedPriceName: fixedRow.fixedPriceName,
       fixedPriceTypeId: fixedRow.fixedPriceTypeId,
       resourceTypeId: fixedRow.resourceTypeId,
@@ -401,7 +506,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
         // go through the set of resoruce and months and update to percent
 
         const resourceRowFG = resourceFA.controls[rowIndex] as FormGroup;
-        const resourceMonthFA = resourceRowFG.get('months') as FormArray;
+        const resourceMonthFA = resourceRowFG.get('resourceMonths') as FormArray;
         const resourceMonthFG = resourceMonthFA.controls[monthIndex] as FormGroup;
         if (this.selectedView === 'Forecast') {
           resourceMonthFG.get('plannedEffortCapPercent').setValue(capWeight);
@@ -415,7 +520,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       } else {
 
         const fixedFeeRowFG = fixedFeeFA.controls[rowIndex] as FormGroup;
-        const fixedFeeMonthFA = fixedFeeRowFG.get('months') as FormArray;
+        const fixedFeeMonthFA = fixedFeeRowFG.get('fixedPriceMonths') as FormArray;
         const fixedFeeMonthFG = fixedFeeMonthFA.controls[monthIndex] as FormGroup;
         if (this.selectedView === 'Forecast') {
           fixedFeeMonthFG.get('plannedCostCapPercent').setValue(capWeight);
@@ -524,51 +629,64 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       return;
     }
 
-    const project: Project  = this.getProjectFromFormValue(this.projectForm.value);
+    const project: Project = this.getProjectFromFormValue(this.projectForm.getRawValue());
 
-      this.projectService.update(project.projectId, project).subscribe(data => {
-        this.toast.success('Group has been updated', 'Success');
+    this.projectService.update(project.projectId, project).subscribe(data => {
+      this.project = data;
+      this.toast.success('Project has been updated', 'Success');
 
-      },
-        error => {this.toast.error(error, 'Oops');
-          console.log(error); });
-    }
+    },
+      error => {
+        this.toast.error(error, 'Oops');
+        console.log(error);
+      });
+  }
 
-    getProjectFromFormValue(formValue: any): Project {
-      const project = new Project();
+  getProjectFromFormValue(formValue: any): Project {
+    const project = new Project();
 
-      project.projectId = this.project.projectId;
-      project.isTemplate = this.project.isTemplate;
-      project.projectName = this.project.projectName;
-      project.projectDesc = this.project.projectDesc;
-      project.projectManager = this.project.projectManager;
-  
-      // the date picker return an instance of date so convert it back to string.
-      
-      project.plannedStartDate = this.project.plannedStartDate;
-      project.actualStartDate = this.project.actualStartDate;
-      project.groupId = this.project.groupId;
-      project.statusId = this.project.statusId;
-  
-  
+    project.projectId = this.project.projectId;
+    project.isTemplate = this.project.isTemplate;
+    project.projectName = this.project.projectName;
+    project.projectDesc = this.project.projectDesc;
+    project.projectManager = this.project.projectManager;
+
+    // the date picker return an instance of date so convert it back to string.
+
+    project.plannedStartDate = this.project.plannedStartDate;
+    project.actualStartDate = this.project.actualStartDate;
+    project.groupId = this.project.groupId;
+    project.statusId = this.project.statusId;
+
+
+    // add the other parts of the object we didn't touch.
+    if (this.project.budgets !== null) {
       project.budgets = this.project.budgets;
-
-      const months: Month[] = formValue.projectMonths.map(
-        (month: Month) => Object.assign({}, month)
-      );
-      project.months = months;
-
-      const resources: Resource[] = formValue.resourceRows.map(
-        (resource: Resource) => Object.assign({}, resource)
-      );
-      project.resources = resources;
-
-      const fixedFees: FixedPrice[] = formValue.fixedRows.map(
-        (fixedFee: FixedPrice) => Object.assign({}, fixedFee)
-      );
-      project.fixedPriceCosts = fixedFees;
-
-      return project;
-  
     }
+    if (this.project.milestones !== null) {
+      project.milestones = this.project.milestones;
+    }
+
+    if (this.project.vendors !== null) {
+      project.vendors = this.project.vendors;
+    }
+
+    const months: Month[] = formValue.projectMonths.map(
+      (month: Month) => Object.assign({}, month)
+    );
+    project.months = months;
+
+    const resources: Resource[] = formValue.resourceRows.map(
+      (resource: Resource) => Object.assign({}, resource)
+    );
+    project.resources = resources;
+
+    const fixedFees: FixedPrice[] = formValue.fixedRows.map(
+      (fixedFee: FixedPrice) => Object.assign({}, fixedFee)
+    );
+    project.fixedPriceCosts = fixedFees;
+
+    return project;
+
+  }
 }

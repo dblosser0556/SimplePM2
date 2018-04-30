@@ -50,4 +50,21 @@ export class ProjectService extends
             .pipe(catchError(this.handleError)
             );
     }
+
+    update(id: number, t: Project) {
+        const body = JSON.stringify(t);
+        const url = `${this.actionUrl}/${id}`;
+        const headerOptions = this.getHeader();
+        const requestOptions = new RequestOptions({
+            method: RequestMethod.Put,
+            headers: headerOptions
+        });
+
+        return this._http.put(url, body, requestOptions)
+            .map((data: Response) => data.json())
+            .map((data: Project) => new Project(data))
+            .pipe(
+            catchError(this.handleError)
+            );
+    }
 }

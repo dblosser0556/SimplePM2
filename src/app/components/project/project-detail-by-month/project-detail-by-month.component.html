@@ -27,7 +27,7 @@
               <clr-icon shape="plus-circle" class="is-solid"></clr-icon>
             </a>
           </th>
-          <th class="month-col" *ngFor="let month of project.months.slice([fcol],[lcol])">{{project.startDate().setMonth(project.startDate().getMonth() + month.monthNo - 1) |date:'MMM-yy' }}</th>
+          <th class="month-col" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol])">{{project.startDate().setMonth(project.startDate().getMonth() + month.monthNo - 1) |date:'MMM-yy' }}</th>
 
         </tr>
         <tr>
@@ -58,7 +58,7 @@
             <td class="action" [contextMenu]="resourceMenu" [contextMenuSubject]="i + ':0'"></td>
             <td class="fixed-col">
               <div class="select fixed-col">
-                <select class="form-control" formControlName="role">
+                <select class="form-control" formControlName="roleId">
                   <option *ngFor="let role of roleList" [value]="role.roleId" [selected]="role.roleId == resource.roleId">{{role.roleName}}</option>
                 </select>
               </div>
@@ -70,17 +70,17 @@
             <td class="fixed-col">
 
               <div class="select fixed-col">
-                <select class="form-control" formControlName="type">
+                <select class="form-control" formControlName="resourceTypeId">
                   <option *ngFor="let type of resourceTypeList" [value]="type.resourceTypeId" [selected]="type.resourceTypeId == resource.resourceTypeId">{{type.resourceTypeName}} </option>
                 </select>
               </div>
             </td>
             <td class="fixed-col">
-              <input formControlName="vendor" name="resourceVendor" class="form-control" type="text" />
+              <input formControlName="vendor" class="form-control" type="text" />
             </td>
 
             <td class="fixed-col">
-              <input formControlName="rate" name="resourceRate" class="form-control" type="text" />
+              <input formControlName="rate" class="form-control" type="text" />
             </td>
 
             <td *ngIf="selectedView=='Forecast'" class="month-col">
@@ -90,9 +90,9 @@
               <input formControlName="totalActualEffort" class="form-control" type="text" />
             </td>
 
-            <ng-container formArrayName="months">
+            <ng-container formArrayName="resourceMonths">
 
-              <td class="ui-state-default month-col" *ngFor="let month of resource.get('months').controls.slice([fcol],[lcol]); let m = index"
+              <td class="ui-state-default month-col" *ngFor="let month of resource.get('resourceMonths').controls.slice([fcol],[lcol]); let m = index"
                 [formGroupName]="m" [id]="'res' + '-' + i + '-' + m">
                 <ng-container *ngIf="selectedView=='Forecast'">
 
@@ -226,7 +226,7 @@
             <th class="total-col border-top"></th>
             <th class="month-col border-top"></th>
             <ng-container formArrayName="projectMonths">
-              <th class="month-col border-top" *ngFor="let month of project.months.slice([fcol],[lcol]); let te = index" [formGroupName]="te">
+              <th class="month-col border-top" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let te = index" [formGroupName]="te">
                 <input type="text" formControlName="totalPlannedCapital">
               </th>
             </ng-container>
@@ -238,7 +238,7 @@
             <th class="total-col"></th>
             <th class="month-col"></th>
             <ng-container formArrayName="projectMonths">
-              <th class="month-col" *ngFor="let month of project.months.slice([fcol],[lcol]); let tc = index" [formGroupName]="tc">
+              <th class="month-col" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let tc = index" [formGroupName]="tc">
                 <input type="text" formControlName="totalPlannedExpense">
               </th>
             </ng-container>
@@ -254,7 +254,7 @@
             <th class="total-col"></th>
             <th class="month-col"></th>
             <ng-container formArrayName="projectMonths">
-              <th class="month-col" *ngFor="let month of project.months.slice([fcol],[lcol]); let tac = index" [formGroupName]="tac">
+              <th class="month-col" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let tac = index" [formGroupName]="tac">
                 <input type="text" formControlName="totalActualCapital">
               </th>
             </ng-container>
@@ -266,7 +266,7 @@
             <th class="total-col"></th>
             <th class="month-col"></th>
             <ng-container formArrayName="projectMonths">
-              <th class="month-col" *ngFor="let month of project.months.slice([fcol],[lcol]); let tae = index" [formGroupName]="tae">
+              <th class="month-col" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let tae = index" [formGroupName]="tae">
                 <input type="text" formControlName="totalActualExpense">
               </th>
             </ng-container>

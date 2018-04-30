@@ -94,11 +94,17 @@ export class Project {
 
     private deserialize(instanceData: Project) {
         // Note this.active will not be listed in keys since it's declared, but not defined
-        const keys = Object.keys(instanceData[0]);
+        let _instanceData = null;
+        if (instanceData[0] !== undefined) {
+            _instanceData = instanceData[0];
+        } else {
+            _instanceData = instanceData;
+        }
+        const keys = Object.keys(_instanceData);
 
         for (const key of keys) {
             {
-                const data = instanceData[0][key];
+                const data = _instanceData[key];
                 switch (key) {
                     case 'fixedPriceCosts':
                         this.fixedPriceCosts = (data != null) ? data.map(d => new FixedPrice(d)) : [];

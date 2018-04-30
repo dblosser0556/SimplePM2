@@ -11,8 +11,8 @@ export class FixedPrice {
     fixedPriceTypeName: string = null;
     resourceTypeId: number = null;
     resourceTypeName: string = null;
-    totalPlannedCost: number = 0;
-    totalActualCost: number = 0;
+    totalPlannedCost: number = null;
+    totalActualCost: number = null;
 
     projectId: number = null;
 
