@@ -1,5 +1,19 @@
 <div class="table-scroll">
-  <h5>Milestones</h5>
+  <h5>{{project.projectName}}</h5>
+
+  <div *ngIf="notStarted" class="alert alert-info">
+    <div class="alert-items">
+      <div class="alert-item static">
+        <div class="alert-icon-wrapper">
+          <clr-icon class="alert-icon" shape="info-circle"></clr-icon>
+        </div>
+        <span class="alert-text">
+          Milestones cannot be set for a project without an actual start date.
+        </span>
+      </div>
+    </div>
+  </div>
+
   <table class="table table-compact">
     <thead>
       <tr>
@@ -71,7 +85,7 @@
         <th class="border-right">Plan (EAC)</th>
         <td>{{totalExpEAC | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
         <td>{{totalCapEAC | currency:'USD':'symbol-narrow':'1.0-0'}}</td>
-        <td >{{planFinishDate}}</td>
+        <td>{{planFinishDate}}</td>
       </tr>
       <tr>
         <th class="border-right">Plan (EAC) Comparison</th>

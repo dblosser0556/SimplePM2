@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ConfigService} from '../../../services';
+import { ConfigService, UserService} from '../../../services';
 import { Subscription } from 'rxjs/Subscription';
 import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 import '../../../rxjs-extensions';
@@ -18,7 +18,8 @@ export class RootComponent implements OnInit, OnDestroy {
 
   constructor(private config: ConfigService,
     private router: Router,
-    private activatedRoute: ActivatedRoute) {
+    private activatedRoute: ActivatedRoute,
+    private user: UserService) {
 
   }
 
@@ -37,8 +38,15 @@ export class RootComponent implements OnInit, OnDestroy {
       .subscribe((event) => this.pageTitle = event['title']);
   }
 
- 
 
+  isProjectManager(): boolean {
+    return this.user.hasRole('editProjects');
+  }
+
+  isProgramManager(): boolean {
+    return this.user.hasRole('editPrograms');
+  }
+  
   ngOnDestroy() {
     if (this.subSideBarActiveStatus) {
       this.subSideBarActiveStatus.unsubscribe();

@@ -32,7 +32,7 @@ export class ProjectMilestonesComponent implements OnInit {
   constructor(private milestoneService: MilestoneService,
     private phaseService: PhaseService,
     private toast: ToastrService,
-    private dp: DecimalPipe ) { }
+    private dp: DecimalPipe) { }
 
   phases: Phase[];
   milestoneDates = [];
@@ -65,7 +65,7 @@ export class ProjectMilestonesComponent implements OnInit {
   totalExpEAC: number;
   expEACToBudget: number;
   isLoading: boolean;
-
+  notStarted: boolean;
 
   ngOnInit() {
     this.isLoading = true;
@@ -86,6 +86,9 @@ export class ProjectMilestonesComponent implements OnInit {
         this.getBudgetTotals();
         this.setMilestoneTable();
         this.isLoading = false;
+        if (this.project.actualStartDate === null) {
+          this.notStarted = true;
+        }
       });
   }
 
@@ -165,6 +168,9 @@ export class ProjectMilestonesComponent implements OnInit {
     this.expenseEACValue = new Array();
     this.totalExpEAC = 0;
 
+    // to calculate EAC need to find the last month with actuals
+    // this compensates for when the user doesn't keep his
+    // actuals up to date.
     let count = 0;
     let countActualCapMonths = 0;
     let countActualExpMonths = 0;
@@ -177,8 +183,13 @@ export class ProjectMilestonesComponent implements OnInit {
       }
       count++;
     }
+    // the last actual month is the last month with an actual value either expense or capital.
     const lastActualMonth = (countActualExpMonths >= countActualCapMonths) ? countActualExpMonths : countActualCapMonths;
-    const defaultDate =  moment([1800]);
+
+    // this logic is looking for the last date with a particular phase.  The phases dont'
+    // have to be in any particular order.  It can go 1/2/1/2/3/4 for example and the last 1 and 2 should
+    // be selected.
+    const defaultDate = moment([1800]);
     let phaseDate = moment([1800]);
     for (const phase of this.phases) {
       phaseDate = moment([1800]);
@@ -191,6 +202,7 @@ export class ProjectMilestonesComponent implements OnInit {
             phaseDate = moment(this.project.actualStartDate).add(month.monthNo, 'M');
           }
 
+          // add in the actuals or the plan to use EAC
           if (month.monthNo <= lastActualMonth) {
             phaseCap += month.totalActualCapital;
             phaseExp += month.totalActualExpense;
@@ -223,7 +235,7 @@ export class ProjectMilestonesComponent implements OnInit {
       this.isLate = true;
     } else {
       this.planFinishDate = phaseDate.format('YYYY-MM');
-      if (this.planFinishDate > this.milestoneFinishDate ) {
+      if (this.planFinishDate > this.milestoneFinishDate) {
         this.isLate = true;
       }
     }
@@ -265,7 +277,7 @@ export class ProjectMilestonesComponent implements OnInit {
             this.project.milestones.push(newMilestone);
           },
           error => {
-           this.toast.error(error, 'Oops');
+            this.toast.error(error, 'Oops');
           }
         );
       } else {

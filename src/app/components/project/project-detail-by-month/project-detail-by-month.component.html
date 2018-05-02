@@ -1,4 +1,43 @@
 <!-- Menu -->
+<div *ngIf="isLoading" class="busy-holder">
+  <div class="busy spinner">
+    Loading...
+  </div>
+</div>
+<div *ngIf="isSaving" class="busy-holder">
+  <div class="busy spinner">
+    Saving...
+  </div>
+</div>
+<div *ngIf="notStarted && selectedView=='Actuals' && !hasActuals && !noWarning" class="alert alert-warning">
+  <div class="alert-items">
+    <div class="alert-item static">
+      <div class="alert-icon-wrapper">
+        <clr-icon class="alert-icon" shape="exclamation-triangle"></clr-icon>
+      </div>
+      <span class="alert-text">
+        There is not actual start date set for this project.
+      </span>
+    </div>
+  </div>
+  <button type="button" class="close" aria-label="Close" (click)="noWarning=true">
+    <clr-icon aria-hidden="true" shape="close"></clr-icon>
+  </button>
+</div>
+
+<div *ngIf="notStarted && selectedView=='Actuals' && hasActuals" class="alert alert-danger">
+  <div class="alert-items">
+    <div class="alert-item static">
+      <div class="alert-icon-wrapper">
+        <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+      </div>
+      <span class="alert-text">
+        There is not actual start date set for this project and there have been actuals added. Please go to the details tab and set
+        the actual start date.
+      </span>
+    </div>
+  </div>
+</div>
 
 <div style="height: 40px; margin-top: 10px">
   <div style="float:left" *ngFor="let menuItem of menuItems; let first = first; let last = last">
@@ -12,24 +51,23 @@
       <button type="button" class="btn tool-bar" (click)="fixedPriceAddRow()">
         <clr-icon shape="dollar" class="has-badge"></clr-icon>
       </button>
-      <button type="button" class="btn tool-bar" (click)="addProjectMonth()">
+      <button type="button" class="btn tool-bar" (click)="projectMonthAddMonth()">
         <clr-icon shape="calendar" class="has-badge"></clr-icon>
       </button>
     </div>
   </div>
-  <div>
-    <h3>{{project.projectName}}</h3>
-  </div>
-  <div *ngIf="selectedView=='Forecast'">Edit Forecast</div>
-  <div *ngIf="selectedView=='Actuals'">Edit Actuals</div>
   <div style="float:right">
-    <button class="btn btn-primary" type="submit" [disabled]="!projectForm.valid" (click)="onSubmit()">
+    <button class="btn btn-primary" type="button" (click)="onSubmit()" [disabled]="!projectForm.valid">
       <clr-icon shape="floppy" class="isFilled"></clr-icon>Save</button>
     <button type="button" class="btn btn-warning-outline" (click)="revert()" [disabled]="!projectForm.dirty">
       <clr-icon shape="undo"></clr-icon>Reset</button>
     <button type="button" class="btn btn-warning-outline" (click)="cancel()">
       <clr-icon shape="ban"></clr-icon>Cancel</button>
   </div>
+  <div>
+    <h3 style="text-align: center; margin-top:0px; align-content: center; height:40px">{{project.projectName}}</h3>
+  </div>
+
 </div>
 <form (ngSubmit)="onSubmit()" name="projectForm" class="project-form" [formGroup]="projectForm" novalidate>
   <div id="cell-select" style="position: relative;">
@@ -45,9 +83,11 @@
           <th class="fixed-col">Vendor</th>
           <th class="rate-col">Rate</th>
           <th class="month-col">
-           
+
           </th>
-          <th class="month-col" [contextMenu]="projectMonthMenu" [contextMenuSubject]="pm + ':0'" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let pm = index;">{{project.startDate().setMonth(project.startDate().getMonth() + month.monthNo - 1) |date:'MMM-yy' }}</th>
+          <th class="month-col" [contextMenu]="projectMonthMenu" [contextMenuSubject]="pm" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let pm = index;">{{project.startDate().setMonth(project.startDate().getMonth() + month.get('monthNo').value - 1) |date:'MMM-yy'
+            }}
+          </th>
 
         </tr>
         <tr>
@@ -63,7 +103,7 @@
               [formGroupName]="m">
               <div class="select">
                 <select class="form-control" formControlName="phaseId">
-                  <option *ngFor="let phase of phaseList" [value]="phase.phaseId" [selected]="phase.phaseId == month.phaseId">{{phase.phaseName}}</option>
+                  <option *ngFor="let phase of phaseList" [value]="phase.phaseId">{{phase.phaseName}}</option>
                 </select>
               </div>
             </th>
@@ -79,7 +119,7 @@
             <td class="fixed-col">
               <div class="select fixed-col">
                 <select class="form-control" formControlName="roleId">
-                  <option *ngFor="let role of roleList" [value]="role.roleId" [selected]="role.roleId == resource.roleId">{{role.roleName}}</option>
+                  <option *ngFor="let role of roleList" [value]="role.roleId">{{role.roleName}}</option>
                 </select>
               </div>
             </td>
@@ -91,7 +131,7 @@
 
               <div class="select fixed-col">
                 <select class="form-control" formControlName="resourceTypeId">
-                  <option *ngFor="let type of resourceTypeList" [value]="type.resourceTypeId" [selected]="type.resourceTypeId == resource.resourceTypeId">{{type.resourceTypeName}} </option>
+                  <option *ngFor="let type of resourceTypeList" [value]="type.resourceTypeId">{{type.resourceTypeName}} </option>
                 </select>
               </div>
             </td>
@@ -104,10 +144,10 @@
             </td>
 
             <td *ngIf="selectedView=='Forecast'" class="total-col">
-              <input formControlName="totalPlannedEffort" class="form-control" type="text" />
+              <input formControlName="totalPlannedEffort" class="form-control" type="number" style="text-align:right;" />
             </td>
             <td *ngIf="selectedView=='Actuals'" class="total-col">
-              <input formControlName="totalActualEffort" class="form-control" type="text" />
+              <input formControlName="totalActualEffort" class="form-control" type="number" style="text-align:right;" />
             </td>
 
             <ng-container formArrayName="resourceMonths">
@@ -117,7 +157,7 @@
                 <ng-container *ngIf="selectedView=='Forecast'">
 
 
-                  <input formControlName="plannedEffort" name="resourceMonth" class="form-control" [ngClass]="{
+                  <input formControlName="plannedEffort" name="resourceMonth" style="text-align:right" class="form-control" [ngClass]="{
                     'fontcolor1':month.get('plannedEffortStyle').value === 0 && selectedView == 'Forecast',
                     'fontcolor1':month.get('plannedEffortStyle').value === 1 && selectedView == 'Forecast',
                     'fontcolor2':month.get('plannedEffortStyle').value === 2 && selectedView == 'Forecast',
@@ -131,7 +171,7 @@
                 <ng-container *ngIf="selectedView=='Actuals'">
 
 
-                  <input name="resourceMonth" class="form-control" [ngClass]="{
+                  <input name="resourceMonth" class="form-control" style="text-align:right" [ngClass]="{
                     'fontcolor1':month.get('actualEffortStyle').value === 0 && selectedView == 'Actuals',
                     'fontcolor1':month.get('actualEffortStyle').value === 1 && selectedView == 'Actuals',
                     'fontcolor2':month.get('actualEffortStyle').value === 2 && selectedView == 'Actuals',
@@ -167,12 +207,12 @@
         </tr>
         <ng-container formArrayName="fixedRows">
           <tr *ngFor="let fixedPrice of projectForm.get('fixedRows').controls; let f = index" [formGroupName]="f">
-            <td class="action" [contextMenu]="fixedFeeMenu" [contextMenuSubject]="f + ':0'">
+            <td class="action" [contextMenu]="fixedMenu" [contextMenuSubject]="f + ':0'">
             </td>
             <td class="fixed-col">
               <div class="select fixed-col">
                 <select class="form-control" formControlName="fixedPriceTypeId">
-                  <option *ngFor="let type of fixedPriceTypeList" [value]="type.fixedPriceTypeId" [selected]="type.fixedPriceTypeId == fixedPrice.fixedPriceTypeId">{{type.fixedPriceTypeName}} </option>
+                  <option *ngFor="let type of fixedPriceTypeList" [value]="type.fixedPriceTypeId">{{type.fixedPriceTypeName}} </option>
                 </select>
               </div>
             </td>
@@ -183,7 +223,7 @@
             <td class="fixed-col">
               <div class="select fixed-col">
                 <select class="form-control" formControlName="resourceTypeId">
-                  <option *ngFor="let type of resourceTypeList" [value]="type.resourceTypeId" [selected]="type.resourceTypeId == fixedPrice.resourceTypeId">{{type.resourceTypeName}} </option>
+                  <option *ngFor="let type of resourceTypeList" [value]="type.resourceTypeId">{{type.resourceTypeName}} </option>
                 </select>
               </div>
             </td>
@@ -196,16 +236,16 @@
             <!-- Fixed Cost Forecast Only Cells  -->
 
             <td *ngIf="selectedView=='Forecast'" class="total-col">
-              <input formControlName="totalPlannedCost" class="form-control" type="text" />
+              <input formControlName="totalPlannedCost" class="form-control" type="number" style="text-align:right" />
             </td>
             <td *ngIf="selectedView=='Actuals'" class="total-col">
-              <input formControlName="totalActualCost" class="form-control" type="text" />
+              <input formControlName="totalActualCost" class="form-control" type="number" style="text-align:right" />
             </td>
             <ng-container formArrayName="fixedPriceMonths">
               <td class="ui-state-default month-col" *ngFor="let month of fixedPrice.get('fixedPriceMonths').controls.slice([fcol],[lcol]); let fm = index"
-                [formGroupName]="fm" [id]="'fix'+ f + fm">
+                [formGroupName]="fm" [id]="'fix-' + f + '-' + fm">
                 <ng-container *ngIf="selectedView=='Forecast'">
-                  <input formControlName="plannedCost" class="form-control" type="number" [ngClass]="{
+                  <input formControlName="plannedCost" class="form-control" type="number" style="text-align:right" [ngClass]="{
                     'fontcolor1':month.get('plannedCostStyle').value === 0 && selectedView == 'Forecast',
                     'fontcolor1':month.get('plannedCostStyle').value === 1 && selectedView == 'Forecast',
                     'fontcolor2':month.get('plannedCostStyle').value === 2 && selectedView == 'Forecast',
@@ -217,7 +257,7 @@
                 <ng-container *ngIf="selectedView=='Actuals'">
 
 
-                  <input formControlNmae="actualCost" class="form-control" [ngClass]="{
+                  <input formControlName="actualCost" class="form-control" type="number" style="text-align:right" [ngClass]="{
                     'fontcolor0':month.get('actualCostStyle').value === 1 && selectedView == 'Actuals',
                     'fontcolor1':month.get('actualCostStyle').value === 1 && selectedView == 'Actuals',
                     'fontcolor2':month.get('actualCostStyle').value === 2 && selectedView == 'Actuals',
@@ -251,7 +291,7 @@
             <ng-container formArrayName="projectMonths">
               <th class="month-col border-top" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let te = index"
                 [formGroupName]="te">
-                <input type="text" formControlName="totalPlannedCapital">
+                <input type="number" style="text-align:right" formControlName="totalPlannedCapital">
               </th>
             </ng-container>
           </tr>
@@ -266,7 +306,7 @@
             <ng-container formArrayName="projectMonths">
               <th class="month-col" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let tc = index"
                 [formGroupName]="tc">
-                <input type="text" formControlName="totalPlannedExpense">
+                <input type="number" style="text-align:right" formControlName="totalPlannedExpense">
               </th>
             </ng-container>
           </tr>
@@ -283,9 +323,9 @@
             <th class="total-col border-top"></th>
             <th class="month-col border-top"></th>
             <ng-container formArrayName="projectMonths">
-              <th class="month-col" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let tac = index"
+              <th class="month-col border-top" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let tac = index"
                 [formGroupName]="tac">
-                <input type="text" formControlName="totalActualCapital">
+                <input type="number" style="text-align:right" formControlName="totalActualCapital">
               </th>
             </ng-container>
           </tr>
@@ -300,7 +340,7 @@
             <ng-container formArrayName="projectMonths">
               <th class="month-col" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let tae = index"
                 [formGroupName]="tae">
-                <input type="text" formControlName="totalActualExpense">
+                <input type="number" style="text-align:right" formControlName="totalActualExpense">
               </th>
             </ng-container>
           </tr>
@@ -333,6 +373,8 @@
 
   </div>
 </form>
+
+
 <!--  Begin the context menus -->
 
 
@@ -356,16 +398,16 @@
 <context-menu #fixedMenu>
   <ng-template contextMenuItem passive="true">Fixed Fee</ng-template>
   <ng-template contextMenuItem divider="true"></ng-template>
-  <ng-template contextMenuItem (execute)="fixedFeeAddRow()">
+  <ng-template contextMenuItem (execute)="fixedPriceAddRow()">
     Add Row
   </ng-template>
-  <ng-template contextMenuItem (execute)="fixedFeeCopyRow($event.item)">
+  <ng-template contextMenuItem (execute)="fixedPriceCopyRow($event.item)">
     Copy Row
   </ng-template>
-  <ng-template contextMenuItem [visible]="canPasteFixedFeeRow" (execute)="fixedFeePasteRow($event.item)">
+  <ng-template contextMenuItem [visible]="canPasteFixedPriceRow" (execute)="fixedPricePasteRow($event.item)">
     Paste Row
   </ng-template>
-  <ng-template contextMenuItem (execute)="fixedFeeDeleteRow($event.item)">
+  <ng-template contextMenuItem (execute)="fixedPriceDeleteRow($event.item)">
     Delete Row
   </ng-template>
 </context-menu>
@@ -373,19 +415,22 @@
 <context-menu #projectMonthMenu>
   <ng-template contextMenuItem passive="true">Project Month</ng-template>
   <ng-template contextMenuItem divider="true"></ng-template>
-  <ng-template contextMenuItem (execute)="addProjectMonth()">
-    Add Month
+  <ng-template contextMenuItem (execute)="projectMonthAddMonth()">
+    Add
   </ng-template>
-  <ng-template contextMenuItem (execute)="copyProjectMonth($event.item)">
-    Copy Month
+  <ng-template contextMenuItem [visible]="!canPasteMonthCol" (execute)="projectMonthInsertMonth($event.item)">
+    Insert Here
   </ng-template>
-  <ng-template contextMenuItem [visible]="canPasteProjectMonth" (execute)="pasteProjectMonth($event.item)">
-    Paste Month
+  <ng-template contextMenuItem (execute)="copyProjectMonthCol($event.item)">
+    Copy
   </ng-template>
-  <ng-template contextMenuItem [visible]="canPasteProjectMonth" (execute)="insertProjectMonth($event.item)">
-    Insert Month
+  <ng-template contextMenuItem [visible]="canPasteMonthCol" (execute)="projectMonthPasteMonth($event.item)">
+    Paste Here
   </ng-template>
-  <ng-template contextMenuItem (execute)="deleteProjectMonth($event.item)">
-    Delete Row
+  <ng-template contextMenuItem [visible]="canPasteMonthCol" (execute)="projectMonthInsertandPasteMonth($event.item)">
+    Insert Before
+  </ng-template>
+  <ng-template contextMenuItem (execute)="projectMonthDeleteMonth($event.item)">
+    Delete
   </ng-template>
 </context-menu>

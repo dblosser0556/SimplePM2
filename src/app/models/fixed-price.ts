@@ -4,7 +4,7 @@ export class FixedPrice {
     fixedPriceMonths: FixedPriceMonth[] = [];
 
     fixedPriceId: number = null;
-    
+
     fixedPriceName: string = null;
     vendor: string = null;
     fixedPriceTypeId: number = null;
@@ -16,7 +16,7 @@ export class FixedPrice {
 
     projectId: number = null;
 
-   
+
 
     constructor(protected monthsData?: FixedPrice) {
         if (monthsData) {
@@ -29,7 +29,7 @@ export class FixedPrice {
         const keys = Object.keys(monthsData);
 
         for (const key of keys) {
-            if (key === 'fixedPriceMonths'){
+            if (key === 'fixedPriceMonths') {
                 this.fixedPriceMonths = monthsData[key].map(data => new FixedPriceMonth(data));
             } else {
                 this[key] = monthsData[key];

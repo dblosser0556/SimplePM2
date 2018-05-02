@@ -1,25 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
 // css of the context menus
 .ngx-contextmenu .dropdown-menu {
-    border: solid 1px chartreuse;
-    background-color: darkgreen;
+    border: solid 1px #444444;
+    background-color: #DDDDDD;
     padding: 0;
   }
   .ngx-contextmenu li {
     display: block;
-    border-top: solid 1px chartreuse;
-    text-transform: uppercase;
+    border-top: solid 1px #444444;
+    background-color: #FAFAFA;
     text-align: center;
   }
   .ngx-contextmenu li:first-child {
     border-top:none;
   }
   .ngx-contextmenu a {
-    color:chartreuse;
+    color:#444444;
     display: block;
-    padding: 0.5em 1em;
+    padding: 0.25em 0.5em;
   }
   .ngx-contextmenu a:hover {
-    color:darkgreen;
-    background-color:chartreuse;
+    color:#444444;
+    background-color: #EEEEEE;
   }

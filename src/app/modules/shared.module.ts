@@ -10,7 +10,7 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 
 import { BrowserAnimationsModule  } from '@angular/platform-browser/animations';
-
+import { AuthGuard } from '../guard/auth.guard';
 import { ColspanDirective } from '../directives/colspan.directive';
 import { MultiselectDirective } from '../directives/multiselect.directive';
 import { FixedHeaderDirective } from '../directives/fixed-header.directive';
@@ -25,7 +25,7 @@ import { UtilityService } from '../services/utility.service';
   imports:      [CommonModule, HttpClientModule,  BrowserAnimationsModule],
   declarations: [ColspanDirective, MultiselectDirective, FixedHeaderDirective],
   exports:      [ColspanDirective, MultiselectDirective, FixedHeaderDirective],
-  providers:    [ConfigService, UserService, UtilityService]
+  providers:    [ConfigService, UserService, UtilityService, AuthGuard]
 })
 export class SharedModule { }
 

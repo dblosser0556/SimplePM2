@@ -10,6 +10,7 @@ import { ConfigurationModule } from './components/configuration/configuration.mo
 import { DashboardModule } from './components/dashboard/dashboard.module';
 import { AppComponent, HomeComponent, HeaderComponent } from './components';
 import { routing } from './app.routing';
+import { PageNotFoundComponent } from './components/page-not-found/page-not-found.component';
 
 
 @NgModule({
@@ -17,6 +18,7 @@ import { routing } from './app.routing';
     AppComponent,
     HomeComponent,
     HeaderComponent,
+    PageNotFoundComponent,
   ],
   imports: [
     BrowserModule,

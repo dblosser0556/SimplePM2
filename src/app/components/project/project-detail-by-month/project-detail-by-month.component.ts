@@ -1,5 +1,7 @@
-import { Component, OnInit, Input, OnChanges, HostListener, ElementRef,
-  AfterViewInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import {
+  Component, OnInit, Input, OnChanges, HostListener, ElementRef,
+  AfterViewInit, ViewChild, Output, EventEmitter
+} from '@angular/core';
 import {
   Project, Resource, Month, ResourceMonth, Phase,
   ResourceType, FixedPriceType, Role, FixedPrice, FixedPriceMonth, MenuItem, Budget
@@ -21,13 +23,22 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterViewInit {
 
+  // set up booleans for the warning/alerts
+  hasActuals: boolean;
+  notStarted: boolean;
 
-  resourceRowFG: FormGroup;
-  fixedPriceRowFG: FormGroup;
-  canPastefixedPriceRow: boolean;
-  canPasteMonthRow: boolean;
+  isSaving = false;
+
+  // data structures for the copy process.
+  copiedProjectMonth: { projectMonth: FormGroup; resourceMonths: any[]; fixedPriceMonths: any[]; };
+  copiedResourceRowFG: FormGroup;
+  copiedFixedPriceRowFG: FormGroup;
+  canPasteFixedPriceRow: boolean;
+  canPasteMonthCol: boolean;
   canPasteFixFeeRow: boolean;
   canPasteResourceRow: boolean;
+
+
   menuItems: MenuItem[];
   selectedCells: any;
   showPaginator: boolean;
@@ -88,6 +99,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
     // create the form.
     this.createForm();
+
   }
 
   ngOnInit() {
@@ -98,12 +110,15 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     // So we need to subscribe to changes to the data to keep from
     // logging many errors.
     this._project.subscribe(x => {
+      if (this.project.actualStartDate === null) {
+        this.notStarted = true;
+      }
 
       // if this is the first time through create the hierarchy,
       // else just make updates.
       if (x !== undefined) {
         this.lcol = 5;
-        this.onChanges();
+
         this.calcPageSize();
         this.isLoading = false;
       }
@@ -118,7 +133,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     if (this.project === undefined) {
       return;
     }
-
+    this.hasActuals = false;
 
     this.projectForm.reset({
       projectID: this.project.projectId
@@ -127,7 +142,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     this.setResourceRows(this.project.resources);
     this.setFixedRows(this.project.fixedPriceCosts);
 
-
+    this.onChanges();
 
   }
 
@@ -142,48 +157,71 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   onChanges() {
-    // subscribe to changes to the fixed rows and update the totals.
+    console.log('On Changes added');
+    // subscribe to changes to the resource rows and update the totals.
     this.projectForm.get('resourceRows').valueChanges.pipe(debounceTime(400)).subscribe(val => {
-      val.forEach((resource: Resource) => {
-        let totalPlannedEffort = 0;
-        let totalActualEffort = 0;
-
-        // add up the hours
-        resource.resourceMonths.forEach(month => {
-          totalPlannedEffort += month.plannedEffort;
-          totalActualEffort += month.actualEffort;
-        });
-
-        // update the fields.
-        const resourceFA = this.projectForm.get('resourceRows') as FormArray;
-        const resourceFG = resourceFA.controls.find(f => f.get('resourceId').value === resource.resourceId) as FormGroup;
-        resourceFG.get('totalPlannedEffort').setValue(totalPlannedEffort);
-        resourceFG.get('totalActualEffort').setValue(totalActualEffort);
-      });
-
+      this.updateResourceTotals(val);
       this.updateMonthlyTotals();
     });
 
 
     // subscribe to changes to the fixed rows and update the totals.
     this.projectForm.get('fixedRows').valueChanges.pipe(debounceTime(400)).subscribe(val => {
-      val.forEach((fixedPrice: FixedPrice) => {
-        let totalPlannedCost = 0;
-        let totalActualCost = 0;
-        fixedPrice.fixedPriceMonths.forEach(month => {
-          totalPlannedCost += month.plannedCost;
-          totalActualCost += month.actualCost;
-        });
-
-
-        const fixedPriceFA = this.projectForm.get('fixedRows') as FormArray;
-        const fixedPriceFG = fixedPriceFA.controls.find(f => f.get('fixedPriceId').value === fixedPrice.fixedPriceId) as FormGroup;
-        fixedPriceFG.get('totalPlannedCost').setValue(totalPlannedCost);
-        fixedPriceFG.get('totalActualCost').setValue(totalActualCost);
-      });
+      this.updateFixedPriceTotals(val);
       this.updateMonthlyTotals();
     });
+  }
 
+  // update the resource totals when a value is updated
+  // or when a month is added or deleted.
+  updateResourceTotals(resourceRows) {
+
+
+    resourceRows.forEach(resource => {
+      // when the form is first built the values are ready.
+      if (resource.resourceId === null) { return; }
+
+      let totalPlannedEffort = 0;
+      let totalActualEffort = 0;
+
+      // add up the hours
+      resource.resourceMonths.forEach(month => {
+        totalPlannedEffort += month.plannedEffort;
+        totalActualEffort += month.actualEffort;
+      });
+
+      // update the fields.
+      const resourceFA = this.projectForm.get('resourceRows') as FormArray;
+
+      const resourceFG = resourceFA.controls.find(f => f.get('resourceId').value === resource.resourceId) as FormGroup;
+      resourceFG.get('totalPlannedEffort').setValue(totalPlannedEffort);
+      resourceFG.get('totalActualEffort').setValue(totalActualEffort);
+
+    });
+
+  }
+
+  // update the fixedprice totals when a value is updated
+  // or when a month is added or deleted.
+  updateFixedPriceTotals(fixedPriceRows) {
+
+    fixedPriceRows.forEach((fixedPrice: FixedPrice) => {
+      // when the form is first built the values are ready.
+      if (fixedPrice.fixedPriceId === null) { return; }
+
+      let totalPlannedCost = 0;
+      let totalActualCost = 0;
+      fixedPrice.fixedPriceMonths.forEach(month => {
+        totalPlannedCost += month.plannedCost;
+        totalActualCost += month.actualCost;
+      });
+
+
+      const fixedPriceFA = this.projectForm.get('fixedRows') as FormArray;
+      const fixedPriceFG = fixedPriceFA.controls.find(f => f.get('fixedPriceId').value === fixedPrice.fixedPriceId) as FormGroup;
+      fixedPriceFG.get('totalPlannedCost').setValue(totalPlannedCost);
+      fixedPriceFG.get('totalActualCost').setValue(totalActualCost);
+    });
   }
 
   // when the monthly values change ensure the monthly totals are updated.
@@ -231,6 +269,11 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
       });
 
+      // set the actuals flag.
+      if (totalActualCapital > 0 || totalActualExpense > 0) {
+        this.hasActuals = true;
+      }
+
       if (this.selectedView === 'Forecast') {
         month.get('totalPlannedCapital').setValue(totalPlannedCapital);
         month.get('totalPlannedExpense').setValue(totalPlannedExpense);
@@ -239,6 +282,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
         month.get('totalActualExpense').setValue(totalActualExpense);
       }
     });
+
   }
   setMonthRows(months: Month[]) {
     const monthFGs = months.map(
@@ -248,7 +292,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   createMonth(month: Month): FormGroup {
-    return this.fb.group({
+    const monthFG =  this.fb.group({
       projectId: month.projectId,
       monthId: month.monthId,
       monthNo: month.monthNo,
@@ -258,16 +302,22 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       totalActualExpense: [{ value: month.totalActualExpense, disabled: true }],
       totalActualCapital: [{ value: month.totalActualCapital, disabled: true }]
     });
+
+    // check for the project having actuals set for warning/error flags.
+    if (month.totalActualExpense > 0 || month.totalActualCapital > 0 ) {
+      this.hasActuals = true;
+    }
+    return monthFG;
   }
 
   setResourceRows(resources: Resource[]) {
     const resourceFGs = resources.map(
-      resource => this.createResource(resource));
+      resource => this.createResourceRow(resource));
     const resourceFA = this.fb.array(resourceFGs);
     this.projectForm.setControl('resourceRows', resourceFA);
   }
 
-  createResource(resource: Resource) {
+  createResourceRow(resource: Resource) {
     return this.fb.group({
       projectId: resource.projectId,
       resourceId: resource.resourceId,
@@ -330,12 +380,12 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
   createFixedPriceMonths(fixedMonths: FixedPriceMonth[]): FormArray {
     const monthFGs = fixedMonths.map(
-      month => this.createFixedMonth(month));
+      month => this.createFixedPriceMonth(month));
     const monthFA = this.fb.array(monthFGs);
     return monthFA;
   }
 
-  createFixedMonth(fixedMonth: FixedPriceMonth): FormGroup {
+  createFixedPriceMonth(fixedMonth: FixedPriceMonth): FormGroup {
     return this.fb.group({
       fixedPriceMonthId: fixedMonth.fixedPriceMonthId,
       monthNo: fixedMonth.monthNo,
@@ -353,7 +403,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   // handle the callbacks from the various right click menus
   // the row menu has delete row, add row.
   // handle the resource menu.
-  resourceAddRow() {
+  resourceAddRow(index?: number) {
 
     const resource = new Resource();
     resource.projectId = this.project.projectId,
@@ -373,7 +423,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       resource.resourceMonths.push(this.addResourceMonth(0, i));
     }
 
-    const resourceRowFG = this.createResource(resource);
+    const resourceRowFG = this.createResourceRow(resource);
     const resourceRowFGs = this.projectForm.get('resourceRows') as FormArray;
     resourceRowFGs.push(resourceRowFG);
   }
@@ -403,17 +453,25 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
     // can only paste resources now.
     this.canPasteResourceRow = true;
-    this.canPastefixedPriceRow = false;
-    this.canPasteMonthRow = false;
+    this.canPasteFixedPriceRow = false;
+    this.canPasteMonthCol = false;
 
     // set a referece the row we want to copy.
     const resourceFGs = this.projectForm.get('resourceRows') as FormArray;
-    this.resourceRowFG = resourceFGs.controls[index] as FormGroup;
+    const copiedResourceRowFG = resourceFGs.controls[index] as FormGroup;
+
+
+    const resource: Resource = Object.assign({}, copiedResourceRowFG.getRawValue());
+
+    resource.resourceId = 0;
+    resource.resourceMonths.forEach(month => { month.resourceId = 0; month.resourceMonthId = 0; });
+    this.copiedResourceRowFG = this.createResourceRow(resource);
+
   }
 
   resourcePasteRow(val: string) {
     const resourceFGs = this.projectForm.get('resourceRows') as FormArray;
-    resourceFGs.push(this.resourceRowFG);
+    resourceFGs.push(this.copiedResourceRowFG);
   }
 
   resourceDeleteRow(val: string) {
@@ -433,6 +491,8 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     fixedPrice.fixedPriceId = 0;
     fixedPrice.resourceTypeId = -1;
     fixedPrice.fixedPriceTypeId = -1;
+    fixedPrice.vendor = '';
+    fixedPrice.fixedPriceName = '';
 
     fixedPrice.fixedPriceMonths = new Array<FixedPriceMonth>();
     for (let i = 0; i < this.project.months.length; i++) {
@@ -463,31 +523,81 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   fixedPriceCopyRow(val: string) {
     const vals = val.split(':');
     const index = Number(vals[0]);
-    this.canPastefixedPriceRow = true;
+    this.canPasteFixedPriceRow = true;
     this.canPasteResourceRow = false;
-    this.canPasteMonthRow = false;
+    this.canPasteMonthCol = false;
 
     const fixedPriceRowFGs = this.projectForm.get('fixedRows') as FormArray;
-    this.fixedPriceRowFG = fixedPriceRowFGs.controls[index] as FormGroup;
+    const copiedFixedPriceRowFG = fixedPriceRowFGs.controls[index] as FormGroup;
+    const fixedPrice: FixedPrice = Object.assign({}, copiedFixedPriceRowFG.getRawValue());
+
+    fixedPrice.fixedPriceId = 0;
+    fixedPrice.fixedPriceMonths.forEach(month => { month.fixedPriceId = 0; month.fixedPriceMonthId = 0; });
+    this.copiedFixedPriceRowFG = this.createFixedRow(fixedPrice);
   }
 
   fixedPricePasteRow(val: string) {
     const fixedPriceRowFGs = this.projectForm.get('fixedRows') as FormArray;
-    fixedPriceRowFGs.push(this.fixedPriceRowFG);
+    fixedPriceRowFGs.push(this.copiedFixedPriceRowFG);
   }
 
   fixedPriceDeleteRow(val: string) {
     const vals = val.split(':');
     const index = Number(vals[0]);
-    this.canPastefixedPriceRow = false;
+    this.canPasteFixedPriceRow = false;
     const fixedPriceRowFGs = this.projectForm.get('fixedRows') as FormArray;
     fixedPriceRowFGs.removeAt(index);
   }
 
-  // handle the month menu commands
-  addProjectMonth() {
+
+  // handle the add month event.
+  projectMonthAddMonth() {
+    this.insertNewProjectMonthCol();
+    this.calcPageSize();
+  }
+  // handle the insert month event.
+  projectMonthInsertMonth(col: number) {
+    this.insertNewProjectMonthCol(col);
+    this.renumberMonths();
+    this.calcPageSize();
+  }
+  // handle the paste insert event.
+  projectMonthInsertandPasteMonth(col: number) {
+    if (!this.canPasteMonthCol) { return; }
+    this.insertCopiedProjectMonth(col);
+    this.renumberMonths();
+    this.calcPageSize();
+  }
+
+  // handle the paste event.
+  projectMonthPasteMonth(col: number) {
+    if (!this.canPasteMonthCol) { return; }
+    this.deleteProjectMonthCol(col);
+    this.insertCopiedProjectMonth(col);
+    this.renumberMonths();
+    this.calcPageSize();
+  }
+
+  // handle the delete month event
+  projectMonthDeleteMonth(col: number) {
+    this.deleteProjectMonthCol(col);
+    this.renumberMonths();
+    this.calcPageSize();
+  }
+
+
+  // insert a blank month into the form at the passed index.
+  insertNewProjectMonthCol(index?: number) {
+
     const projectMonthsFA = this.projectForm.get('projectMonths') as FormArray;
-    const monthNo = projectMonthsFA.controls.length;
+    // set up the month no.
+    let monthNo = projectMonthsFA.controls.length;
+    // if index passed then use that for the month no.
+    // monthno is a zero based index and is the same value
+    // as the array index.
+    if (index !== undefined) {
+      monthNo = index;
+    }
 
     // create a new month
     const month = new Month();
@@ -502,7 +612,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
     // crate the formgrooup and push it to array.
     const monthFG = this.createMonth(month);
-    projectMonthsFA.push(monthFG);
+    projectMonthsFA.insert(monthNo, monthFG);
 
     // go through each of the resources and add a month.
     const resourcesFA = this.projectForm.get('resourceRows') as FormArray;
@@ -510,33 +620,167 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       const resourceMonthsFA = resource.get('resourceMonths') as FormArray;
       const resourceMonth = this.addResourceMonth(resource.get('resourceId').value, monthNo);
       const resourceMonthFG = this.createResourceMonth(resourceMonth);
-      resourceMonthsFA.push(resourceMonthFG);
-      });
+      resourceMonthsFA.insert(monthNo, resourceMonthFG);
+    });
 
     const fixedPriceFA = this.projectForm.get('fixedRows') as FormArray;
     fixedPriceFA.controls.forEach(fixedPrice => {
       const fixedPriceMonthsFA = fixedPrice.get('fixedPriceMonths') as FormArray;
       const fixedPriceMonth = this.addFixedMonth(fixedPrice.get('fixedPriceId').value, monthNo);
-      const fixedPriceMonthFG = this.createFixedMonth(fixedPriceMonth);
-      fixedPriceMonthsFA.push(fixedPriceMonthFG);
+      const fixedPriceMonthFG = this.createFixedPriceMonth(fixedPriceMonth);
+      fixedPriceMonthsFA.insert(monthNo, fixedPriceMonthFG);
     });
 
-    this.calcPageSize();
-  }
-
-  copyProjectMonth(index: number) {
 
   }
 
-  pasteProjectMonth(index: number) {
+
+  // copy a projectMonth and the same resourceMonths and fixedPriceMonths
+  // into an array so they can be later used.
+  copyProjectMonthCol(index: number) {
+    // need to create new instances of formGroups
+    const projectMonthsFA = this.projectForm.get('projectMonths') as FormArray;
+    const projectMonthFG = projectMonthsFA.controls[index] as FormGroup;
+    // get the rawvalues as there are disabled fields
+    const projectMonthFGValue = projectMonthFG.getRawValue();
+
+    // create a new projectMonth as assign the values from the selected month.
+    const projectMonth = new Month();
+    const keys = Object.keys(projectMonthFGValue);
+    for (const key of keys) {
+      projectMonth[key] = projectMonthFGValue[key];
+    }
+
+    // update the monthId to 0 to indicate it's a new month when saved.
+    projectMonth.monthId = 0;
+
+    // create the formGroup.
+    const _projectMonthFG = this.createMonth(projectMonth);
+
+
+    const resourcesFA = this.projectForm.get('resourceRows') as FormArray;
+    const resourceMonths = new Array<FormGroup>();
+    resourcesFA.controls.forEach((resource) => {
+      const resourceMonthsFA = resource.get('resourceMonths') as FormArray;
+      const resourceMonthFG = resourceMonthsFA.controls[index] as FormGroup;
+      resourceMonths.push(this.createResourceMonthFromFG(resourceMonthFG));
+    });
+
+    const fixedPriceFA = this.projectForm.get('fixedRows') as FormArray;
+    const fixedPriceMonths = new Array<FormGroup>();
+    fixedPriceFA.controls.forEach(fixedPrice => {
+      const fixedPriceMonthsFA = fixedPrice.get('fixedPriceMonths') as FormArray;
+      const fixedPriceMonthFG = fixedPriceMonthsFA.controls[index] as FormGroup;
+      fixedPriceMonths.push(this.createFixedPriceMonthFromFG(fixedPriceMonthFG));
+    });
+
+    this.copiedProjectMonth = { projectMonth: _projectMonthFG, resourceMonths: resourceMonths, fixedPriceMonths: fixedPriceMonths };
+    this.canPasteFixedPriceRow = false;
+    this.canPasteResourceRow = false;
+    this.canPasteMonthCol = true;
+
 
   }
 
-  pasteInsertProjectMonth(index: number) {
+  // create a resource month FG from an passed FG
+  createResourceMonthFromFG(resourceMonthFG: FormGroup): FormGroup {
+
+    // get the raw values and create a new instance of the form group.
+    const resourceMonthFGValues = resourceMonthFG.getRawValue();
+    const keys = Object.keys(resourceMonthFGValues);
+    const resourceMonth = new ResourceMonth();
+    for (const key of keys) {
+      resourceMonth[key] = resourceMonthFGValues[key];
+    }
+    resourceMonth.resourceMonthId = 0;
+    return this.createResourceMonth(resourceMonth);
+  }
+
+  // create a fixedprice month from a passed form group
+  createFixedPriceMonthFromFG(fixedPriceMonthFG: FormGroup): FormGroup {
+    // get the raw values and create a new instance of the form group.
+    const fixedPriceMonthFGValues = fixedPriceMonthFG.getRawValue();
+    const keys = Object.keys(fixedPriceMonthFGValues);
+    const fixedPriceMonth = new FixedPriceMonth();
+    for (const key of keys) {
+      fixedPriceMonth[key] = fixedPriceMonthFGValues[key];
+    }
+    fixedPriceMonth.fixedPriceMonthId = 0;
+    return this.createFixedPriceMonth(fixedPriceMonth);
+  }
+
+
+  // this routine inserts the copied col into the appropriate position
+  // in the form arrays of months, resources and fixedPrices.
+  insertCopiedProjectMonth(index: number) {
+    const projectMonthsFA = this.projectForm.get('projectMonths') as FormArray;
+    projectMonthsFA.insert(index, this.copiedProjectMonth.projectMonth);
+
+    const resourcesFA = this.projectForm.get('resourceRows') as FormArray;
+    resourcesFA.controls.forEach((resource, row) => {
+      const resourceMonthsFA = resource.get('resourceMonths') as FormArray;
+      resourceMonthsFA.insert(index, this.copiedProjectMonth.resourceMonths[row]);
+      console.log('res mon:', resourceMonthsFA.value);
+    });
+
+    const fixedPriceFA = this.projectForm.get('fixedRows') as FormArray;
+    fixedPriceFA.controls.forEach((fixedPrice, row) => {
+      const fixedPriceMonthsFA = fixedPrice.get('fixedPriceMonths') as FormArray;
+      fixedPriceMonthsFA.insert(index, this.copiedProjectMonth.fixedPriceMonths[row]);
+      console.log('res mon:', fixedPriceMonthsFA.value);
+    });
+  }
+
+  // renumber the months because of some othe operation
+  renumberMonths() {
+    let i = 0;
+    const projectMonthsFA = this.projectForm.get('projectMonths') as FormArray;
+    projectMonthsFA.controls.forEach(month => {
+      month.get('monthNo').setValue(i++);
+    });
+
+
+    const resourcesFA = this.projectForm.get('resourceRows') as FormArray;
+    resourcesFA.controls.forEach(resource => {
+      i = 0;
+      const resourceMonthsFA = resource.get('resourceMonths') as FormArray;
+      resourceMonthsFA.controls.forEach(month => {
+        month.get('monthNo').setValue(i++);
+      });
+    });
+
+    const fixedPriceFA = this.projectForm.get('fixedRows') as FormArray;
+    fixedPriceFA.controls.forEach((fixedPrice, row) => {
+      i = 0;
+      const fixedPriceMonthsFA = fixedPrice.get('fixedPriceMonths') as FormArray;
+      fixedPriceMonthsFA.controls.forEach(month => {
+        month.get('monthNo').setValue(i++);
+      });
+    });
 
   }
 
-  deleteProjectMonth(index: number) {
+  // remove the month, resourceMonth and fixedPriceMonth from the appropriate
+  // formArrays
+  deleteProjectMonthCol(index: number) {
+    const projectMonthsFA = this.projectForm.get('projectMonths') as FormArray;
+    projectMonthsFA.removeAt(index);
+
+    const resourcesFA = this.projectForm.get('resourceRows') as FormArray;
+    resourcesFA.controls.forEach((resource, row) => {
+      const resourceMonthsFA = resource.get('resourceMonths') as FormArray;
+      resourceMonthsFA.removeAt(index);
+    });
+
+    const fixedPriceFA = this.projectForm.get('fixedRows') as FormArray;
+    fixedPriceFA.controls.forEach((fixedPrice, row) => {
+      const fixedPriceMonthsFA = fixedPrice.get('fixedPriceMonths') as FormArray;
+      fixedPriceMonthsFA.removeAt(index);
+    });
+
+    this.canPasteFixedPriceRow = false;
+    this.canPasteResourceRow = false;
+    this.canPasteMonthCol = false;
   }
 
   getSelectedCells(event) {
@@ -658,7 +902,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
         element = element.parentElement;
       }
     } while (notFound);
-    console.log('window width: ', width);
+
 
     // the size of the left columns including name etc.
     // find table element
@@ -668,10 +912,10 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     let staticColWidth = 0;
     for (let i = 0; i < 7; i++) {
       staticColWidth += tableElem.rows[0].cells[i].clientWidth;
-      console.log('staticColWidth: ', staticColWidth);
+
     }
     // max allowed for the first 7 columns is after CSS applied.
-    if (staticColWidth > 630 ) {
+    if (staticColWidth > 630) {
       staticColWidth = 630;
     }
 
@@ -692,6 +936,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
   // save the updated project
   onSubmit() {
+    this.isSaving = true;
     this.projectForm.updateValueAndValidity();
     if (this.projectForm.invalid) {
       return;
@@ -703,9 +948,10 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       this.project = data;
       this.toast.success('Project has been updated', 'Success');
       this.projectChange.emit(this.project);
-
+      this.isSaving = false;
     },
       error => {
+        this.isSaving = false;
         this.toast.error(error, 'Oops');
         console.log(error);
       });
@@ -761,6 +1007,10 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
   revert() { this.ngOnChanges(); }
 
-  cancel() { this.router.navigate(['../../projects'], {relativeTo: this.route,
-    queryParams: { $filter: 'IsTemplate eq false'}}); }
+  cancel() {
+    this.router.navigate(['../../projects'], {
+      relativeTo: this.route,
+      queryParams: { $filter: 'IsTemplate eq false' }
+    });
+  }
 }

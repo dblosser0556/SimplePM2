@@ -4,16 +4,11 @@
       <form class="login" [formGroup]="loginForm" novalidate (ngSubmit)="login()">
         <label class="title">
           <h3 class="welcome">Welcome to</h3>
-          Company Product Name
+          SimplePM
           <h5 class="hint">Use your Company ID to sign in or create one now</h5>
         </label>
         <div class="login-group">
-          <div class="auth-source select">
-            <select id="login-auth-source-1">
-              <option>Local Users</option>
-              <option>Administrator</option>
-            </select>
-          </div>
+
           <input class="username" type="text" id="login_username" formControlName="userName" placeholder="Username" ngModel>
           <input class="password" type="password" id="login_password" formControlName="password" placeholder="Password" ngModel>
           <div class="checkbox">

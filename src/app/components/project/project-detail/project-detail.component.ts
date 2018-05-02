@@ -29,16 +29,12 @@ interface CreateProject {
 })
 export class ProjectDetailComponent implements OnInit, OnChanges {
 
-  private _project = new BehaviorSubject<Project>(undefined);
+  hasStartDateError: boolean;
+  hasStatusError: boolean;
+  hasStartError: boolean;
+  hasStartDate: boolean;
 
-  @Input() set project(value: Project) {
-    this._project.next(value);
-  }
-
-  get project() {
-    return this._project.getValue();
-  }
-
+  @Input() project: Project;
   @Input() statusList: Status[];
   @Input() groupList: Group[];
   @Input() pmList: LoggedInUser[];
@@ -69,26 +65,17 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
 
   ngOnInit() {
 
-    this.isLoading = true;
-    // The Project data is provided asyncronously by
-    // the parent component.  The data is not available on init.
-    // So we need to subscribe to changes to the data to keep from
-    // logging many errors.
-    this._project.subscribe(x => {
-
-      // if this is the first time through create the hierarchy,
-      // else just make updates.
-      if (x !== undefined) {
-        this.isLoading = false;
-      }
-    });
   }
 
   ngOnChanges() {
-    if (this.project === undefined) {
+
+    if (this.project === undefined || this.statusList === undefined ||
+      this.groupList === undefined || this.pmList === undefined ||
+      this.createTemplate === undefined || this.selectedView === undefined) {
+      console.log('something Undefined');
       return;
     }
-    
+
     let plannedStartDate = moment().format('MM/DD/YYYY');
     if (this.project.plannedStartDate !== null) {
       plannedStartDate = moment(this.project.plannedStartDate).format('MM/DD/YYYY');
@@ -115,7 +102,48 @@ export class ProjectDetailComponent implements OnInit, OnChanges {
     });
     this.setBudget(BudgetType.Capital, this.project.budgets);
     this.setBudget(BudgetType.Expense, this.project.budgets);
+    this.checkErrors();
 
+    // maintain the warnings as the form changes.
+    this.projectForm.get('actualStartDate').valueChanges.subscribe(val => this.checkErrors());
+
+    this.projectForm.get('plannedStartDate').valueChanges.subscribe(val => this.checkErrors());
+
+    this.projectForm.get('statusId').valueChanges.subscribe(val => this.checkErrors());
+
+    this.isLoading = false;
+  }
+
+  checkErrors() {
+    // set up all of the warning flags.
+
+    if (this.projectForm.get('actualStartDate').value !== null) {
+      this.hasStartDate = true;
+    } else {
+      this.hasStartDate = false;
+    }
+
+    const today = moment();
+    if (!this.hasStartDate && moment(this.projectForm.get('plannedStartDate').value).isBefore(today)) {
+      this.hasStartError = true;
+    } else {
+      this.hasStartError = false;
+    }
+    console.log('statusID', this.projectForm.get('statusId').value);
+    console.log('statusList ', this.statusList);
+    const statusType: Status = this.statusList.find(s => s.statusId === Number(this.projectForm.get('statusId').value));
+    console.log('status tupe', statusType);
+    if (this.hasStartDate && !statusType.dashboard) {
+      this.hasStartDateError = true;
+    } else {
+      this.hasStartDateError = false;
+    }
+
+    if (!this.hasStartDate && statusType.dashboard) {
+      this.hasStatusError = true;
+    } else {
+      this.hasStatusError = false;
+    }
   }
 
   onSubmit() {

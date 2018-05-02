@@ -92,6 +92,13 @@ export class MultiselectDirective {
     if (event.key === 'Escape') {
       this.clearCells();
     }
+
+    if (event.key === 'Tab') {
+      this.clearCells();
+      this.onMouseDown(event.target, null);
+
+
+    }
   }
 
   setStartCell(el) {

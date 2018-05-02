@@ -49,7 +49,7 @@ export class LoginFormComponent implements OnInit {
     this.submitted = true;
     this.isRequesting = true;
     this.errors = '';
-  
+
     this.userService.login(user.userName, user.password)
       .subscribe(result => {
 
@@ -57,7 +57,7 @@ export class LoginFormComponent implements OnInit {
           this.userService.getLoggedInUser(user.userName)
             .subscribe(result2 => {
               this.isRequesting = false;
-              this.router.navigate(['/home']);
+              this.router.navigate(['/dashboard']);
             },
               error => {
                 this.isRequesting = false;

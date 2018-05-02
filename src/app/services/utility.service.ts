@@ -56,11 +56,12 @@ export class UtilityService {
           this._phaseList = results;
           const type = new Phase();
           type.phaseId = -1;
+          type.order = 0;
           type.phaseName = '--Select--';
           this._phaseList.push(type);
           this._phaseList.sort((leftSide, rightSide): number => {
-            if (leftSide.phaseId < rightSide.phaseId) { return -1; }
-            if (leftSide.phaseId > rightSide.phaseId) { return 1; }
+            if (leftSide.order < rightSide.order) { return -1; }
+            if (leftSide.order > rightSide.order) { return 1; }
             return 0;
           });
           this.phaseListIsDirty = false;
@@ -139,7 +140,7 @@ export class UtilityService {
     return this._roleList;
   }
 
- 
+
 
   findRoleName(projectRoleId: number) {
     if (this._roleList === undefined ||
@@ -192,7 +193,4 @@ export class UtilityService {
     }
     return '';
   }
-
- 
-
 }

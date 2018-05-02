@@ -11,6 +11,47 @@
     <h6>{{projectSummary.projectName}}</h6>
     <div>{{projectSummary.projectDesc}}</div>
   </div>
+  <div class="card-block">
+    <div *ngIf="!noWarning  && hasStartError" class="alert alert-warning alert-sm">
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <clr-icon class="alert-icon" shape="exclamation-triangle"></clr-icon>
+          </div>
+          <div class="alert-text">
+            Today is beyond the planned start date and the project hasn't started.
+          </div>
+        </div>
+      </div>
+      <button type="button" class="close" aria-label="Close" (click)="noWarning=true">
+        <clr-icon aria-hidden="true" shape="close"></clr-icon>
+      </button>
+    </div>
+    <div *ngIf="hasStatusError" class="alert alert-danger alert-sm">
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+          </div>
+          <div class="alert-text">
+            Project is in a started status but has not start date.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="hasStartDateError" class="alert alert-danger alert-sm">
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+          </div>
+          <div class="alert-text">
+            Project has a start date but is not in a started status.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <ng-container *ngIf="!showMilestones">
     <div class="card-block">
       <app-project-card-summary [projectSummary]="projectSummary" *ngIf="showView=='summary'"></app-project-card-summary>

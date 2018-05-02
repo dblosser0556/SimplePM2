@@ -1,11 +1,50 @@
 <div class="card">
   <div *ngIf="isLoading" class="card-block">Is Loading...</div>
   <div *ngIf="!isLoading" class="card-block">
+    <div *ngIf="!noWarning  && hasStartError" class="alert alert-warning alert-sm">
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <clr-icon class="alert-icon" shape="exclamation-triangle"></clr-icon>
+          </div>
+          <div class="alert-text">
+            Today is beyond the planned start date and the project hasn't started.
+          </div>
+        </div>
+      </div>
+      <button type="button" class="close" aria-label="Close" (click)="noWarning=true">
+        <clr-icon aria-hidden="true" shape="close"></clr-icon>
+      </button>
+    </div>
+    <div *ngIf="hasStatusError" class="alert alert-danger alert-sm">
+      <div class="alert-items">
+        <div class="alert-item static">
+          <div class="alert-icon-wrapper">
+            <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+          </div>
+          <div class="alert-text">
+            Project is in a started status but has not start date. 
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="hasStartDateError" class="alert alert-danger alert-sm">
+        <div class="alert-items">
+          <div class="alert-item static">
+            <div class="alert-icon-wrapper">
+              <clr-icon class="alert-icon" shape="exclamation-circle"></clr-icon>
+            </div>
+            <div class="alert-text">
+              Project has a start date but is not in a started status. 
+            </div>
+          </div>
+        </div>
+      </div>
     <form (ngSubmit)="onSubmit()" name="projectForm" class="project-form" [formGroup]="projectForm" novalidate>
       <div class="row">
         <div class="column">
           <section class="form-block">
-            <label>Project Details Details</label>
+            <label>Project Details</label>
             <input readonly hidden formControlName="projectID" class="required">
 
             <div class="form-group">
@@ -24,7 +63,7 @@
             <div class="form-group">
               <label class="required">Project Group</label>
               <div class="select">
-                <select formControlName="groupId"  required>
+                <select formControlName="groupId" required>
                   <option *ngFor="let group of groupList" [value]="group.groupId">{{group.groupName}}</option>
                 </select>
               </div>
@@ -82,7 +121,7 @@
             <div class="form-group">
               <label class="required">Planned Start</label>
               <label for="plannedStartDate" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="plannedStartDate.invalid && (plannedStartDate.dirty || plannedStartDate.touched)">
-                <input id="plannedStartDate"  clrDate type="date" size="15" formControlName="plannedStartDate" required>
+                <input id="plannedStartDate" clrDate type="date" size="15" formControlName="plannedStartDate" required>
                 <span class="tooltip-content">
                   Planned Start Date is required!
                 </span>
@@ -160,11 +199,11 @@
                     <input type="number" formControlName="amount" size="10">
                   </td>
                   <td>
-                      <input type="text" formControlName="accountingIdentifier" size="15">
-                    </td>
-                    <td>
-                      <input type="text" formControlName="comments" size="15">
-                    </td>
+                    <input type="text" formControlName="accountingIdentifier" size="15">
+                  </td>
+                  <td>
+                    <input type="text" formControlName="comments" size="15">
+                  </td>
                   <td>
                     <a ref (click)="confirmDeleteBudget(1, j)" title="Delete Budget">
                       <clr-icon shape="trash" class="is-solid"></clr-icon>

@@ -7,7 +7,6 @@ import { ProjectModule } from '../project/project.module';
 import { FilterModule } from '../filter-components/filter.module';
 import { BreadcrumbsModule } from '../breadcrumbs/breadcrumbs.module';
 import { dashboardRouting } from './dashboard.routing';
-import { AuthGuard } from '../../guard/auth.guard';
 import { ProjectMonthlyProjectionService, ChartHelperService } from '../../services';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 
@@ -40,6 +39,6 @@ import { ProjectScorecardComponent } from './project-scorecard/project-scorecard
     RootComponent,
     ProjectScorecardComponent,
     ],
-  providers: [AuthGuard, ProjectMonthlyProjectionService, ChartHelperService ]
+  providers: [ProjectMonthlyProjectionService, ChartHelperService ]
 })
 export class DashboardModule { }

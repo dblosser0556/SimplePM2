@@ -29,10 +29,14 @@ export class StatusService extends
                 const type = new Status();
                 type.statusId = -1;
                 type.statusName = '-Select-';
+                type.order = 0;
+                type.dashboard = false;
+                type.disabled = false;
+                type.statusDesc = 'Please select';
                 results.push(type);
                 results.sort((leftSide, rightSide): number => {
-                if (leftSide.statusId < rightSide.statusId) { return -1; }
-                if (leftSide.statusId > rightSide.statusId) { return 1; }
+                if (leftSide.order < rightSide.order) { return -1; }
+                if (leftSide.order > rightSide.order) { return 1; }
                 return 0;
                  });
                  return results;

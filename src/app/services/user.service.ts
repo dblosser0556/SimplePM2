@@ -8,7 +8,7 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class UserService {
-   
+
   _url = 'http://localhost:5000/api';
   loggedIn = false;
   loggedInUser: LoggedInUser;
@@ -65,12 +65,12 @@ export class UserService {
     const headerOptions = new HttpHeaders()
       .set('Content-Type', 'application/json')
       .set('Authorization', 'Bearer ' + authToken);
-      return this.http.delete(
-        this._url + '/accounts/' + userName, { headers: headerOptions,  responseType: 'text' })
-        .map( res => {
-          return true;
-        })
-        .catch(x => this.handleAuthError(x));
+    return this.http.delete(
+      this._url + '/accounts/' + userName, { headers: headerOptions, responseType: 'text' })
+      .map(res => {
+        return true;
+      })
+      .catch(x => this.handleAuthError(x));
   }
 
   getLoggedInUser(userName: string) {
@@ -126,9 +126,10 @@ export class UserService {
       .set('Content-Type', 'application/json')
       .set('Authorization', 'Bearer ' + authToken);
     return this.http.get<LoggedInUser[]>(this._url + '/accounts/role/' + roleName, { headers: headerOptions })
-      .map(res =>
-        { this.usersInRole = res;
-        return res; }
+      .map(res => {
+      this.usersInRole = res;
+        return res;
+      }
       )
       .catch(x => this.handleAuthError(x));
   }
@@ -146,6 +147,19 @@ export class UserService {
 
   currentUser(): LoggedInUser {
     return this.loggedInUser;
+  }
+
+  hasRole(role: string): boolean {
+    let _hasRole = false;
+    if (!this.isLoggedIn) {
+      return false;
+    }
+    this.loggedInUser.roles.forEach( r => {
+      if (r.roleName === role) {
+        _hasRole = r.selected;
+      }
+    });
+    return _hasRole;
   }
 
 

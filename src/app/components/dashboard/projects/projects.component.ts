@@ -35,39 +35,40 @@ export class ProjectsComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private groupService: GroupService) {
-      if (router.url === '/dashboard/myprojects') {
-        this.allowEdit = true;
-      }
-
+    if (router.url === '/dashboard/myprojects') {
+      this.allowEdit = true;
     }
+
+  }
 
   ngOnInit() {
     //  get the query paramaters from the route
-    this.getQueryParam();
+    this.getProject();
+
 
 
   }
 
 
-  getQueryParam(): any {
-    this.route.queryParams.subscribe(
-      params => {
-        this.queryParams = {...params.keys, ...params};
+  getProject(): any {
+    let _queryString =  'IsTemplate eq false';
 
-        if (this.allowEdit) {
-          const _param: QueryParams = {$filter: 'ProjectManager eq \'0f2e9bd6-5e33-4511-ac61-83b7c662a486\''};
-          this.queryParams = _param;
-        }
-        this.projectService.getList(this.queryParams).subscribe( res => {
-          this.projectList = res;
-          this.filteredProjects = this.projectList;
-          this.getGroups();
-        });
-      }
-    );
+    if (this.allowEdit) {
+      const pmId = this.userService.loggedInUser.currentUser.userId;
+      const filter = 'ProjectManager eq \'' + pmId + '\'';
+      _queryString += ' and ' + filter;
+
+    }
+    this.queryParams = {$filter: _queryString};
+    this.projectService.getList(this.queryParams).subscribe(res => {
+      this.projectList = res;
+      this.filteredProjects = this.projectList;
+      this.getGroups();
+    });
   }
 
-   // get all the groups and put them in a hierarchy.
+
+  // get all the groups and put them in a hierarchy.
   // the tp[] groups have a parent of 0
   getGroups() {
     this.groupService.getAll().subscribe(results => {
@@ -78,11 +79,11 @@ export class ProjectsComponent implements OnInit {
 
 
   updateChart(projectList: ProjectList[]) {
-       // set the filter list for each filter component
-       this.projectsByGroup = this.setProjectsByKey('groupName', projectList);
-       this.projectsByStatus = this.setProjectsByKey('statusName', projectList);
-       this.projectsByYear = this.setProjectsByKey('filterYear', projectList);
-       this.filteredProjects = projectList;
+    // set the filter list for each filter component
+    this.projectsByGroup = this.setProjectsByKey('groupName', projectList);
+    this.projectsByStatus = this.setProjectsByKey('statusName', projectList);
+    this.projectsByYear = this.setProjectsByKey('filterYear', projectList);
+    this.filteredProjects = projectList;
   }
 
   changeYearFilter(event: FilterByKey[]) {
@@ -152,9 +153,9 @@ export class ProjectsComponent implements OnInit {
 
   // update the status filter
   filterByKey(key: string, filterKeys: FilterByKey[], projects: ProjectList[]):
-      ProjectList[] {
+    ProjectList[] {
 
-        // ensure the filter has been set if not then return passed values
+    // ensure the filter has been set if not then return passed values
     if (filterKeys === undefined || filterKeys.length === 0) {
       return projects;
     }

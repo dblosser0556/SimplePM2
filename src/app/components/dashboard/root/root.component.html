@@ -29,7 +29,7 @@
       Projects</a>
 
 
-    <a clrVerticalNavLink href="#" routerLinkActive="active" routerLink="/dashboard/myprojects">
+    <a *ngIf="isProjectManager()" clrVerticalNavLink href="#" routerLinkActive="active" routerLink="/dashboard/myprojects">
       <clr-icon clrVerticalNavIcon shape="list" size="16"></clr-icon>
       My Projects</a>
 
