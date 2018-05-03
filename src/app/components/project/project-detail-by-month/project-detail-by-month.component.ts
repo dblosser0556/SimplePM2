@@ -56,11 +56,12 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   @Input() selectedView: any;
 
   @Output() projectChange = new EventEmitter<Project>();
+
   // set up the context menus.
   @ViewChild('resourceMenu') public resourceMenu: ContextMenuComponent;
   @ViewChild('fixedMenu') public fixedMenu: ContextMenuComponent;
   @ViewChild('projectMonthMenu') public projectMonthMenu: ContextMenuComponent;
-
+  @ViewChild('resourceCellMenu') public cellMenu: ContextMenuComponent;
 
   projectForm: FormGroup;
 
@@ -157,7 +158,6 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   onChanges() {
-    console.log('On Changes added');
     // subscribe to changes to the resource rows and update the totals.
     this.projectForm.get('resourceRows').valueChanges.pipe(debounceTime(400)).subscribe(val => {
       this.updateResourceTotals(val);
@@ -292,7 +292,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   createMonth(month: Month): FormGroup {
-    const monthFG =  this.fb.group({
+    const monthFG = this.fb.group({
       projectId: month.projectId,
       monthId: month.monthId,
       monthNo: month.monthNo,
@@ -304,7 +304,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     });
 
     // check for the project having actuals set for warning/error flags.
-    if (month.totalActualExpense > 0 || month.totalActualCapital > 0 ) {
+    if (month.totalActualExpense > 0 || month.totalActualCapital > 0) {
       this.hasActuals = true;
     }
     return monthFG;
@@ -403,7 +403,14 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   // handle the callbacks from the various right click menus
   // the row menu has delete row, add row.
   // handle the resource menu.
-  resourceAddRow(index?: number) {
+  resourceAddRow(val?: string) {
+
+    const resourceRowFGs = this.projectForm.get('resourceRows') as FormArray;
+    let index = resourceRowFGs.controls.length;
+    if (val !== undefined) {
+      const vals = val.split(':');
+      index = Number(vals[0]);
+    }
 
     const resource = new Resource();
     resource.projectId = this.project.projectId,
@@ -424,8 +431,8 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     }
 
     const resourceRowFG = this.createResourceRow(resource);
-    const resourceRowFGs = this.projectForm.get('resourceRows') as FormArray;
-    resourceRowFGs.push(resourceRowFG);
+
+    resourceRowFGs.insert(index, resourceRowFG);
   }
 
   // create the resource months
@@ -470,8 +477,21 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   resourcePasteRow(val: string) {
+    const vals = val.split(':');
+    const index = Number(vals[0]);
+
+    this.resourceDeleteRow(val);
     const resourceFGs = this.projectForm.get('resourceRows') as FormArray;
-    resourceFGs.push(this.copiedResourceRowFG);
+    resourceFGs.insert(index, this.copiedResourceRowFG);
+  }
+
+
+  resourceInsertRow(val: string) {
+    const vals = val.split(':');
+    const index = Number(vals[0]);
+
+    const resourceFGs = this.projectForm.get('resourceRows') as FormArray;
+    resourceFGs.insert(index, this.copiedResourceRowFG);
   }
 
   resourceDeleteRow(val: string) {
@@ -556,13 +576,17 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     this.calcPageSize();
   }
   // handle the insert month event.
-  projectMonthInsertMonth(col: number) {
+  projectMonthInsertMonth(val: string) {
+    const vals = val.split(':');
+    const col = Number(vals[1]);
     this.insertNewProjectMonthCol(col);
     this.renumberMonths();
     this.calcPageSize();
   }
   // handle the paste insert event.
-  projectMonthInsertandPasteMonth(col: number) {
+  projectMonthInsertandPasteMonth(val: string) {
+    const vals = val.split(':');
+    const col = Number(vals[1]);
     if (!this.canPasteMonthCol) { return; }
     this.insertCopiedProjectMonth(col);
     this.renumberMonths();
@@ -570,7 +594,9 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   // handle the paste event.
-  projectMonthPasteMonth(col: number) {
+  projectMonthPasteMonth(val: string) {
+    const vals = val.split(':');
+    const col = Number(vals[1]);
     if (!this.canPasteMonthCol) { return; }
     this.deleteProjectMonthCol(col);
     this.insertCopiedProjectMonth(col);
@@ -579,7 +605,9 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   // handle the delete month event
-  projectMonthDeleteMonth(col: number) {
+  projectMonthDeleteMonth(val: string) {
+    const vals = val.split(':');
+    const col = Number(vals[1]);
     this.deleteProjectMonthCol(col);
     this.renumberMonths();
     this.calcPageSize();

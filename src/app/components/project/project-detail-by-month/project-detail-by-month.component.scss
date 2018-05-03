@@ -99,6 +99,59 @@ th div .fixed-col {
   border-right: 1px solid #ccc;
 }
 
+.border-left {
+  border-left: 1px solid #ccc;
+}
+.start-cell {
+  border: 1px darkblue dashed;
+}
+.selecting-border-top {
+  border-top: 1px solid #F76F6C;
+}
+
+.selecting-border-bottom {
+  border-bottom: 1px solid #F76F6C;
+}
+
+.selecting-border-right {
+  border-right: 1px solid #F76F6C;
+}
+
+.selecting-border-left {
+  border-left: 1px solid #F76F6C;
+}
+
+.copy-border-top {
+  border-top: 2px dashed #C92100;
+}
+
+.copy-border-bottom {
+  border-bottom: 2px dashed #C92100;
+}
+
+.copy-border-right {
+  border-right: 2px dashed #C92100;
+}
+
+.copy-border-left {
+  border-left: 2px dashed #C92100;
+}
+
+.selected-border-top {
+  border-top: 2px solid #C92100;
+}
+
+.selected-border-bottom {
+  border-bottom: 2px solid #C92100;
+}
+
+.selected-border-right {
+  border-right: 2px solid #C92100;
+}
+
+.selected-border-left {
+  border-left: 2px solid #C92100;
+}
 .no-border-bottom {
   border-bottom: none;
 }
@@ -238,7 +291,9 @@ th div .fixed-col {
 .pagination a:last-child {
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-} //css for the selection area
+} 
+
+//css for the selection area
 [multi-cell-select] {
   cursor: pointer;
   -webkit-touch-callout: none;
@@ -250,22 +305,17 @@ th div .fixed-col {
 }
 
 [multi-cell-select] .eng-selected-item {
-  background: #007AFF !important;
+  background: rgb(164, 208, 255) !important;
   color: white !important;
-  border-bottom-color: #007AFF;
-  border: #007AFF;
 }
 
-[multi-cell-select] eng-selected-item:last-child {
-  background: rgb(255, 51, 0);
-}
 
 [multi-cell-select] .hover-area {
-  background: #8deaed;
-  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
-  background: -moz-linear-gradient(#8deaed, #9fedf0);
-  background: linear-gradient(#8deaed, #9fedf0);
-  box-shadow: inset 0 0 0 1px #b9f2f5;
+  background: #b5ecee;
+  //background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  //background: -moz-linear-gradient(#8deaed, #9fedf0);
+  //background: linear-gradient(#8deaed, #9fedf0);
+  //box-shadow: inset 0 0 0 1px #b9f2f5;
 }
 
 .ui-state-default {
@@ -280,16 +330,15 @@ th div .fixed-col {
 }
 
 [multi-cell-select] td.eng-selected-item>input {
-  background: #007AFF !important;
+  background:  rgb(164, 208, 255) !important;
   color: white !important;
-  border-bottom-color: #007AFF;
-  border: #007AFF;
+ 
 }
 
 [multi-cell-select] td.hover-area>input {
-  background: #8deaed;
-  background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
-  background: -moz-linear-gradient(#8deaed, #9fedf0);
-  background: linear-gradient(#8deaed, #9fedf0);
-  box-shadow: inset 0 0 0 1px #b9f2f5;
+  background: #cbf5f6;
+  //background: -webkit-gradient(linear, 0 0, 0 bottom, from(#8deaed), to(#9fedf0));
+  //background: -moz-linear-gradient(#8deaed, #9fedf0);
+  //background: linear-gradient(#8deaed, #9fedf0);
+  //box-shadow: inset 0 0 0 1px #b9f2f5;
 }
