@@ -20,9 +20,15 @@ export class MultiselectDirective {
 
   @HostListener('mousedown', ['$event.target', '$event.which']) onMouseDown(el, button) {
 
+    // check to see if we are on the table.
+    if (!this.el.nativeElement.contains(el)) { return; }
 
     // only respond to left mouse buttons.
     if (button !== 1) { return; }
+
+    // clear any copy cells
+    this.clearCopyCells();
+
 
     const el1 = this.findTD(el);
 
@@ -115,6 +121,12 @@ export class MultiselectDirective {
     this.startCell = el;
     this.render.addClass(el, 'start-cell');
   }
+
+  setRow(row: number) {
+    const rows = this.el.nativeElement.querySelectorAll('tr');
+    this.setCopyCellRange(rows[row].cells);
+  }
+
 
   setRangeArea(start, el) {
     if (this.dragging) {
@@ -290,7 +302,7 @@ export class MultiselectDirective {
     // set the rows large as we are looking for the smallest row and column.
     let topRow = 1000000000000000;
     let topCol = 100000000000000;
-    selectedCells.forEach(cell => {
+    for (const cell of selectedCells) {
       const coords = this.getCoords(cell);
         if (topRow > coords.row) {
           topRow = coords.row;
@@ -298,7 +310,7 @@ export class MultiselectDirective {
         if (topCol > coords.column) {
           topCol = coords.column;
         }
-    });
+    }
     return {row: topRow, column: topCol};
 
   }
@@ -319,7 +331,7 @@ export class MultiselectDirective {
     // set the seeds small as we are looking for the largest row and column.
     let topRow = -1;
     let topCol = -1;
-    selectedCells.forEach(cell => {
+    for (const cell of selectedCells) {
       const coords = this.getCoords(cell);
         if (topRow < coords.row) {
           topRow = coords.row;
@@ -327,15 +339,12 @@ export class MultiselectDirective {
         if (topCol < coords.column) {
           topCol = coords.column;
         }
-    });
+    }
     return {row: topRow, column: topCol};
 
   }
 
   cellsBetween(topLeft, bottomRight) {
-
-
-
     const tds = this.el.nativeElement.querySelectorAll('td');
     return Array.prototype.filter.call(tds, el => {
       const coords = this.getCoords(el);
@@ -359,10 +368,15 @@ export class MultiselectDirective {
       this.render.removeClass(td, 'selected-border-bottom');
       this.render.removeClass(td, 'selected-border-left');
       this.render.removeClass(td, 'selected-border-right');
-      this.render.removeClass(td, 'copyarea-border-top');
-      this.render.removeClass(td, 'copyarea-border-bottom');
-      this.render.removeClass(td, 'copyarea-border-left');
-      this.render.removeClass(td, 'copyarea-border-right');
+    });
+  }
+
+  clearCopyCells() {
+    Array.prototype.forEach.call(this.el.nativeElement.querySelectorAll('td'), td => {
+      this.render.removeClass(td, 'copy-border-top');
+      this.render.removeClass(td, 'copy-border-bottom');
+      this.render.removeClass(td, 'copy-border-left');
+      this.render.removeClass(td, 'copy-border-right');
     });
   }
 

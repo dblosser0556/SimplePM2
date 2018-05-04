@@ -15,7 +15,7 @@ import { Subject } from 'rxjs/Subject';
 import { ContextMenuComponent } from 'ngx-contextmenu';
 import { debounceTime } from 'rxjs/operators/debounceTime';
 import { Router, ActivatedRoute } from '@angular/router';
-
+import { MultiselectDirective } from '../../../directives/multiselect.directive';
 @Component({
   selector: 'app-project-detail-by-month',
   templateUrl: './project-detail-by-month.component.html',
@@ -23,6 +23,9 @@ import { Router, ActivatedRoute } from '@angular/router';
 })
 export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterViewInit {
 
+  canPasteCells: boolean;
+  copyCellsBuffer: any[];
+  canCopyCells: boolean;
   // set up booleans for the warning/alerts
   hasActuals: boolean;
   notStarted: boolean;
@@ -63,6 +66,10 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   @ViewChild('projectMonthMenu') public projectMonthMenu: ContextMenuComponent;
   @ViewChild('resourceCellMenu') public cellMenu: ContextMenuComponent;
 
+  // set up access to the multiselect directive to handle the formating
+  // of the table cells.
+  @ViewChild(MultiselectDirective) private multiselectDirective: MultiselectDirective;
+  
   projectForm: FormGroup;
 
   phaseList: Phase[] = [];
@@ -458,10 +465,14 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     const vals = val.split(':');
     const index = Number(vals[0]);
 
+    // set the copy row. Add 2 for the two header rows.
+    this.multiselectDirective.setRow(index + 2 );
+
     // can only paste resources now.
     this.canPasteResourceRow = true;
     this.canPasteFixedPriceRow = false;
     this.canPasteMonthCol = false;
+    this.canCopyCells = false;
 
     // set a referece the row we want to copy.
     const resourceFGs = this.projectForm.get('resourceRows') as FormArray;
@@ -811,12 +822,40 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     this.canPasteMonthCol = false;
   }
 
+  copyCells(val) {
+    this.canPasteCells = true;
+    this.canPasteFixedPriceRow = false;
+    this.canPasteMonthCol = false;
+    this.canPasteResourceRow = false;
+
+    this.cashSelectedCells();
+    this.multiselectDirective.setCopyCellRange(this.selectedCells);
+
+  }
+
   getSelectedCells(event) {
     // this get the set of cells that are selected in the month columns
     // using the multiselected cell directive.
     // It returns a set of TD elememnts
     this.selectedCells = event;
+    this.canCopyCells = true;
   }
+
+
+  cashSelectedCells(){
+
+    const copyCellsBuffer = new Array();
+    for (const el of this.selectedCells) {
+      const cells = el.attributes['id'].nodeValue.split('-');
+      const type = cells[0];
+      const rowIndex = Number(cells[1]);
+      const monthIndex = Number(cells[2]) + this.fcol;
+      const cell = {type: type, row: rowIndex, month: monthIndex};
+      copyCellsBuffer.push(cell);
+    }
+    this.copyCellsBuffer = copyCellsBuffer;
+  }
+
 
   updateSelectedCells(event: MenuItem) {
 
@@ -872,7 +911,9 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
   // manage the scrolling of the months
   scrollRight() {
-    if (this.lcol < this.project.months.length) {
+
+
+    if (this.lcol < this.projectMonths) {
       this.lcol++;
       this.fcol++;
     } else {
@@ -882,11 +923,12 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   pageRight() {
-    if (this.lcol + this.pageSize < this.project.months.length) {
+
+    if (this.lcol + this.pageSize < this.projectMonths) {
       this.lcol += this.pageSize;
       this.fcol += this.pageSize;
-    } else if (this.lcol < this.project.months.length) {
-      this.lcol = this.project.months.length;
+    } else if (this.lcol < this.projectMonths) {
+      this.lcol = this.projectMonths;
       this.fcol = this.lcol - this.pageSize;
     } else {
       this.toast.info('At the end', 'Sorry');
@@ -960,6 +1002,13 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       this.lcol = this.fcol + this.pageSize;
       this.showPaginator = true;
     }
+  }
+
+  get projectMonths(): number {
+    const monthsFA = this.projectForm.get('projectMonths') as FormArray;
+    const months = monthsFA.controls.length;
+    console.log('months ', months);
+    return months;
   }
 
   // save the updated project
