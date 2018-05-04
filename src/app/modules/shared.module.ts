@@ -14,6 +14,7 @@ import { AuthGuard } from '../guard/auth.guard';
 import { ColspanDirective } from '../directives/colspan.directive';
 import { MultiselectDirective } from '../directives/multiselect.directive';
 import { FixedHeaderDirective } from '../directives/fixed-header.directive';
+import { NoContextMenuDirective } from '../directives/noContextMenu.directive';
 
 // import { ConfirmationComponent } from '../components/confirmation/confirmation.component';
 
@@ -23,8 +24,8 @@ import { UtilityService } from '../services/utility.service';
 
 @NgModule({
   imports:      [CommonModule, HttpClientModule,  BrowserAnimationsModule],
-  declarations: [ColspanDirective, MultiselectDirective, FixedHeaderDirective],
-  exports:      [ColspanDirective, MultiselectDirective, FixedHeaderDirective],
+  declarations: [ColspanDirective, MultiselectDirective, FixedHeaderDirective, NoContextMenuDirective],
+  exports:      [ColspanDirective, MultiselectDirective, FixedHeaderDirective, NoContextMenuDirective],
   providers:    [ConfigService, UserService, UtilityService, AuthGuard]
 })
 export class SharedModule { }

@@ -17,6 +17,7 @@ export class MultiselectDirective {
   }
 
   @Output() selectedCells = new EventEmitter<any[]>();
+  @Output() clearCopy = new EventEmitter();
 
   @HostListener('mousedown', ['$event.target', '$event.which']) onMouseDown(el, button) {
 
@@ -105,6 +106,7 @@ export class MultiselectDirective {
 
     if (event.key === 'Escape') {
       this.clearCells();
+      this.clearCopyCells();
     }
 
     if (event.key === 'Tab') {
@@ -122,11 +124,18 @@ export class MultiselectDirective {
     this.render.addClass(el, 'start-cell');
   }
 
+  // set the copy column class for the passed rpw
   setRow(row: number) {
     const rows = this.el.nativeElement.querySelectorAll('tr');
     this.setCopyCellRange(rows[row].cells);
   }
 
+  // set the copy column class for the passed column
+  setColumn(column: number) {
+    const selector = 'table tr > td:nth-child(' + column + ')';
+    const elements = this.el.nativeElement.querySelectorAll(selector);
+    this.setCopyCellRange(elements);
+  }
 
   setRangeArea(start, el) {
     if (this.dragging) {
@@ -378,6 +387,7 @@ export class MultiselectDirective {
       this.render.removeClass(td, 'copy-border-left');
       this.render.removeClass(td, 'copy-border-right');
     });
+    this.clearCopy.emit();
   }
 
   getCoords(cell) {
