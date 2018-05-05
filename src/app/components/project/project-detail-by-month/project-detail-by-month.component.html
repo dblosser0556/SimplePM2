@@ -239,7 +239,7 @@
             </td>
             <ng-container formArrayName="fixedPriceMonths">
               <td class="ui-state-default month-col" *ngFor="let month of fixedPrice.get('fixedPriceMonths').controls.slice([fcol],[lcol]); let fm = index"
-                [formGroupName]="fm" [id]="'fix-' + f + '-' + fm">
+                [formGroupName]="fm" [id]="'fix-' + f + '-' + fm" [contextMenu]="fixedPriceCellMenu" [contextMenuSubject]="f +':' + fm">
                 <ng-container *ngIf="selectedView=='Forecast'">
                   <input formControlName="plannedCost" class="form-control" type="number" style="text-align:right" [ngClass]="{
                     'fontcolor1':month.get('plannedCostStyle').value === 0 && selectedView == 'Forecast',
@@ -320,7 +320,7 @@
             <th class="month-col border-top"></th>
             <ng-container formArrayName="projectMonths">
               <th class="month-col border-top" *ngFor="let month of projectForm.get('projectMonths').controls.slice([fcol],[lcol]); let tac = index"
-                [formGroupName]="tac" [contextMenu]="projectMonthMenu" [contextMenuSubject]="'0:' + pm">
+                [formGroupName]="tac">
                 <input type="number" style="text-align:right" formControlName="totalActualCapital">
               </th>
             </ng-container>
@@ -377,19 +377,19 @@
 <context-menu #resourceMenu>
   <ng-template contextMenuItem passive="true">Resource</ng-template>
   <ng-template contextMenuItem divider="true"></ng-template>
-  <ng-template contextMenuItem (execute)="resourceAddRow()">
+  <ng-template contextMenuItem [visible]="!canPasteResourceRow" (execute)="resourceAddRow()">
     Add Row
   </ng-template>
-  <ng-template contextMenuItem (execute)="resourceCopyRow($event.item)">
+  <ng-template contextMenuItem [visible]="!canPasteResourceRow" (execute)="resourceCopyRow($event.item)">
     Copy Row
   </ng-template>
   <ng-template contextMenuItem [visible]="canPasteResourceRow" (execute)="resourcePasteRow($event.item)">
     Paste Here
   </ng-template>
-  <ng-template contextMenuItem [visible]="canPasteResourceRow" (execute)="resourceInsertRow($event.item)">
+  <ng-template contextMenuItem visible]="canPasteResourceRow"[ (execute)="resourceInsertRow($event.item)">
     Insert Before
   </ng-template>
-  <ng-template contextMenuItem (execute)="resourceDeleteRow($event.item)">
+  <ng-template contextMenuItem [visible]="!canPasteResourceRow"  (execute)="resourceDeleteRow($event.item)">
     Delete Row
   </ng-template>
 </context-menu>
@@ -397,16 +397,19 @@
 <context-menu #fixedMenu>
   <ng-template contextMenuItem passive="true">Fixed Fee</ng-template>
   <ng-template contextMenuItem divider="true"></ng-template>
-  <ng-template contextMenuItem (execute)="fixedPriceAddRow()">
+  <ng-template contextMenuItem [visible]="!canPasteFixedPriceRow" (execute)="fixedPriceAddRow()">
     Add Row
   </ng-template>
-  <ng-template contextMenuItem (execute)="fixedPriceCopyRow($event.item)">
+  <ng-template contextMenuItem [visible]="!canPasteFixedPriceRow" (execute)="fixedPriceCopyRow($event.item)">
     Copy Row
   </ng-template>
   <ng-template contextMenuItem [visible]="canPasteFixedPriceRow" (execute)="fixedPricePasteRow($event.item)">
-    Paste Row
+    Paste Here
   </ng-template>
-  <ng-template contextMenuItem (execute)="fixedPriceDeleteRow($event.item)">
+  <ng-template contextMenuItem [visible]="canPasteFixedPriceRow" (execute)="fixedPriceInsertRow($event.item)">
+    Insert Before
+  </ng-template>
+  <ng-template contextMenuItem  [visible]="!canPasteFixedPriceRow" (execute)="fixedPriceDeleteRow($event.item)">
     Delete Row
   </ng-template>
 </context-menu>
@@ -414,13 +417,13 @@
 <context-menu #projectMonthMenu>
   <ng-template contextMenuItem passive="true">Project Month</ng-template>
   <ng-template contextMenuItem divider="true"></ng-template>
-  <ng-template contextMenuItem (execute)="projectMonthAddMonth()">
+  <ng-template contextMenuItem [visible]="!canPasteMonthCol" (execute)="projectMonthAddMonth()">
     Add
   </ng-template>
   <ng-template contextMenuItem [visible]="!canPasteMonthCol" (execute)="projectMonthInsertMonth($event.item)">
     Insert Here
   </ng-template>
-  <ng-template contextMenuItem (execute)="copyProjectMonthCol($event.item)">
+  <ng-template contextMenuItem [visible]="!canPasteMonthCol" (execute)="copyProjectMonthCol($event.item)">
     Copy
   </ng-template>
   <ng-template contextMenuItem [visible]="canPasteMonthCol" (execute)="projectMonthPasteMonth($event.item)">
@@ -429,7 +432,7 @@
   <ng-template contextMenuItem [visible]="canPasteMonthCol" (execute)="projectMonthInsertandPasteMonth($event.item)">
     Insert Before
   </ng-template>
-  <ng-template contextMenuItem (execute)="projectMonthDeleteMonth($event.item)">
+  <ng-template contextMenuItem [visible]="!canPasteMonthCol" (execute)="projectMonthDeleteMonth($event.item)">
     Delete
   </ng-template>
 </context-menu>
@@ -490,6 +493,68 @@
       Insert Before
     </ng-template>
     <ng-template contextMenuItem (execute)="resourceDeleteRow($event.item)">
+      Delete Row
+    </ng-template>
+  </context-menu>
+</context-menu>
+
+
+<context-menu #fixedPriceCellMenu>
+  <ng-template contextMenuItem [visible]="canCopyCells" (execute)="copyCells($event.item)">
+    Copy
+  </ng-template>
+  <ng-template contextMenuItem [visible]="canPasteCells" (execute)="pasteCells($event.item)">
+    Paste
+  </ng-template>
+  <ng-template contextMenuItem [visible]="canPasteCells" (execute)="pasteCells($event.item)">
+    Paste Values
+  </ng-template>
+  <ng-template contextMenuItem [visible]="canPasteCells" (execute)="pasteCells($event.item)">
+    Paste Format
+  </ng-template>
+  <ng-template contextMenuItem [visible]="!canPasteCells" [subMenu]="monthSubMenu">
+    Month
+  </ng-template>
+  <context-menu #monthSubMenu>
+    <ng-template contextMenuItem [visible]="!canPasteMonthCol" (execute)="projectMonthAddMonth()">
+      Add Month
+    </ng-template>
+    <ng-template contextMenuItem [visible]="!canPasteMonthCol" (execute)="projectMonthInsertMonth($event.item)">
+      Insert Here
+    </ng-template>
+    <ng-template contextMenuItem [visible]="!canPasteMonthCol" (execute)="copyProjectMonthCol($event.item)">
+      Copy Month
+    </ng-template>
+    <ng-template contextMenuItem [visible]="canPasteMonthCol" (execute)="projectMonthPasteMonth($event.item)">
+      Paste Here
+    </ng-template>
+    <ng-template contextMenuItem [visible]="canPasteMonthCol" (execute)="projectMonthInsertandPasteMonth($event.item)">
+      Insert Before
+    </ng-template>
+    <ng-template contextMenuItem (execute)="projectMonthDeleteMonth($event.item)">
+      Delete Month
+    </ng-template>
+  </context-menu>
+  <ng-template contextMenuItem [visible]="!canPasteCells" [subMenu]="fixedPriceSubMenu">
+    Fixed Fee
+  </ng-template>
+  <context-menu #fixedPriceSubMenu>
+    <ng-template contextMenuItem [visible]="!canPasteFixedPriceRow" (execute)="fixedPriceAddRow()">
+      Add Row
+    </ng-template>
+    <ng-template contextMenuItem [visible]="!canPasteFixedPriceRow" (execute)="fixedPriceAddRow($event.item)">
+      Insert Row Here
+    </ng-template>
+    <ng-template contextMenuItem  [visible]="!canPasteFixedPriceRow" (execute)="fixedPriceCopyRow($event.item)">
+      Copy Row
+    </ng-template>
+    <ng-template contextMenuItem [visible]="canPasteFixedPriceRow" (execute)="fixedPricePasteRow($event.item)">
+      Paste Here
+    </ng-template>
+    <ng-template contextMenuItem [visible]="canPasteFixedPriceRow" (execute)="resourceInsertRow($event.item)">
+      Insert Before
+    </ng-template>
+    <ng-template contextMenuItem (execute)="fixedPriceDeleteRow($event.item)">
       Delete Row
     </ng-template>
   </context-menu>

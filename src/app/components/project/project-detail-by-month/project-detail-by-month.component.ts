@@ -64,12 +64,13 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   @ViewChild('resourceMenu') public resourceMenu: ContextMenuComponent;
   @ViewChild('fixedMenu') public fixedMenu: ContextMenuComponent;
   @ViewChild('projectMonthMenu') public projectMonthMenu: ContextMenuComponent;
-  @ViewChild('resourceCellMenu') public cellMenu: ContextMenuComponent;
+  @ViewChild('resourceCellMenu') public resourceCellMenu: ContextMenuComponent;
+  @ViewChild('fixedPriceCellMenu') public fixedPriceCellMenu: ContextMenuComponent;
 
   // set up access to the multiselect directive to handle the formating
   // of the table cells.
   @ViewChild(MultiselectDirective) private multiselectDirective: MultiselectDirective;
-  
+
   projectForm: FormGroup;
 
   phaseList: Phase[] = [];
@@ -361,7 +362,8 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       actualEffortStyle: resourceMonth.actualEffortStyle
     });
   }
-
+  // as part of the ngOnChanges add the fixed price rows to
+  // the projectForm
   setFixedRows(fixedRows: FixedPrice[]) {
     const fixedRowFGs = fixedRows.map(
       fixedRow => this.createFixedRow(fixedRow));
@@ -465,10 +467,10 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     const vals = val.split(':');
     const index = Number(vals[0]);
 
-     // remove the copy cell outline if any.
-     this.multiselectDirective.clearCopyCells();
+    // remove the copy cell outline if any.
+    this.multiselectDirective.clearCopyCells();
     // set the copy row. Add 2 for the two header rows.
-    this.multiselectDirective.setRow(index + 2 );
+    this.multiselectDirective.setRow(index + 2);
 
     // can only paste resources now.
     this.canPasteResourceRow = true;
@@ -518,7 +520,14 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   // handle the fixed fee menu.
-  fixedPriceAddRow(): any {
+  fixedPriceAddRow(val?: string): any {
+    const fixedPriceRowFA = this.projectForm.get('fixedRows') as FormArray;
+    let index = fixedPriceRowFA.controls.length;
+    if (val !== undefined) {
+      const vals = val.split(':');
+      index = Number(vals[0]);
+    }
+
     const fixedPrice = new FixedPrice();
     fixedPrice.projectId = this.project.projectId;
     fixedPrice.fixedPriceId = 0;
@@ -534,8 +543,8 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     }
 
     const fixedPriceRowFG = this.createFixedRow(fixedPrice);
-    const fixedPriceRowFGs = this.projectForm.get('fixedRows') as FormArray;
-    fixedPriceRowFGs.push(fixedPriceRowFG);
+
+    fixedPriceRowFA.insert(index, fixedPriceRowFG);
 
   }
 
@@ -553,9 +562,22 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     return fixedMonth;
   }
 
+  // copy the fixedprice row into a buffer for later use and
+  // set the class indicating that what we are copying.
   fixedPriceCopyRow(val: string) {
     const vals = val.split(':');
     const index = Number(vals[0]);
+
+
+    // remove the copy cell outline if any.
+    this.multiselectDirective.clearCopyCells();
+    // set the copy row class.
+    // get the number of rows in the resource rows array
+    const resourceRowsFA = this.projectForm.get('resourceRows') as FormArray;
+    // Add 3 for the three header rows.
+    this.multiselectDirective.setRow(resourceRowsFA.controls.length + index + 3);
+
+
     this.canPasteFixedPriceRow = true;
     this.canPasteResourceRow = false;
     this.canPasteMonthCol = false;
@@ -569,17 +591,30 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     this.copiedFixedPriceRowFG = this.createFixedRow(fixedPrice);
   }
 
+  // handle the paste row event on a fixedprice row.
   fixedPricePasteRow(val: string) {
+    const vals = val.split(':');
+    const index = Number(vals[0]);
+    this.fixedPriceDeleteRow(val);
     const fixedPriceRowFGs = this.projectForm.get('fixedRows') as FormArray;
-    fixedPriceRowFGs.push(this.copiedFixedPriceRowFG);
+    fixedPriceRowFGs.insert(index, this.copiedFixedPriceRowFG);
+  }
+
+  fixedPriceInsertRow(val: string) {
+    const vals = val.split(':');
+    const index = Number(vals[0]);
+    const fixedPriceRowFGs = this.projectForm.get('fixedRows') as FormArray;
+    fixedPriceRowFGs.insert(index, this.copiedFixedPriceRowFG);
   }
 
   fixedPriceDeleteRow(val: string) {
     const vals = val.split(':');
     const index = Number(vals[0]);
-    this.canPasteFixedPriceRow = false;
+
     const fixedPriceRowFGs = this.projectForm.get('fixedRows') as FormArray;
     fixedPriceRowFGs.removeAt(index);
+
+    this.setNoCopy();
   }
 
 
@@ -606,7 +641,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     this.calcPageSize();
   }
 
-  // handle the paste event.
+  // handle the paste month event.
   projectMonthPasteMonth(val: string) {
     const vals = val.split(':');
     const col = Number(vals[1]);
@@ -683,7 +718,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
 
 
   // copy a projectMonth and the same resourceMonths and fixedPriceMonths
-  // into an array so they can be later used.
+  // into an array so they can be later used during the paste month operation
   copyProjectMonthCol(val: string) {
     const vals = val.split(':');
     const col = Number(vals[1]);
@@ -691,7 +726,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
     // remove the copy cell outline if any.
     this.multiselectDirective.clearCopyCells();
     // mark month to be copied add 8 as the index passed is the array
-    // index from the form array and there are 8 other columns 
+    // index from the form array and there are 8 other columns
     // ahead.
     this.multiselectDirective.setColumn(col + 8);
 
@@ -835,7 +870,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       fixedPriceMonthsFA.removeAt(index);
     });
 
-   this.setNoCopy();
+    this.setNoCopy();
   }
 
   copyCells(val) {
@@ -866,7 +901,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
 
-  cacheSelectedCells(){
+  cacheSelectedCells() {
 
     const copyCellsBuffer = new Array();
     for (const el of this.selectedCells) {
@@ -874,7 +909,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
       const type = cells[0];
       const rowIndex = Number(cells[1]);
       const monthIndex = Number(cells[2]) + this.fcol;
-      const cell = {type: type, row: rowIndex, month: monthIndex};
+      const cell = { type: type, row: rowIndex, month: monthIndex };
       copyCellsBuffer.push(cell);
     }
     this.copyCellsBuffer = copyCellsBuffer;
@@ -1029,7 +1064,7 @@ export class ProjectDetailByMonthComponent implements OnInit, OnChanges, AfterVi
   }
 
   get projectMonths(): number {
-    const projectMonthFA =  this.projectForm.get('projectMonths') as FormArray;
+    const projectMonthFA = this.projectForm.get('projectMonths') as FormArray;
     return projectMonthFA.controls.length;
   }
 
