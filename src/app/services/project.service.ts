@@ -6,14 +6,15 @@ import { UserService } from './user.service';
 import { Http, Response, Headers, RequestOptions, RequestMethod, URLSearchParams } from '@angular/http';
 import { catchError } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
-
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class ProjectService extends
     AbstractRestService<Project> {
 
-    constructor(http: Http, user: UserService, private config: ConfigService) {
-        super(http, 'http://localhost:5000/api/' + 'projects', user);
+    constructor(http: Http, user: UserService) {
+        const apiUrl = environment.apiUrl;
+        super(http, apiUrl + '/projects', user);
     }
 
     getList(params?: any): Observable<ProjectList[]> {

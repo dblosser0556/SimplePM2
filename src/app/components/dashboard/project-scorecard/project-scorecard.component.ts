@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ProjectList, FilterByKey, ProjectsByFilterKey, Group, QueryParams } from '../../../models';
-import { GroupService } from '../../configuration/group/group.service';
-import { ProjectService } from '../../../services';
+import { ProjectService, GroupService, StatusService } from '../../../services';
 import { ToastrService } from 'ngx-toastr';
-import { StatusService } from '../../configuration/status/status.service';
 import * as _ from 'lodash';
 
 @Component({

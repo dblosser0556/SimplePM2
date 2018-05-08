@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges, Output, EventEmitter  } from '@angular/core';
 
 
-import { FixedPriceTypeService } from './../fixed-price-type.service';
+import { FixedPriceTypeService } from '../../../../services/fixed-price-type.service';
 import { FixedPriceType } from '../../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
@@ -62,7 +62,6 @@ export class FixedPriceTypeDetailComponent implements OnInit, OnChanges {
       this.itemService.create(JSON.stringify(newProjectCostType)).subscribe(data => {
         // this.resetForm();
         this.item = data;
-       
         this.itemChange.emit(item);
       },
       error => this.error = error);

@@ -1,6 +1,6 @@
 
 import { Component, OnInit, Input, OnChanges, Output, EventEmitter  } from '@angular/core';
-import { ResourceTypeService } from './../resource-type.service';
+import { ResourceTypeService } from '../../../../services';
 import { ResourceType } from '../../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
@@ -17,7 +17,7 @@ interface CreateResourceType {
 })
 export class ResourceTypeDetailComponent implements OnInit, OnChanges {
 
- 
+
   @Input() item: ResourceType;
   @Output() itemChange = new EventEmitter<string>();
 

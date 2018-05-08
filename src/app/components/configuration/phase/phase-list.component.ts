@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { PhaseService } from './phase.service';
+import { PhaseService } from '../../../services';
 import { Phase } from '../../../models';
 import { Observable } from 'rxjs/Observable';
 import '../../../rxjs-extensions';
@@ -12,7 +12,7 @@ import { ToastrService } from 'ngx-toastr';
     styleUrls: ['./phase-list.component.scss']
 })
 
- 
+
 export class PhaseListComponent implements OnInit {
 
     phases: Phase[];
@@ -33,9 +33,6 @@ export class PhaseListComponent implements OnInit {
     }
 
 
-
-
-   
   confirmDelete(status: Phase) {
     this.selectedDelete = status;
     this.showDeleteConf = true;

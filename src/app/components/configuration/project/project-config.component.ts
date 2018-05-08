@@ -2,9 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProjectService } from '../../../services';
 import { Project, ProjectList, Status, Group, LoggedInUser } from '../../../models';
 import { Observable } from 'rxjs/Observable';
-import { StatusService } from '../status/status.service';
-import { GroupService } from '../group/group.service';
-import { UserService } from '../../../services/user.service';
+import { UserService, GroupService, StatusService } from '../../../services';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 

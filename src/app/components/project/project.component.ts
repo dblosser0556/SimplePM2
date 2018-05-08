@@ -1,10 +1,8 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { ProjectService } from '../../services';
 import { Project, Group, Status, LoggedInUser, ProjectList } from '../../models';
-import { StatusService } from '../configuration/status/status.service';
-import { GroupService } from '../configuration/group/group.service';
 import { UtilityService } from '../../services/utility.service';
-import { UserService } from '../../services/user.service';
+import { UserService, GroupService, StatusService } from '../../services';
 import { ActivatedRoute } from '@angular/router';
 import 'rxjs/add/operator/filter';
 import { ToastrService } from 'ngx-toastr';

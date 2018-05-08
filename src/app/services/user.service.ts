@@ -5,11 +5,12 @@ import { UserRegistration, User, LoggedInUser } from '../models';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class UserService {
 
-  _url = 'http://localhost:5000/api';
+  _url = environment.apiUrl;
   loggedIn = false;
   loggedInUser: LoggedInUser;
   authorityToken: string;

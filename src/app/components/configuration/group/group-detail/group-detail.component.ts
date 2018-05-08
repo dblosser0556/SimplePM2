@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
-import { GroupService } from './../group.service';
+import { GroupService } from '../../../../services';
 import { Group, LoggedInUser, GroupBudget, BudgetType } from '../../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl, FormArray } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
@@ -281,10 +281,6 @@ export class GroupDetailComponent implements OnInit, OnChanges {
   }
 
 
- 
-
-
- 
 
   confirmDeleteBudget(type: BudgetType, index: number) {
     this.selectedBudget = [type, index];

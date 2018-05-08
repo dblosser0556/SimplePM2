@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { GroupTreeView, Group, FilterByKey, ProjectsByFilterKey } from '../../models';
-import { GroupService } from '../configuration/group/group.service';
+import { GroupService } from '../../services';
 import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 

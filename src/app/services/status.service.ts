@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { AbstractRestService } from '../../../services/abstractrestservice';
-import { Status } from '../../../models';
-import { UserService} from '../../../services/user.service';
+import { AbstractRestService } from './abstractrestservice';
+import { Status } from '../models';
+import { UserService} from './user.service';
 import { Observable } from 'rxjs/Observable';
 import { catchError } from 'rxjs/operators';
 import { Http, Response, Headers, RequestOptions, RequestMethod } from '@angular/http';
+import { environment } from '../../environments/environment';
 
 
 
@@ -13,7 +14,8 @@ export class StatusService extends
     AbstractRestService<Status> {
 
     constructor(http: Http, user: UserService ) {
-        super(http, 'http://localhost:5000/api/' + 'status', user);
+        const apiUrl = environment.apiUrl;
+        super(http, apiUrl + '/status', user);
     }
 
 

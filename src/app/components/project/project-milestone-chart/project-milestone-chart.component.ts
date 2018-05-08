@@ -3,7 +3,7 @@ import { Project, Milestone, Month, Phase } from '../../../models';
 import { MilestoneChartData } from '../../dashboard/home/home.component';
 import { MilestoneChartScaleLabel, MilestoneChartMilestone } from '../../milestone-chart/milestone-chart.component';
 import * as moment from 'moment';
-import { PhaseService } from '../../configuration/phase/phase.service';
+import { PhaseService } from '../../../services';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Component({

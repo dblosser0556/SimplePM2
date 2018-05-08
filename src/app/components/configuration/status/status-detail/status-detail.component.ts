@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, Output, EventEmitter  } from '@angular/core';
-import { StatusService } from './../status.service';
+import { StatusService } from '../../../../services';
 import { Status } from '../../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';

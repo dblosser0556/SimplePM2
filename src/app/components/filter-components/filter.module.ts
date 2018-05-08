@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClarityModule } from '@clr/angular';
-import { GroupService } from '../configuration/group/group.service';
-import { StatusService } from '../configuration/status/status.service';
+import { GroupService, StatusService } from '../../services';
+
 
 
 

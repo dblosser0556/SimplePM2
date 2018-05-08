@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ProjectService } from '../../../services';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
-import { StatusService } from '../../configuration/status/status.service';
+import { StatusService } from '../../../services';
 
 @Component({
   selector: 'app-project-card',

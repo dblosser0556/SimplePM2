@@ -4,12 +4,11 @@ import {
   Project, Resource, ResourceMonth, Month,
   Phase, ResourceType, FixedPriceType, Role, Status, Group
 } from '../models';
-import { PhaseService } from '../components/configuration/phase/phase.service';
-import { ResourceTypeService } from '../components/configuration/resource-type/resource-type.service';
-import { FixedPriceTypeService } from '../components/configuration/fixed-price-type/fixed-price-type.service';
-import { RoleService } from '../components/configuration/role/role.service';
-import { StatusService } from '../components/configuration/status/status.service';
-import { GroupService } from '../components/configuration/group/group.service';
+import { PhaseService } from './phase.service';
+import { ResourceTypeService } from './resource-type.service';
+import { FixedPriceTypeService } from './fixed-price-type.service';
+import { RoleService, StatusService } from '../services';
+import { GroupService } from './group.service';
 
 
 @Injectable()

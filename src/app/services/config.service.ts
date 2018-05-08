@@ -3,10 +3,9 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { CapWeightPercent } from '../models';
 
+
 @Injectable()
 export class ConfigService {
-  rootDataUrl = 'http://localhost:5000/api';
-
 
   COOLGREY = '#314351';
   COOLGREYBG = '#F3F6FA';
@@ -18,10 +17,8 @@ export class ConfigService {
   TEALBG = '#DEFFF9';
   BLUE = '#1A23A0';
   BLUEBG = '#EBF0FF';
- 
   PURPLE = '#660092';
   PURPLEBG = '#F3E6FF';
- 
 
 
 

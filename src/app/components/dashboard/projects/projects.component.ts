@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { ProjectService, UserService } from '../../../services';
+import { ProjectService, UserService , GroupService } from '../../../services';
 import { ProjectList, ProjectsByFilterKey, FilterByKey, Group, QueryParams } from '../../../models';
 import * as _ from 'lodash';
-import { GroupService } from '../../configuration/group/group.service';
 
 
 

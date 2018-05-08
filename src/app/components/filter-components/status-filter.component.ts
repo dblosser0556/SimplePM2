@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { FilterByKey, ProjectsByFilterKey, Status } from '../../models';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { StatusService } from '../configuration/status/status.service';
+import { StatusService } from '../../services';
 import { ToastrService } from 'ngx-toastr';
 
 

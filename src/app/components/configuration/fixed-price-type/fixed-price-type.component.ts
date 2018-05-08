@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FixedPriceTypeService } from './fixed-price-type.service';
+import { FixedPriceTypeService } from '../../../services/fixed-price-type.service';
 import { FixedPriceType } from '../../../models';
 import { Observable } from 'rxjs/Observable';
 

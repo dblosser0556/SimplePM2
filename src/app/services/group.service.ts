@@ -1,18 +1,20 @@
 import { Injectable } from '@angular/core';
-import { AbstractRestService } from '../../../services/abstractrestservice';
-import { Group } from '../../../models';
-import { UserService} from '../../../services/user.service';
+import { AbstractRestService } from './abstractrestservice';
+import { Group } from '../models';
+import { UserService} from './user.service';
 import { Observable } from 'rxjs/Observable';
 import { catchError } from 'rxjs/operators';
 import { Http, Response, Headers, RequestOptions, RequestMethod } from '@angular/http';
-
+import { environment } from '../../environments/environment';
 
 @Injectable()
 export class GroupService extends
     AbstractRestService<Group> {
 
     constructor(http: Http, user: UserService ) {
-        super(http, 'http://localhost:5000/api/' + 'groups', user);
+        const apiUrl = environment.apiUrl;
+        super(http, apiUrl + '/groups', user);
+
     }
 
 

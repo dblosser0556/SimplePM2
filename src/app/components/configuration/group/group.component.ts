@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { GroupService } from './group.service';
+import { GroupService } from '../../../services';
 import { Group, User, LoggedInUser } from '../../../models';
 import { UserService } from '../../../services';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -15,7 +15,7 @@ export class GroupComponent implements OnInit {
   groups: Group[];
   selectedGroup: Group;
   managers: LoggedInUser[];
-  
+
   error: any;
   isLoading = false;
   showDeleteConf = false;
@@ -69,7 +69,7 @@ export class GroupComponent implements OnInit {
             }
           }
         }
-        // pass the groups back to the for and  
+        // pass the groups back to the for and
         this.groups = groups;
         this.selectedGroup = undefined;
 

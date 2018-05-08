@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { StatusService } from './status.service';
+import { StatusService } from '../../../services';
 import { Status } from '../../../models';
 import { Observable } from 'rxjs/Observable';
 

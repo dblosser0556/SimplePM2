@@ -1,8 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
-import { ResourceTypeService } from './resource-type.service';
+import { ResourceTypeService } from '../../../services';
 import { ResourceType } from '../../../models';
-import { Observable } from 'rxjs/Observable';
 
 import '../../../rxjs-extensions';
 import { ToastrService } from 'ngx-toastr';
@@ -17,8 +16,6 @@ export class ResourceTypeComponent implements OnInit {
 
   items: ResourceType[];
   selectedItem: ResourceType;
-  error: any;
-  successMessage: string;
   isLoading = false;
   selectedDelete: ResourceType;
   showDeleteConf = false;
@@ -51,8 +48,6 @@ export class ResourceTypeComponent implements OnInit {
   }
 
 
- 
-
   getList() {
     this.isLoading = true;
     this.itemService.getAll()
@@ -60,7 +55,10 @@ export class ResourceTypeComponent implements OnInit {
         this.items = results;
         this.isLoading = false;
       },
-      error => this.error = error);
+      error =>  {
+        this.toast.error(error);
+        console.log(error);
+      });
     this.selectedItem = undefined;
   }
 
@@ -73,10 +71,7 @@ export class ResourceTypeComponent implements OnInit {
   }
 
   updateList(event: any) {
-    if (event != null) {
-      this.successMessage = event;
       this.getList();
-    }
   }
 }
 

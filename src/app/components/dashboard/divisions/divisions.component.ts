@@ -1,6 +1,5 @@
 import { Component, OnInit, OnChanges, ElementRef, HostListener } from '@angular/core';
-import { StatusService } from '../../configuration/status/status.service';
-import { GroupService } from '../../configuration/group/group.service';
+import { GroupService , StatusService } from '../../../services';
 import { Status, Group, GroupTreeView, ProjectMonthlyProjection,
   ChartData, Month, Budget, GroupBudget, ProjectsByFilterKey, FilterByKey } from '../../../models';
 import { ProjectMonthlyProjectionService } from '../../../services/project-monthly-projection.service';

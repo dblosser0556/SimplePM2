@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnChanges, Output, EventEmitter  } from '@angular/core';
-import { RoleService } from './../role.service';
+import { RoleService } from '../../../../services';
 import { Role } from '../../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';

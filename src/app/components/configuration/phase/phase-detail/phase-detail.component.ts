@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 
-import { PhaseService } from './../phase.service';
+import { PhaseService } from '../../../../services';
 import { UtilityService } from './../../../../services/utility.service';
 import { Phase } from '../../../../models';
 import { FormBuilder, FormGroup, Validators, FormControl, AbstractControl } from '@angular/forms';

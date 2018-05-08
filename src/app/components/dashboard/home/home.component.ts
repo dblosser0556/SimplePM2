@@ -2,12 +2,11 @@ import { Component, OnInit, HostListener, ElementRef } from '@angular/core';
 import { ProjectMilestone, FilterByKey, ProjectsByFilterKey, GroupBudget,
   Group, Month, ChartData, Milestone, ProjectList, Status, QueryParams } from '../../../models';
 import { ToastrService } from 'ngx-toastr';
-import { ProjectService } from '../../../services';
-import { GroupService } from '../../configuration/group/group.service';
+import { ProjectService, GroupService, StatusService } from '../../../services';
 import * as moment from 'moment';
 import * as _ from 'lodash';
 import { MilestoneChartMilestone, MilestoneChartScaleLabel,  } from '../../milestone-chart/milestone-chart.component';
-import { StatusService } from '../../configuration/status/status.service';
+
 
 
 export interface MilestoneChartData {
@@ -76,7 +75,7 @@ export class HomeComponent implements OnInit {
 
   // get the list of projects by with thier cost data by month.
   getProjects() {
-    // create the string that represents the list of status that are configured to 
+    // create the string that represents the list of status that are configured to
     // be in this view.
     let filterString = '';
     for (const _status of this.dashboardStatus) {

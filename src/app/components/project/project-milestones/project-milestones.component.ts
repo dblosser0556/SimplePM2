@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Project, Phase, BudgetType, Milestone } from '../../../models';
-import { MilestoneService } from '../../../services';
-import { PhaseService } from '../../configuration/phase/phase.service';
+import { MilestoneService, PhaseService } from '../../../services';
 import * as moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { DecimalPipe } from '@angular/common';

@@ -9,13 +9,8 @@ import { ClarityModule } from '@clr/angular';
 import { HttpModule } from '@angular/http';
 import { ProjectModule } from '../project/project.module';
 import { BreadcrumbsModule } from '../breadcrumbs/breadcrumbs.module';
-import { FixedPriceTypeService } from './fixed-price-type/fixed-price-type.service';
-import { RoleService } from './role/role.service';
-import { StatusService } from './status/status.service';
-import { GroupService } from './group/group.service';
-import { ResourceTypeService } from './resource-type/resource-type.service';
-import { PhaseService } from './phase/phase.service';
-import { UserService } from '../../services';
+import { UserService, GroupService, PhaseService, ResourceTypeService,
+  StatusService, FixedPriceTypeService, RoleService } from '../../services';
 
 
 import {
