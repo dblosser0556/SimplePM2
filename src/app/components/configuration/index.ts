@@ -24,6 +24,10 @@ import { ProjectConfigComponent } from './project/project-config.component';
 import { GroupComponent } from './group/group.component';
 import { GroupDetailComponent } from './group/group-detail/group-detail.component';
 
+import { CharacteristicComponent } from './characteristic/characteristic.component';
+import { CharacteristicDetailComponent } from './characteristic/characteristic-detail/characteristic-detail.component';
+
+
 export {
     RootComponent,
     AccountListComponent,
@@ -40,6 +44,8 @@ export {
     ResourceTypeDetailComponent,
     GroupComponent,
     GroupDetailComponent,
+    CharacteristicComponent,
+    CharacteristicDetailComponent,
     ProjectConfigComponent
 };
 
@@ -59,5 +65,7 @@ export default [
     ResourceTypeDetailComponent,
     GroupComponent,
     GroupDetailComponent,
+    CharacteristicComponent,
+    CharacteristicDetailComponent,
     ProjectConfigComponent
 ];

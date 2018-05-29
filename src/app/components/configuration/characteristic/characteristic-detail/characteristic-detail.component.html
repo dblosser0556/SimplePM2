@@ -1,0 +1,87 @@
+<div class="card">
+  <div *ngIf="isLoading" class="card-block">
+    Loading Characteristic Details ...
+  </div>
+  <div *ngIf="!isLoading" class="card-block">
+    <form (ngSubmit)="onSubmit()" name="characteristicForm" class="group-form" [formGroup]="characteristicForm" novalidate>
+
+      <div class="row">
+        <div class="column">
+          <section class="form-block">
+            <label>Edit Chanacteristic</label>
+           
+            <div class="form-group">
+              <label class="required">Characteristic Name</label>
+              <label for="characteristicName" aria-haspopup="true" role="tooltip" class="tooltip tooltip-validation tooltip-sm" [class.invalid]="characteristicName.invalid && (characteristicName.dirty || characteristicName.touched)">
+
+                <input type="text" id="characteristicName" formControlName="characteristicName" required placeholder="Name">
+                <span class="tooltip-content">The name is required.</span>
+              </label>
+            </div>
+            <div class="form-group">
+              <label for="characteristicDesc">Description</label>
+              <input type="text" id="characteristicDesc" formControlName="characteristicDesc" size="45" placeholder="Description">
+            </div>
+
+          </section>
+        </div>
+        <div class="column">
+          <section class="form-block">
+            <label>Characteristic Attributes</label>
+
+            <table class="table table-compact">
+              <thead>
+                <tr>
+                  <th>Attribute</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody formArrayName="attributes">
+                <tr *ngFor="let attribute of characteristicForm.get('attributes').controls; let i=index" [formGroupName]="i">
+                  <td>
+                    <input type="text" formControlName="characteristicName" size="10" required placeholder="Name">
+                  </td>
+                  <td>
+                    <input type="text" formControlName="characteristicDesc" size="10" placeholder="Description">
+                  </td>
+                  <td>
+                    <a ref (click)="confirmDeleteAttribute(0,i)" title="Delete Attribute">
+                      <clr-icon shape="trash" class="is-solid"></clr-icon>
+                    </a>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+
+            <div>
+              <button type="button" class="btn btn-sm btn-link" (click)="addAttribute()">
+                <clr-icon shape="plus"></clr-icon>Add Attriubte</button>
+            </div>
+          </section>
+          
+        </div>
+      </div>
+      <div>
+        <button class="btn btn-primary" type="submit" [disabled]="!groupForm.valid">
+          <clr-icon shape="floppy" class="is-solid"></clr-icon>Save</button>
+        <button type="button" class="btn btn-warning-outline" [disabled]="!groupForm.dirty" (click)="revert()">
+          <clr-icon shape="undo"></clr-icon>Reset</button>
+
+        <button type="button" class="btn btn-warning-outline" (click)="cancel()">
+          <clr-icon shape="ban"></clr-icon>Cancel</button>
+      </div>
+
+    </form>
+  </div>
+</div>
+<clr-modal [(clrModalOpen)]="showDeleteAttribute">
+  <h3 class="modal-title">Confirm Deletion</h3>
+  <div class="modal-body">
+    <p>Are you sure you want to delete this attribute?</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="showDeleteAttribute = false">Cancel</button>
+    <button type="button" class="btn btn-warning" (click)="removeAttribute()">Delete</button>
+  </div>
+</clr-modal>

@@ -15,6 +15,8 @@ import {
   RegistrationFormComponent,
   GroupComponent,
   GroupDetailComponent,
+  CharacteristicComponent,
+  CharacteristicDetailComponent,
   ProjectConfigComponent,
 } from '../configuration';
 
@@ -82,6 +84,15 @@ export const configurationRouting: ModuleWithProviders = RouterModule.forChild([
             children: [
               { path: '', component: GroupComponent, data: { 'title': 'Configure Project Groups', 'breadcrumb': 'Groups' } },
               { path: 'details', component: GroupDetailComponent, data: { 'title': 'Edit Project Group', 'breadcrumb': 'Group' } },
+            ]
+          },
+          {
+            path: 'characteristics', data: { 'title': 'Configure Project Characteristics', 'breadcrumb': 'Characteristics' },
+            children: [
+              { path: '', component: CharacteristicComponent, data: { 'title': 'Configure Project Characteristics',
+                'breadcrumb': 'Characteristics' } },
+              { path: 'details', component: CharacteristicDetailComponent, data: { 'title': 'Edit Project Characteristic',
+                'breadcrumb': 'Characteristic' } },
             ]
           },
           {

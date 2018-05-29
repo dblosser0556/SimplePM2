@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="card">
+    <div class="card-block">
+      <div *ngIf="isLoading">Loading Characteristics ...</div>
+      <table class="table" *ngIf="!isLoading">
+        <tr>
+          <th>Parent Name</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Edit</th>
+          <th>Delete</th>
+        </tr>
+        <tr *ngFor="let characteristic of characteristics">
+          <td>{{characteristic.parentName}}</td>
+          <td>
+            {{characteristic.characteristicName}}
+          </td>
+          <td>
+            {{characteristic.characteristicDesc}}
+          </td>
+        
+          <td>
+            <a (click)="edit(characteristic)">
+              <clr-icon shape="pencil" class="is-solid"></clr-icon>
+            </a>
+          </td>
+          <td>
+            <a ref (click)="confirmDelete(characteristic)" title="Delete">
+              <clr-icon shape="trash" class="is-solid"></clr-icon>
+            </a>
+          </td>
+        </tr>
+
+      </table>
+      <div class="card-block">
+        <button class="btn btn-primary" (click)="add()">
+          <clr-icon shape="plus"></clr-icon>Add New</button>
+      </div>
+    </div>
+  </div>
+</div>
+<clr-modal [(clrModalOpen)]="showDeleteConf">
+    <h3 class="modal-title">Confirm Deletion</h3>
+    <div class="modal-body">
+        <p>Are you sure you want to delete?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-warning" (click)="onDelete()">Delete</button>  
+        <button type="button" class="btn btn-outline" (click)="showDeleteConf = false">Cancel</button>
+  
+    </div>
+</clr-modal>

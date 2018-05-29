@@ -14,5 +14,6 @@ export * from './fixed-price-type.service';
 
 export * from './status.service';
 export * from './role.service';
+export * from './characteristic.service';
 
 

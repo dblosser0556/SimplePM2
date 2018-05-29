@@ -37,3 +37,4 @@ export * from './filter-by-key-interface';
 export * from './project-milestone';
 export * from './query-params-interface';
 export * from './menu-item-interface';
+export * from './characteristic';

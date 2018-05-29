@@ -10,7 +10,7 @@ import { HttpModule } from '@angular/http';
 import { ProjectModule } from '../project/project.module';
 import { BreadcrumbsModule } from '../breadcrumbs/breadcrumbs.module';
 import { UserService, GroupService, PhaseService, ResourceTypeService,
-  StatusService, FixedPriceTypeService, RoleService } from '../../services';
+  StatusService, FixedPriceTypeService, RoleService, CharacteristicService } from '../../services';
 
 
 import {
@@ -29,6 +29,8 @@ import {
   RegistrationFormComponent,
   GroupComponent,
   GroupDetailComponent,
+  CharacteristicComponent,
+  CharacteristicDetailComponent,
   ProjectConfigComponent
 } from '../configuration';
 
@@ -63,7 +65,9 @@ import {
     AccountListComponent,
     RegistrationFormComponent,
     GroupDetailComponent,
-    ProjectConfigComponent
+    ProjectConfigComponent,
+    CharacteristicComponent,
+    CharacteristicDetailComponent
   ],
   providers: [
     PhaseService,
@@ -71,6 +75,7 @@ import {
     RoleService,
     StatusService,
     ResourceTypeService,
-    GroupService]
+    GroupService,
+    CharacteristicService]
 })
 export class ConfigurationModule { }
